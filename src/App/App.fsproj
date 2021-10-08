@@ -3,6 +3,10 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Components/Header/Header.fs" />
+    <Compile Include="Pages/SignIn/SignIn.fs" />
+    <Compile Include="Pages/SignUp/SignUp.fs" />
+    <Compile Include="Pages/Home/Home.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
   <ItemGroup>

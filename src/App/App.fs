@@ -1,17 +1,15 @@
 module App
 
-open System
 open Sutil
-open Sutil.DOM
-open Sutil.Attr
-open Feliz
-open type Feliz.length
-open Sutil.Program
 
-let view() =
-    Html.div [
-        class' "container mx-auto flex flex-row justify-between py-2"
-        text "Hello World"
+open Sutil.Program
+open SubtleConduit.Components.Header
+open SubtleConduit.Pages.Home
+
+let view () = 
+    Html.div [ 
+        Header()
+        HomePage()
     ]
 
-view() |> mountElement "sutil-app"
+view () |> mountElement "sutil-app"
