@@ -1,0 +1,27 @@
+{
+  "name": "SubtleConduit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "engines": {
+    "node": ">=14",
+    "pnpm": ">=6",
+    "npm": "please-use-pnpm",
+    "yarn": "please-use-pnpm"
+  },
+  "scripts": {
+    "install": "dotnet tool restore",
+        "build": "dotnet fable ./src/App -o ./build/client --run vite build",
+        "start": "dotnet fable watch ./src/App -s -o ./build/client --runFast vite --open"
+  },
+  "devDependencies": {
+      "autoprefixer": "10.3.7",
+      "postcss": "8.3.9",
+      "tailwindcss": "2.2.16",
+      "tailwindcss-textshadow": "2.1.3",
+      "vite": "2.6.2"
+  },
+  "keywords": [],
+  "author": "Kai Ito",
+  "license": "MIT"
+}
