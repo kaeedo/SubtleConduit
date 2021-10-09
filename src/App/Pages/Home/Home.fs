@@ -1,20 +1,41 @@
 module SubtleConduit.Pages.Home
 
 open Sutil
-open Sutil.Attr
+open Tailwind
 
 let HomePage () =
     let view =
         Html.div [
-            class' "bg-conduit-green w-screen p-8"
+            Attr.classes [
+                tw.``bg-conduit-green``
+                tw.``w-screen``
+                tw.``p-8``
+            ]
             Html.div [
-                class' "container mx-auto text-white"
+                Attr.classes [
+                    tw.``container``
+                    tw.``mx-auto``
+                    tw.``text-white``
+                ]
                 Html.h1 [
-                    class' "mx-auto text-center text-6xl font-mono font-bold text-shadow-lg mb-2"
+                    Attr.classes [
+                        tw.``mx-auto``
+                        tw.``text-center``
+                        tw.``text-6xl``
+                        tw.``font-mono``
+                        tw.``font-bold``
+                        tw.``text-shadow-lg``
+                        tw.``mb-2``
+                    ]
                     text "conduit"
                 ]
                 Html.h2 [
-                    class' "mx-auto text-center text-2xl font-light"
+                    Attr.classes [
+                        tw.``mx-auto``
+                        tw.``text-center``
+                        tw.``text-2xl``
+                        tw.``font-light``
+                    ]
                     text "A place to share your knowledge"
                 ]
             ]

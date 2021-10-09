@@ -3,6 +3,7 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Tailwind.fs" />
     <Compile Include="Components/Header/Header.fs" />
     <Compile Include="Pages/SignIn/SignIn.fs" />
     <Compile Include="Pages/SignUp/SignUp.fs" />
@@ -10,6 +11,7 @@
     <Compile Include="App.fs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Sutil" Version="1.0.0-beta-011" />
+    <PackageReference Include="Sutil" Version="1.0.0-beta-012" />
+    <PackageReference Include="Zanaptak.TypedCssClasses" Version="1.0.0" />
   </ItemGroup>
 </Project>
