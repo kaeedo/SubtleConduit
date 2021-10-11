@@ -11,15 +11,31 @@
   },
   "scripts": {
     "install": "dotnet tool restore",
-        "build": "dotnet fable ./src/App -o ./build/client --run vite build",
-        "start": "dotnet fable watch ./src/App -s -o ./build/client --runFast vite --open"
+    "build": "dotnet fable ./src/App -o ./build/client --run vite build",
+    "start": "dotnet fable watch ./src/App -s -o ./build/client --runFast vite --open"
   },
   "devDependencies": {
-      "autoprefixer": "10.3.7",
-      "postcss": "8.3.9",
-      "tailwindcss": "2.2.16",
-      "tailwindcss-textshadow": "2.1.3",
-      "vite": "2.6.2"
+    "autoprefixer": "10.3.7",
+    "husky": "7.0.2",
+    "lint-staged": "11.2.3",
+    "postcss": "8.3.9",
+    "prettier": "2.4.1",
+    "tailwindcss": "2.2.16",
+    "tailwindcss-textshadow": "2.1.3",
+    "vite": "2.6.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/*.{ts,json,md,yml,yaml,js,mdx,tsx,jsx}": [
+      "prettier --write"
+    ],
+    "src/**/*.fs": [
+      "dotnet fantomas ./src/**/*.fs"
+    ]
   },
   "keywords": [],
   "author": "Kai Ito",

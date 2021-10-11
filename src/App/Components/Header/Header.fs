@@ -2,8 +2,10 @@ module SubtleConduit.Components.Header
 
 open Sutil
 open Sutil.Attr
+open SubtleConduit.Types
+open SubtleConduit.Router
 
-let Header () =
+let Header dispatch =
     let view =
         Html.nav [
             class' "container mx-auto flex flex-row justify-between py-2"
@@ -19,6 +21,7 @@ let Header () =
                         class' "h-auto"
                         Html.a [
                             Attr.href "javascript:void(0);"
+                            onClick (fun _ -> dispatch (SetPage Home)) [ PreventDefault ]
                             text "Home"
                         ]
                     ]
@@ -26,6 +29,7 @@ let Header () =
                         class' "h-auto ml-4"
                         Html.a [
                             Attr.href "javascript:void(0);"
+                            onClick (fun _ -> dispatch (SetPage SignIn)) [ PreventDefault ]
                             text "Sign In"
                         ]
                     ]
@@ -33,6 +37,7 @@ let Header () =
                         class' "h-auto ml-4"
                         Html.a [
                             Attr.href "javascript:void(0);"
+                            onClick (fun _ -> dispatch (SetPage SignUp)) [ PreventDefault ]
                             text "Sign Up"
                         ]
                     ]

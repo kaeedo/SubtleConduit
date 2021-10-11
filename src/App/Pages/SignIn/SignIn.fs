@@ -4,6 +4,5 @@ open Sutil
 open Sutil.Attr
 
 let SignInPage () =
-    let view =
-        Html.div [ text "Sign In" ]
+    let view = Html.div [ text "Sign In" ]
     view

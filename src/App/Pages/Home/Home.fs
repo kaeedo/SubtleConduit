@@ -13,7 +13,7 @@ let HomePage () =
             ]
             Html.div [
                 Attr.classes [
-                    tw.``container``
+                    tw.container
                     tw.``mx-auto``
                     tw.``text-white``
                 ]

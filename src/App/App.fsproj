@@ -4,6 +4,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Tailwind.fs" />
+    <Compile Include="Types.fs" />
+    <Compile Include="Router.fs" />
     <Compile Include="Components/Header/Header.fs" />
     <Compile Include="Pages/SignIn/SignIn.fs" />
     <Compile Include="Pages/SignUp/SignUp.fs" />
