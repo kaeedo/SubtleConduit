@@ -15,7 +15,7 @@ let viewPage model dispatch page =
     match page with
     | Home -> HomePage()
     | SignIn -> SignInPage dispatch
-    | SignUp -> SignUpPage()
+    | SignUp -> SignUpPage dispatch
 
 let view () =
 
@@ -34,7 +34,7 @@ let view () =
         unsubscribeOnUnmount [
             routerSubscription
         ]
-        Header dispatch
+        Header(model, dispatch)
 
         Bind.el (page, (viewPage model dispatch))
     ]

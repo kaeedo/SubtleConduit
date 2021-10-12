@@ -5,7 +5,13 @@ open Sutil.Attr
 open SubtleConduit.Types
 open Tailwind
 
-let Header dispatch =
+let Header (model, dispatch) =
+    let isHome = model .> fun m -> m.Page = Page.Home
+    let isSignIn = model .> fun m -> m.Page = Page.SignIn
+    let isSignUp = model .> fun m -> m.Page = Page.SignUp
+
+    let negate m = m .> not
+
     let view =
         Html.nav [
             Attr.classes [
@@ -37,7 +43,13 @@ let Header dispatch =
                         tw.``flex-row``
                     ]
                     Html.li [
-                        Attr.classes [ tw.``h-auto`` ]
+                        Bind.toggleClass (isHome, tw.``text-gray-700``)
+                        Bind.toggleClass (negate isHome, tw.``text-gray-400``)
+
+                        Attr.classes [
+                            tw.``h-auto``
+                            tw.``hover:text-gray-700``
+                        ]
                         Html.a [
                             Attr.href "javascript:void(0);"
                             onClick (fun _ -> dispatch (SetPage Home)) [ PreventDefault ]
@@ -45,9 +57,13 @@ let Header dispatch =
                         ]
                     ]
                     Html.li [
+                        Bind.toggleClass (isSignIn, tw.``text-gray-700``)
+                        Bind.toggleClass (negate isSignIn, tw.``text-gray-400``)
+
                         Attr.classes [
                             tw.``h-auto``
                             tw.``ml-4``
+                            tw.``hover:text-gray-700``
                         ]
                         Html.a [
                             Attr.href "javascript:void(0);"
@@ -56,9 +72,13 @@ let Header dispatch =
                         ]
                     ]
                     Html.li [
+                        Bind.toggleClass (isSignUp, tw.``text-gray-700``)
+                        Bind.toggleClass (negate isSignUp, tw.``text-gray-400``)
+
                         Attr.classes [
                             tw.``h-auto``
                             tw.``ml-4``
+                            tw.``hover:text-gray-700``
                         ]
                         Html.a [
                             Attr.href "javascript:void(0);"
