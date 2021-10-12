@@ -3,22 +3,41 @@ module SubtleConduit.Components.Header
 open Sutil
 open Sutil.Attr
 open SubtleConduit.Types
-open SubtleConduit.Router
+open Tailwind
 
 let Header dispatch =
     let view =
         Html.nav [
-            class' "container mx-auto flex flex-row justify-between py-2"
+            Attr.classes [
+                tw.container
+                tw.``mx-auto``
+                tw.flex
+                tw.``flex-row``
+                tw.``justify-between``
+                tw.``py-2``
+            ]
             Html.span [
-                class' "text-2xl font-mono text-conduit-green"
+                Attr.classes [
+                    tw.``text-2xl``
+                    tw.``font-mono``
+                    tw.``text-conduit-green``
+                ]
                 text "conduit"
             ]
             Html.div [
-                class' "flex justify-end content-center h-auto"
+                Attr.classes [
+                    tw.flex
+                    tw.``justify-end``
+                    tw.``content-center``
+                    tw.``h-auto``
+                ]
                 Html.ul [
-                    class' "flex flex-row"
+                    Attr.classes [
+                        tw.flex
+                        tw.``flex-row``
+                    ]
                     Html.li [
-                        class' "h-auto"
+                        Attr.classes [ tw.``h-auto`` ]
                         Html.a [
                             Attr.href "javascript:void(0);"
                             onClick (fun _ -> dispatch (SetPage Home)) [ PreventDefault ]
@@ -26,7 +45,10 @@ let Header dispatch =
                         ]
                     ]
                     Html.li [
-                        class' "h-auto ml-4"
+                        Attr.classes [
+                            tw.``h-auto``
+                            tw.``ml-4``
+                        ]
                         Html.a [
                             Attr.href "javascript:void(0);"
                             onClick (fun _ -> dispatch (SetPage SignIn)) [ PreventDefault ]
@@ -34,7 +56,10 @@ let Header dispatch =
                         ]
                     ]
                     Html.li [
-                        class' "h-auto ml-4"
+                        Attr.classes [
+                            tw.``h-auto``
+                            tw.``ml-4``
+                        ]
                         Html.a [
                             Attr.href "javascript:void(0);"
                             onClick (fun _ -> dispatch (SetPage SignUp)) [ PreventDefault ]

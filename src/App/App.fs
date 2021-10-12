@@ -14,7 +14,7 @@ open SubtleConduit.Router
 let viewPage model dispatch page =
     match page with
     | Home -> HomePage()
-    | SignIn -> SignInPage()
+    | SignIn -> SignInPage dispatch
     | SignUp -> SignUpPage()
 
 let view () =

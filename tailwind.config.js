@@ -5,10 +5,12 @@ module.exports = {
   theme: {
     extend: {
       colors:{
-        'conduit-green':'#5CB85C'
+        'conduit-green':'#5CB85C',
+        'conduit-green-500':'#449d44'
       },
       textColors:{
-        'conduit-green':'#5CB85C'
+        'conduit-green':'#5CB85C',
+        'conduit-green-500':'#449d44'
       }
     },
   },
