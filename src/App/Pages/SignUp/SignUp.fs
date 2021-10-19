@@ -24,7 +24,9 @@ let SignUpPage dispatch =
                 text "Sign up"
             ]
             Html.div [
-                Attr.classes [ tw.``mb-4`` ]
+                Attr.classes [
+                    tw.``mb-4``
+                ]
                 Html.a [
                     Attr.classes [
                         tw.``text-conduit-green``
@@ -36,17 +38,25 @@ let SignUpPage dispatch =
                 ]
             ]
             Html.form [
-                Attr.classes [ tw.``w-96`` ]
+                Attr.classes [
+                    tw.``w-96``
+                ]
                 Html.div [
-                    Attr.classes [ tw.``mb-4`` ]
+                    Attr.classes [
+                        tw.``mb-4``
+                    ]
                     TextInput.TextInput { TextInput.Props.Placeholder = "Your Name" }
                 ]
                 Html.div [
-                    Attr.classes [ tw.``mb-4`` ]
+                    Attr.classes [
+                        tw.``mb-4``
+                    ]
                     TextInput.TextInput { TextInput.Props.Placeholder = "Email" }
                 ]
                 Html.div [
-                    Attr.classes [ tw.``mb-4`` ]
+                    Attr.classes [
+                        tw.``mb-4``
+                    ]
                     TextInput.TextInput { TextInput.Props.Placeholder = "Password" }
                 ]
                 Html.div [

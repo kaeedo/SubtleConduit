@@ -30,7 +30,9 @@ let view () =
         Navigable.listenLocation parseRoute (SetPage >> dispatch)
 
     fragment [
-        disposeOnUnmount [ model ]
+        disposeOnUnmount [
+            model
+        ]
         unsubscribeOnUnmount [
             routerSubscription
         ]

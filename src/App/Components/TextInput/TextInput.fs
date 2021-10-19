@@ -18,7 +18,7 @@ let TextInput (props: Props) =
                 tw.``px-6``
                 tw.``py-3``
                 tw.``w-full``
-                ]
+            ]
             Attr.placeholder props.Placeholder
             type' "text"
         ]
