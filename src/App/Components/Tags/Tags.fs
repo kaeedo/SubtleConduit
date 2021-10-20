@@ -3,14 +3,15 @@ module SubtleConduit.Components.Tags
 open Sutil
 open Tailwind
 open Sutil.DOM
+open SubtleConduit.Services
 
 let Tags () =
     let view () =
         let tags: IStore<string list> = Store.make []
 
         promise {
-            let! tagsFromApi = SubtleConduit.Services.Api.getTags ()
-            tags <~ tagsFromApi
+            let! tagsFromApi = Api.getTags ()
+            tags <~ (tagsFromApi.tags |> List.ofArray) // TODO Refactor to use array once Sutil supports it
         }
         |> Promise.start
 
@@ -22,9 +23,9 @@ let Tags () =
                 tw.``px-2``
                 tw.``pt-1``
                 tw.``pb-2``
-                tw.``bg-gray-200``
+                tw.``bg-gray-100``
                 tw.rounded
-                tw.``w-64``
+                tw.``w-40``
             ]
             Html.h6 [
                 Attr.classes [
@@ -48,10 +49,11 @@ let Tags () =
                                         tw.``rounded-xl``
                                         tw.``cursor-pointer``
                                         tw.``bg-gray-500``
-                                        tw.``hover:bg-gray-700``
+                                        tw.``hover:bg-gray-600``
                                         tw.``text-white``
                                         tw.``mr-1``
                                         tw.``mb-1``
+                                        tw.``text-xs``
                                     ]
                                     text tag
                                 ]

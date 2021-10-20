@@ -1,19 +1,29 @@
 module SubtleConduit.Services.Api
 
-open Fable.Core.JS
-
 [<Literal>]
 let TAGS_URL =
     "https://cirosantilli-realworld-next.herokuapp.com/api/tags"
 
-// Type is created automatically from the url
+[<Literal>]
+let ARTICLES_URL =
+    "https://cirosantilli-realworld-next.herokuapp.com/api/articles"
+
 type Tags = Fable.JsonProvider.Generator<TAGS_URL>
+type Articles = Fable.JsonProvider.Generator<ARTICLES_URL>
 
 
-let getTags () : Promise<string list> =
+let getTags () =
     promise {
         let! response = Fetch.fetch TAGS_URL []
 
         let! tags = response.json<Tags> ()
-        return tags.tags |> List.ofArray // TODO Refactor to use array once Sutil supports it
+        return tags
+    }
+
+let getArticles () =
+    promise {
+        let! response = Fetch.fetch ARTICLES_URL []
+
+        let! articles = response.json<Articles> ()
+        return articles
     }
