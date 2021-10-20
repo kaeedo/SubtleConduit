@@ -6,32 +6,17 @@ open Sutil.DOM
 
 let Tags () =
     let view () =
-        let tags: IStore<string array> =
-            Store.make [|
-                "wef"
-                "rthrth"
-            |]
+        let tags: IStore<string list> = Store.make []
 
-        let otherTags: IStore<string list> =
-            Store.make [
-                "wef"
-                "rthrth"
-            ]
-
-
-        // promise {
-        //     let! tagsFromApi = SubtleConduit.Services.Api.getTags ()
-        //     tags <~ tagsFromApi
-
-        // //let otherTagsFromApi = tagsFromApi |> List.ofArray
-        // //otherTags <~ otherTagsFromApi
-        // }
-        // |> Promise.start
+        promise {
+            let! tagsFromApi = SubtleConduit.Services.Api.getTags ()
+            tags <~ tagsFromApi
+        }
+        |> Promise.start
 
         Html.div [
             disposeOnUnmount [
                 tags
-                otherTags
             ]
             Attr.classes [
                 tw.``px-2``
@@ -49,7 +34,29 @@ let Tags () =
             ]
             Html.div [
                 Html.ul [
-                    Bind.each (otherTags, (fun tag -> Html.li [ text tag ]))
+                    Bind.each (
+                        tags,
+                        (fun tag ->
+                            Html.li [
+                                Attr.classes [
+                                    tw.``inline-flex``
+                                ]
+                                Html.span [
+                                    Attr.classes [
+                                        tw.``px-2``
+                                        tw.``py-1``
+                                        tw.``rounded-xl``
+                                        tw.``cursor-pointer``
+                                        tw.``bg-gray-500``
+                                        tw.``hover:bg-gray-700``
+                                        tw.``text-white``
+                                        tw.``mr-1``
+                                        tw.``mb-1``
+                                    ]
+                                    text tag
+                                ]
+                            ])
+                    )
                 ]
             ]
         ]

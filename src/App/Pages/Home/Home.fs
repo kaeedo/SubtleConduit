@@ -47,6 +47,7 @@ let HomePage () =
                 Attr.classes [
                     tw.container
                     tw.``mx-auto``
+                    tw.``mt-8``
                     tw.flex
                     tw.``justify-between``
                 ]
