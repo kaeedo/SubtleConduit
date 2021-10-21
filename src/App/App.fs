@@ -39,6 +39,7 @@ let view () =
         Header(model, dispatch)
 
         Bind.el (page, (viewPage model dispatch))
-    ]
+
+        ]
 
 view () |> mountElement "sutil-app"

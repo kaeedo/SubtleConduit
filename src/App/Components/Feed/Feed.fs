@@ -23,11 +23,17 @@ let Feed () =
         let articleList =
             articles .> fun a -> a.articles |> List.ofArray
 
-        promise {
-            let! articlesFromApi = Api.getArticles ()
-            articles <~ (articlesFromApi) // TODO Refactor to use array once Sutil supports it
-        }
-        |> Promise.start
+        let articleListPages = Store.make (10, 0)
+
+        let articleListPagesSubscription =
+            Store.subscribe
+                (fun value ->
+                    promise {
+                        let! articlesFromApi = Api.getArticles articleListPages.Value
+                        articles <~ (articlesFromApi) // TODO Refactor to use array once Sutil supports it
+                    }
+                    |> Promise.start)
+                articleListPages
 
         let formateDate date =
             let formatDateUS =
@@ -38,6 +44,7 @@ let Feed () =
         Html.div [
             disposeOnUnmount [
                 articles
+                articleListPagesSubscription
             ]
 
             Attr.classes [
@@ -171,8 +178,6 @@ let Feed () =
                                     ]
                                     Html.ul [
                                         for tag in a.tagList do
-                                            let tag: string = tag :?> string
-
                                             Html.li [
                                                 Attr.classes [
                                                     tw.``inline-flex``
@@ -191,7 +196,7 @@ let Feed () =
                                                         tw.rounded
                                                         tw.``border-gray-300``
                                                     ]
-                                                    text tag
+                                                    text (tag :?> string)
                                                 ]
                                             ]
                                     ]
