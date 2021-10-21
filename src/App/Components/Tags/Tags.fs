@@ -26,6 +26,7 @@ let Tags () =
                 tw.``bg-gray-100``
                 tw.rounded
                 tw.``w-40``
+                tw.``h-full``
             ]
             Html.h6 [
                 Attr.classes [
