@@ -36,6 +36,7 @@ let view () =
         unsubscribeOnUnmount [
             routerSubscription
         ]
+
         Header(model, dispatch)
 
         Bind.el (page, (viewPage model dispatch))

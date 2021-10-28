@@ -33,6 +33,7 @@ let HomePage () =
                             tw.``font-bold``
                             tw.``text-shadow-lg``
                             tw.``mb-2``
+                            tw.``cursor-default``
                         ]
                         text "conduit"
                     ]
@@ -42,6 +43,7 @@ let HomePage () =
                             tw.``text-center``
                             tw.``text-2xl``
                             tw.``font-light``
+                            tw.``cursor-default``
                         ]
                         text "A place to share your knowledge"
                     ]

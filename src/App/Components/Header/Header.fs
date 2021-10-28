@@ -25,6 +25,7 @@ let Header (model, dispatch) =
                     tw.``text-2xl``
                     tw.``font-mono``
                     tw.``text-conduit-green``
+                    tw.``cursor-default``
                 ]
                 text "conduit"
             ]

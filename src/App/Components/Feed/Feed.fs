@@ -61,18 +61,39 @@ let Feed (articleFilter: Api.ArticleFilter option) (setArticleFilter) =
             ]
 
             Html.div [
+                Attr.classes [
+                    tw.flex
+                ]
                 Html.div [
                     Attr.classes [
                         tw.``text-conduit-green``
                         tw.``w-max``
                         tw.``py-2``
                         tw.``px-4``
-                        tw.``border-b-2``
-                        tw.``box-content``
-                        tw.``border-conduit-green``
+                        tw.``cursor-pointer``
+
+                        if articleFilter.IsNone then
+                            tw.``border-b-2``
+                            tw.``border-conduit-green``
                     ]
+                    onClick (fun _ -> setArticleFilter None) []
                     text "Global Feed"
                 ]
+                match articleFilter with
+                | Some (Api.Tag t) ->
+                    Html.div [
+                        Attr.classes [
+                            tw.``text-conduit-green``
+                            tw.``w-max``
+                            tw.``py-2``
+                            tw.``px-4``
+                            tw.``border-b-2``
+                            tw.``box-content``
+                            tw.``border-conduit-green``
+                        ]
+                        text t
+                    ]
+                | _ -> ()
             ]
             Html.ul [
                 Bind.el (
@@ -118,6 +139,7 @@ let Feed (articleFilter: Api.ArticleFilter option) (setArticleFilter) =
                                                         Attr.classes [
                                                             tw.``text-conduit-green``
                                                             tw.``font-semibold``
+                                                            tw.``cursor-pointer``
                                                         ]
                                                         text a.author.username
                                                     ]
@@ -160,20 +182,24 @@ let Feed (articleFilter: Api.ArticleFilter option) (setArticleFilter) =
                                         Html.div [
                                             Attr.classes [
                                                 tw.``mb-4``
+                                                tw.flex
+                                                tw.``flex-col``
                                             ]
-                                            Html.div [
+                                            Html.a [
                                                 Attr.classes [
                                                     tw.``text-2xl``
                                                     tw.``font-semibold``
                                                     tw.``mb-1``
                                                 ]
+                                                Attr.href "#"
                                                 text a.title
                                             ]
-                                            Html.div [
+                                            Html.a [
                                                 Attr.classes [
                                                     tw.``text-sm``
                                                     tw.``text-gray-400``
                                                 ]
+                                                Attr.href "#"
                                                 text a.description
                                             ]
                                         ]
@@ -183,11 +209,12 @@ let Feed (articleFilter: Api.ArticleFilter option) (setArticleFilter) =
                                                 tw.``justify-between``
                                                 tw.``items-baseline``
                                             ]
-                                            Html.span [
+                                            Html.a [
                                                 Attr.classes [
                                                     tw.``text-xs``
                                                     tw.``text-gray-300``
                                                 ]
+                                                Attr.href "#"
                                                 text "Read more..."
                                             ]
                                             Html.ul [
@@ -210,6 +237,11 @@ let Feed (articleFilter: Api.ArticleFilter option) (setArticleFilter) =
                                                                 tw.rounded
                                                                 tw.``border-gray-300``
                                                             ]
+                                                            onClick
+                                                                (fun _ ->
+                                                                    setArticleFilter
+                                                                    <| Some(Api.ArticleFilter.Tag(tag.ToString())))
+                                                                []
                                                             text (tag.ToString())
                                                         ]
                                                     ]
