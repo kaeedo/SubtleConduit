@@ -11,6 +11,10 @@ let ARTICLES_URL =
 type Tags = Fable.JsonProvider.Generator<TAGS_URL>
 type Articles = Fable.JsonProvider.Generator<ARTICLES_URL>
 
+type ArticleFilter =
+    | Tag of string
+    | User of string
+
 
 let getTags () =
     promise {
@@ -20,9 +24,16 @@ let getTags () =
         return tags
     }
 
-let getArticles limit offset =
+let getArticles limit offset (filter: ArticleFilter option) =
+    let url =
+        $"{ARTICLES_URL}?limit={limit}&offset={offset}"
+        + match filter with
+          | None -> ""
+          | Some (Tag t) -> $"&tag={t}"
+          | Some (User u) -> $"&author={u}"
+
     promise {
-        let! response = Fetch.fetch $"{ARTICLES_URL}?limit={limit}&offset={offset}" []
+        let! response = Fetch.fetch url []
 
         let! articles = response.json<Articles> ()
         return articles

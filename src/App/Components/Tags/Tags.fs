@@ -4,21 +4,22 @@ open Sutil
 open Tailwind
 open Sutil.DOM
 open SubtleConduit.Services
+open Sutil.Attr
 
-let Tags () =
-    let view () =
-        let tags: IStore<string list> = Store.make []
+//let private tags: IStore<string list> = Store.make []
+let private tags = ObservablePromise<Api.Tags>()
 
-        promise {
-            let! tagsFromApi = Api.getTags ()
-            tags <~ (tagsFromApi.tags |> List.ofArray) // TODO Refactor to use array once Sutil supports it
-        }
-        |> Promise.start
+let private getTags () =
+    tags.Run
+    <| promise {
+        let! tagsFromApi = Api.getTags ()
+        return tagsFromApi
+       }
 
+let Tags (articleFilter: Api.ArticleFilter option) (setArticleFilter: Api.ArticleFilter option -> unit) =
+    let view =
         Html.div [
-            disposeOnUnmount [
-                tags
-            ]
+            onMount (fun _ -> getTags ()) [ Once ]
             Attr.classes [
                 tw.``px-2``
                 tw.``pt-1``
@@ -36,32 +37,39 @@ let Tags () =
             ]
             Html.div [
                 Html.ul [
-                    Bind.each (
+                    Bind.el (
                         tags,
-                        (fun tag ->
-                            Html.li [
-                                Attr.classes [
-                                    tw.``inline-flex``
-                                ]
-                                Html.span [
-                                    Attr.classes [
-                                        tw.``px-2``
-                                        tw.``py-1``
-                                        tw.``rounded-xl``
-                                        tw.``cursor-pointer``
-                                        tw.``bg-gray-500``
-                                        tw.``hover:bg-gray-600``
-                                        tw.``text-white``
-                                        tw.``mr-1``
-                                        tw.``mb-1``
-                                        tw.``text-xs``
+                        (function
+                        | Waiting -> text "Loading"
+                        | Error e -> text $"Error occured: {e.Message}"
+                        | Result tagsResult ->
+                            fragment [
+                                for t in tagsResult.tags do
+                                    Html.li [
+                                        Attr.classes [
+                                            tw.``inline-flex``
+                                        ]
+                                        Html.span [
+                                            Attr.classes [
+                                                tw.``px-2``
+                                                tw.``py-1``
+                                                tw.``rounded-xl``
+                                                tw.``cursor-pointer``
+                                                tw.``bg-gray-500``
+                                                tw.``hover:bg-gray-600``
+                                                tw.``text-white``
+                                                tw.``mr-1``
+                                                tw.``mb-1``
+                                                tw.``text-xs``
+                                            ]
+                                            onClick (fun _ -> setArticleFilter <| Some(Api.ArticleFilter.Tag t)) []
+                                            text t
+                                        ]
                                     ]
-                                    text tag
-                                ]
                             ])
                     )
                 ]
             ]
         ]
 
-    view ()
+    view

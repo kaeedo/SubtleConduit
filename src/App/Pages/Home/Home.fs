@@ -3,6 +3,11 @@ module SubtleConduit.Pages.Home
 open Sutil
 open Tailwind
 open SubtleConduit.Components
+open SubtleConduit.Services
+open Sutil.DOM
+
+let private articleFilter =
+    Store.make<Api.ArticleFilter option> None
 
 let HomePage () =
     let view =
@@ -51,8 +56,16 @@ let HomePage () =
                     tw.flex
                     tw.``justify-between``
                 ]
-                Feed.Feed()
-                Tags.Tags()
+                Bind.el (
+                    articleFilter,
+                    (fun af ->
+                        let setter = Store.set articleFilter
+
+                        fragment [
+                            Feed.Feed af setter
+                            Tags.Tags af setter
+                        ])
+                )
             ]
         ]
 

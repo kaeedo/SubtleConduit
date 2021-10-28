@@ -17,10 +17,10 @@ let private offset = Store.make 0
 
 let private articles = ObservablePromise<Api.Articles>()
 
-let private getArticles pageSize newOffset =
+let private getArticles pageSize newOffset filter =
     articles.Run
     <| promise {
-        let! articlesFromApi = Api.getArticles pageSize newOffset
+        let! articlesFromApi = Api.getArticles pageSize newOffset filter
         offset <~ newOffset
         return articlesFromApi // TODO Refactor to use array once Sutil supports it
        }
@@ -45,12 +45,12 @@ let private formateDate date =
 
     formatDateUS <| DateTime.Parse(date)
 
-let Feed () =
+let Feed (articleFilter: Api.ArticleFilter option) (setArticleFilter) =
     let heartIcon = importDefault "../../Images/heart.svg"
 
     let view =
         Html.div [
-            onMount (fun _ -> getArticles pageSize 0) [ Once ]
+            onMount (fun _ -> getArticles pageSize 0 articleFilter) [ Once ]
             disposeOnUnmount [
                 offset
             ]
@@ -246,7 +246,7 @@ let Feed () =
                                         if offset.Value = 0 then
                                             ()
                                         else
-                                            getArticles pageSize (offset.Value - pageSize))
+                                            getArticles pageSize (offset.Value - pageSize) articleFilter)
                                     []
                                 text "<"
                             ]
@@ -266,7 +266,7 @@ let Feed () =
                                         tw.``border-gray-300``
                                         tw.``border-r-0``
                                     ]
-                                    onClick (fun _ -> getArticles pageSize (int pn * pageSize - 10)) []
+                                    onClick (fun _ -> getArticles pageSize (int pn * pageSize - 10) articleFilter) []
                                     text pn
                                 ]
 
@@ -284,7 +284,7 @@ let Feed () =
                                         if (offset.Value / pageSize + 1) = int lastPage then
                                             ()
                                         else
-                                            getArticles pageSize (offset.Value + pageSize))
+                                            getArticles pageSize (offset.Value + pageSize) articleFilter)
 
                                     []
 
