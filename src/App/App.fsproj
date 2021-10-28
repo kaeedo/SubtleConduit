@@ -5,6 +5,7 @@
   <ItemGroup>
     <Compile Include="Tailwind.fs" />
     <Compile Include="Types.fs" />
+    <Compile Include="Utilities.fs" />
     <Compile Include="Router.fs" />
     <Compile Include="Services/Api.fs" />
     <Compile Include="Components/TextInput/TextInput.fs" />

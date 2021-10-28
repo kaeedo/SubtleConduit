@@ -2,7 +2,7 @@ module SubtleConduit.Components.Feed
 
 open Sutil
 open Sutil.Attr
-open SubtleConduit.Types
+open SubtleConduit.Utilities
 
 open Fable.Core
 
@@ -12,45 +12,54 @@ open Sutil.DOM
 open System
 open Fable.Core.JsInterop
 
+let private pageSize = 10
+let private offset = Store.make 0
+
+let private articles = ObservablePromise<Api.Articles>()
+
+let private getArticles pageSize newOffset =
+    articles.Run
+    <| promise {
+        let! articlesFromApi = Api.getArticles pageSize newOffset
+        offset <~ newOffset
+        return articlesFromApi // TODO Refactor to use array once Sutil supports it
+       }
+
+let private currentPage = offset .> fun o -> (o / pageSize) + 1
+
+let private pageNumbers = // TODO refactor to array
+    let total =
+        articles
+        .> (function
+        | Result a ->
+            Math.Ceiling(a.articlesCount / float pageSize)
+            |> int
+        | _ -> 0)
+
+    Store.zip currentPage total
+    .> (fun (current, total) -> getPagesToDisplay current total)
+
+let private formateDate date =
+    let formatDateUS =
+        Date.Format.localFormat Date.Local.englishUS "MMMM dd, yyyy"
+
+    formatDateUS <| DateTime.Parse(date)
+
 let Feed () =
     let heartIcon = importDefault "../../Images/heart.svg"
 
     let view =
-        let articles: IStore<Api.Articles> =
-            Store.make
-            <| Api.Articles("{\"articles\":[], \"articlesCount\":0}")
-
-        let articleList =
-            articles .> fun a -> a.articles |> List.ofArray
-
-        let articleListPages = Store.make (10, 0)
-
-        let articleListPagesSubscription =
-            Store.subscribe
-                (fun value ->
-                    promise {
-                        let! articlesFromApi = Api.getArticles articleListPages.Value
-                        articles <~ (articlesFromApi) // TODO Refactor to use array once Sutil supports it
-                    }
-                    |> Promise.start)
-                articleListPages
-
-        let formateDate date =
-            let formatDateUS =
-                Date.Format.localFormat Date.Local.englishUS "MMMM dd, yyyy"
-
-            formatDateUS <| DateTime.Parse(date)
-
         Html.div [
+            onMount (fun _ -> getArticles pageSize 0) [ Once ]
             disposeOnUnmount [
-                articles
-                articleListPagesSubscription
+                offset
             ]
 
             Attr.classes [
                 tw.``flex-auto``
                 tw.``mr-6``
             ]
+
             Html.div [
                 Html.div [
                     Attr.classes [
@@ -66,141 +75,220 @@ let Feed () =
                 ]
             ]
             Html.ul [
-                Bind.each (
-                    articleList,
-                    fun a ->
-                        Html.li [
-                            Attr.classes [
-                                tw.``border-t``
-                                tw.``py-6``
-                            ]
-                            Html.div [
-                                Html.div [
+                Bind.el (
+                    articles,
+                    function
+                    | Waiting -> text "Loading"
+                    | Error e -> text $"Error occured: {e.Message}"
+                    | Result art ->
+                        fragment [
+                            for a in art.articles do
+                                Html.li [
                                     Attr.classes [
-                                        tw.flex
-                                        tw.``justify-between``
+                                        tw.``border-t``
+                                        tw.``py-6``
                                     ]
                                     Html.div [
-                                        Attr.classes [
-                                            tw.flex
-                                            tw.``mb-4``
-                                        ]
-                                        Html.img [
+                                        Html.div [
                                             Attr.classes [
-                                                tw.``w-8``
-                                                tw.``h-8``
-                                                tw.``rounded-3xl``
-                                                tw.``self-center``
+                                                tw.flex
+                                                tw.``justify-between``
                                             ]
-                                            Attr.src a.author.image
+                                            Html.div [
+                                                Attr.classes [
+                                                    tw.flex
+                                                    tw.``mb-4``
+                                                ]
+                                                Html.img [
+                                                    Attr.classes [
+                                                        tw.``w-8``
+                                                        tw.``h-8``
+                                                        tw.``rounded-3xl``
+                                                        tw.``self-center``
+                                                    ]
+                                                    Attr.src a.author.image
+                                                ]
+                                                Html.div [
+                                                    Attr.classes [
+                                                        tw.flex
+                                                        tw.``flex-col``
+                                                        tw.``ml-2``
+                                                    ]
+                                                    Html.span [
+                                                        Attr.classes [
+                                                            tw.``text-conduit-green``
+                                                            tw.``font-semibold``
+                                                        ]
+                                                        text a.author.username
+                                                    ]
+                                                    Html.span [
+                                                        Attr.classes [
+                                                            tw.``text-xs``
+                                                            tw.``text-gray-400``
+                                                        ]
+                                                        text (formateDate a.createdAt)
+                                                    ]
+                                                ]
+                                            ]
+                                            Html.button [
+                                                Attr.classes [
+                                                    tw.border
+                                                    tw.rounded
+                                                    tw.``border-conduit-green``
+                                                    tw.``hover:bg-conduit-green``
+                                                    tw.``h-8``
+                                                    tw.flex
+                                                    tw.``px-2``
+                                                    tw.``hover:text-white``
+                                                    tw.``text-conduit-green``
+                                                    tw.``text-xs``
+                                                    tw.``items-center``
+                                                ]
+                                                Html.img [
+                                                    Attr.classes [
+                                                        tw.``w-4``
+                                                        tw.``mr-1``
+                                                        // tw.``hover:text-white``
+                                                        // tw.``text-conduit-green``
+                                                        // tw.``fill-current``
+                                                        ]
+                                                    Attr.src heartIcon
+                                                ]
+                                                text (a.favoritesCount.ToString())
+                                            ]
+                                        ]
+                                        Html.div [
+                                            Attr.classes [
+                                                tw.``mb-4``
+                                            ]
+                                            Html.div [
+                                                Attr.classes [
+                                                    tw.``text-2xl``
+                                                    tw.``font-semibold``
+                                                    tw.``mb-1``
+                                                ]
+                                                text a.title
+                                            ]
+                                            Html.div [
+                                                Attr.classes [
+                                                    tw.``text-sm``
+                                                    tw.``text-gray-400``
+                                                ]
+                                                text a.description
+                                            ]
                                         ]
                                         Html.div [
                                             Attr.classes [
                                                 tw.flex
-                                                tw.``flex-col``
-                                                tw.``ml-2``
-                                            ]
-                                            Html.span [
-                                                Attr.classes [
-                                                    tw.``text-conduit-green``
-                                                    tw.``font-semibold``
-                                                ]
-                                                text a.author.username
+                                                tw.``justify-between``
+                                                tw.``items-baseline``
                                             ]
                                             Html.span [
                                                 Attr.classes [
                                                     tw.``text-xs``
-                                                    tw.``text-gray-400``
+                                                    tw.``text-gray-300``
                                                 ]
-                                                text (formateDate a.createdAt)
+                                                text "Read more..."
                                             ]
-                                        ]
-                                    ]
-                                    Html.button [
-                                        Attr.classes [
-                                            tw.border
-                                            tw.rounded
-                                            tw.``border-conduit-green``
-                                            tw.``hover:bg-conduit-green``
-                                            tw.``h-8``
-                                            tw.flex
-                                            tw.``px-2``
-                                            tw.``hover:text-white``
-                                            tw.``text-conduit-green``
-                                            tw.``text-xs``
-                                            tw.``items-center``
-                                        ]
-                                        Html.img [
-                                            Attr.classes [
-                                                tw.``w-4``
-                                                tw.``mr-1``
-                                                // tw.``hover:text-white``
-                                                // tw.``text-conduit-green``
-                                                // tw.``fill-current``
-                                                ]
-                                            Attr.src heartIcon
-                                        ]
-                                        text (a.favoritesCount.ToString())
-                                    ]
-                                ]
-                                Html.div [
-                                    Attr.classes [
-                                        tw.``mb-4``
-                                    ]
-                                    Html.div [
-                                        Attr.classes [
-                                            tw.``text-2xl``
-                                            tw.``font-semibold``
-                                            tw.``mb-1``
-                                        ]
-                                        text a.title
-                                    ]
-                                    Html.div [
-                                        Attr.classes [
-                                            tw.``text-sm``
-                                            tw.``text-gray-400``
-                                        ]
-                                        text a.description
-                                    ]
-                                ]
-                                Html.div [
-                                    Attr.classes [
-                                        tw.flex
-                                        tw.``justify-between``
-                                        tw.``items-baseline``
-                                    ]
-                                    Html.span [
-                                        Attr.classes [
-                                            tw.``text-xs``
-                                            tw.``text-gray-300``
-                                        ]
-                                        text "Read more..."
-                                    ]
-                                    Html.ul [
-                                        for tag in a.tagList do
-                                            Html.li [
-                                                Attr.classes [
-                                                    tw.``inline-flex``
-                                                ]
-                                                Html.span [
-                                                    Attr.classes [
-                                                        tw.``px-2``
-                                                        tw.``py-1``
-                                                        tw.``rounded-xl``
-                                                        tw.``cursor-pointer``
-                                                        tw.``text-gray-300``
-                                                        tw.``mr-1``
-                                                        tw.``mb-1``
-                                                        tw.``text-xs``
-                                                        tw.border
-                                                        tw.rounded
-                                                        tw.``border-gray-300``
+                                            Html.ul [
+                                                for tag in a.tagList do
+                                                    Html.li [
+                                                        Attr.classes [
+                                                            tw.``inline-flex``
+                                                        ]
+                                                        Html.span [
+                                                            Attr.classes [
+                                                                tw.``px-2``
+                                                                tw.``py-1``
+                                                                tw.``rounded-xl``
+                                                                tw.``cursor-pointer``
+                                                                tw.``text-gray-300``
+                                                                tw.``mr-1``
+                                                                tw.``mb-1``
+                                                                tw.``text-xs``
+                                                                tw.border
+                                                                tw.rounded
+                                                                tw.``border-gray-300``
+                                                            ]
+                                                            text (tag.ToString())
+                                                        ]
                                                     ]
-                                                    text (tag :?> string)
-                                                ]
                                             ]
+                                        ]
                                     ]
                                 ]
+                        ]
+                )
+            ]
+            Html.ul [
+                Attr.classes [
+                    tw.flex
+                    tw.``justify-center``
+                ]
+                Bind.el (
+                    pageNumbers,
+                    fun pns ->
+                        let lastPage = pns.[pns.Length - 1]
+
+                        fragment [
+                            Html.li [
+                                Attr.classes [
+                                    tw.``cursor-pointer``
+                                    tw.``px-3``
+                                    tw.``py-2``
+                                    tw.border
+                                    tw.``border-gray-300``
+                                    tw.``border-r-0``
+                                    tw.``rounded-l-sm``
+                                ]
+                                onClick
+                                    (fun _ ->
+                                        if offset.Value = 0 then
+                                            ()
+                                        else
+                                            getArticles pageSize (offset.Value - pageSize))
+                                    []
+                                text "<"
+                            ]
+
+                            for pn in pns do
+                                Html.li [
+                                    Bind.toggleClass (
+                                        (currentPage .> fun cp -> (cp.ToString()) = pn),
+                                        tw.``bg-conduit-green`` + " " + tw.``text-white``,
+                                        tw.``hover:bg-gray-100``
+                                    )
+                                    Attr.classes [
+                                        tw.``cursor-pointer``
+                                        tw.``px-3``
+                                        tw.``py-2``
+                                        tw.border
+                                        tw.``border-gray-300``
+                                        tw.``border-r-0``
+                                    ]
+                                    onClick (fun _ -> getArticles pageSize (int pn * pageSize - 10)) []
+                                    text pn
+                                ]
+
+                            Html.li [
+                                Attr.classes [
+                                    tw.``cursor-pointer``
+                                    tw.``px-3``
+                                    tw.``py-2``
+                                    tw.border
+                                    tw.``border-gray-300``
+                                    tw.``rounded-r-sm``
+                                ]
+                                onClick
+                                    (fun _ ->
+                                        if (offset.Value / pageSize + 1) = int lastPage then
+                                            ()
+                                        else
+                                            getArticles pageSize (offset.Value + pageSize))
+
+                                    []
+
+                                text ">"
                             ]
                         ]
                 )

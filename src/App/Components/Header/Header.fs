@@ -10,8 +10,6 @@ let Header (model, dispatch) =
     let isSignIn = model .> fun m -> m.Page = Page.SignIn
     let isSignUp = model .> fun m -> m.Page = Page.SignUp
 
-    let negate m = m .> not
-
     let view =
         Html.nav [
             Attr.classes [
@@ -43,8 +41,7 @@ let Header (model, dispatch) =
                         tw.``flex-row``
                     ]
                     Html.li [
-                        Bind.toggleClass (isHome, tw.``text-gray-700``)
-                        Bind.toggleClass (negate isHome, tw.``text-gray-400``)
+                        Bind.toggleClass (isHome, tw.``text-gray-700``, tw.``text-gray-400``)
 
                         Attr.classes [
                             tw.``h-auto``
@@ -57,8 +54,7 @@ let Header (model, dispatch) =
                         ]
                     ]
                     Html.li [
-                        Bind.toggleClass (isSignIn, tw.``text-gray-700``)
-                        Bind.toggleClass (negate isSignIn, tw.``text-gray-400``)
+                        Bind.toggleClass (isSignIn, tw.``text-gray-700``, tw.``text-gray-400``)
 
                         Attr.classes [
                             tw.``h-auto``
@@ -72,8 +68,7 @@ let Header (model, dispatch) =
                         ]
                     ]
                     Html.li [
-                        Bind.toggleClass (isSignUp, tw.``text-gray-700``)
-                        Bind.toggleClass (negate isSignUp, tw.``text-gray-400``)
+                        Bind.toggleClass (isSignUp, tw.``text-gray-700``, tw.``text-gray-400``)
 
                         Attr.classes [
                             tw.``h-auto``

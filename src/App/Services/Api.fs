@@ -20,7 +20,7 @@ let getTags () =
         return tags
     }
 
-let getArticles (limit, offset) =
+let getArticles limit offset =
     promise {
         let! response = Fetch.fetch $"{ARTICLES_URL}?limit={limit}&offset={offset}" []
 
