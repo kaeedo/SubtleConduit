@@ -32,8 +32,8 @@ let SignUpPage dispatch =
                         tw.``text-conduit-green``
                         tw.``text-base``
                     ]
-                    Attr.href "javascript:void(0);"
-                    onClick (fun _ -> dispatch (SetPage SignIn)) [ PreventDefault ]
+                    Attr.href "#signin"
+                    //onClick (fun _ -> dispatch (SetPage SignIn)) [ PreventDefault ]
                     text "Have an account?"
                 ]
             ]

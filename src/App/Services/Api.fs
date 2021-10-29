@@ -1,12 +1,10 @@
 module SubtleConduit.Services.Api
 
 [<Literal>]
-let TAGS_URL =
-    "https://cirosantilli-realworld-next.herokuapp.com/api/tags"
+let TAGS_URL = "./services/TagsSampleResponse.json"
 
 [<Literal>]
-let ARTICLES_URL =
-    "https://cirosantilli-realworld-next.herokuapp.com/api/articles"
+let ARTICLES_URL = "./services/ArticlesSampleResponse.json"
 
 type Tags = Fable.JsonProvider.Generator<TAGS_URL>
 type Articles = Fable.JsonProvider.Generator<ARTICLES_URL>
@@ -17,8 +15,11 @@ type ArticleFilter =
 
 
 let getTags () =
+    let url =
+        "https://cirosantilli-realworld-next.herokuapp.com/api/tags"
+
     promise {
-        let! response = Fetch.fetch TAGS_URL []
+        let! response = Fetch.fetch url []
 
         let! tags = response.json<Tags> ()
         return tags
@@ -26,7 +27,10 @@ let getTags () =
 
 let getArticles limit offset (filter: ArticleFilter option) =
     let url =
-        $"{ARTICLES_URL}?limit={limit}&offset={offset}"
+        "https://cirosantilli-realworld-next.herokuapp.com/api/articles"
+
+    let url =
+        $"{url}?limit={limit}&offset={offset}"
         + match filter with
           | None -> ""
           | Some (Tag t) -> $"&tag={t}"

@@ -4,11 +4,15 @@ specifiers:
   autoprefixer: 10.3.7
   husky: 7.0.2
   lint-staged: 11.2.3
+  navigo: 8.11.1
   postcss: 8.3.9
   prettier: 2.4.1
   tailwindcss: 2.2.16
   tailwindcss-textshadow: 2.1.3
   vite: 2.6.2
+
+dependencies:
+  navigo: 8.11.1
 
 devDependencies:
   autoprefixer: 10.3.7_postcss@8.3.9
@@ -1003,6 +1007,10 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
     dev: true
+
+  /navigo/8.11.1:
+    resolution: {integrity: sha512-e3sc1UzakF+bWquC8/dbPCgo7LgPEW1ekgwb4pmEcl8tOc/I7lML8r7HBql+b0VRk7tJWTZqtkeObwJAVR1pxg==}
+    dev: false
 
   /node-emoji/1.11.0:
     resolution: {integrity: sha512-wo2DpQkQp7Sjm2A0cq+sN7EHKO6Sl0ctXeBdFZrL9T9+UywORbufTcTZxom8YqpLQt/FqNMUkOpkZrJVYSKD3A==}

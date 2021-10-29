@@ -1,27 +1,31 @@
 module SubtleConduit.Router
 
-open System
-open Browser.Types
-open SubtleConduit.Types
+open Fable.Core
 
-let parseHash (location: Location) =
-    let hash =
-        if location.hash.Length > 1 then
-            location.hash.Substring 1
-        else
-            String.Empty
+type Route = {| name: string; path: string |}
 
-    if hash.Contains("?") then
-        let h = hash.Substring(0, hash.IndexOf("?"))
-        h, hash.Substring(h.Length + 1)
-    else
-        hash, String.Empty
+type Match<'UrlParams, 'QueryParams> =
+    {| url: string
+       queryString: string
+       hashString: string
+       Route: Route
+       data: 'UrlParams option
+       ``params``: 'QueryParams option |}
 
-let parseUrl (location: Location) = parseHash location
+type RouteHandler<'UrlParams, 'QueryParams> = Match<'UrlParams, 'QueryParams> option -> unit
 
-let parseRoute (location: Location) : Page =
-    let hash, query = parseUrl location
+type Router =
+    abstract member on : string -> RouteHandler<'UrlParams, 'QueryParams> -> Router
 
-    match Page.Find hash with
-    | Some p -> p
-    | None -> Home
+    abstract member notFound : (unit -> unit) -> Router
+    abstract member navigate : string -> obj option -> unit
+    abstract member navigateByName : string -> 'T option -> unit
+    abstract member getCurrentLocation : unit -> Match<_, _>
+    abstract member resolve : unit -> unit
+
+
+[<ImportMember("./Router.js")>]
+let Router: Router = jsNative
+
+[<ImportMember("./Router.js")>]
+let getCurrentLocation: unit -> string array = jsNative

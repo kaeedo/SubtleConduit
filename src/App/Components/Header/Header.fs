@@ -49,8 +49,8 @@ let Header (model, dispatch) =
                             tw.``hover:text-gray-700``
                         ]
                         Html.a [
-                            Attr.href "javascript:void(0);"
-                            onClick (fun _ -> dispatch (SetPage Home)) [ PreventDefault ]
+                            Attr.href "#/home"
+                            //onClick (fun _ -> dispatch (SetPage Home)) [ PreventDefault ]
                             text "Home"
                         ]
                     ]
@@ -63,8 +63,8 @@ let Header (model, dispatch) =
                             tw.``hover:text-gray-700``
                         ]
                         Html.a [
-                            Attr.href "javascript:void(0);"
-                            onClick (fun _ -> dispatch (SetPage SignIn)) [ PreventDefault ]
+                            Attr.href "#/signin"
+                            //onClick (fun _ -> dispatch (SetPage SignIn)) [ PreventDefault ]
                             text "Sign In"
                         ]
                     ]
@@ -77,8 +77,8 @@ let Header (model, dispatch) =
                             tw.``hover:text-gray-700``
                         ]
                         Html.a [
-                            Attr.href "javascript:void(0);"
-                            onClick (fun _ -> dispatch (SetPage SignUp)) [ PreventDefault ]
+                            Attr.href "#/signup"
+                            //onClick (fun _ -> dispatch (SetPage SignUp)) [ PreventDefault ]
                             text "Sign Up"
                         ]
                     ]

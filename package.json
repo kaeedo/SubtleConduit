@@ -39,5 +39,8 @@
   },
   "keywords": [],
   "author": "Kai Ito",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "navigo": "8.11.1"
+  }
 }
