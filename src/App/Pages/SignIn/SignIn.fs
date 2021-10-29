@@ -1,9 +1,7 @@
 module SubtleConduit.Pages.SignIn
 
 open Sutil
-open Sutil.Attr
 open SubtleConduit.Components
-open SubtleConduit.Types
 open Tailwind
 
 let SignInPage dispatch =
@@ -33,7 +31,6 @@ let SignInPage dispatch =
                         tw.``text-base``
                     ]
                     Attr.href "#signup"
-                    //onClick (fun _ -> dispatch (SetPage SignUp)) [ PreventDefault ]
                     text "Need an account?"
                 ]
             ]

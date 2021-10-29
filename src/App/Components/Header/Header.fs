@@ -50,7 +50,6 @@ let Header (model, dispatch) =
                         ]
                         Html.a [
                             Attr.href "#/home"
-                            //onClick (fun _ -> dispatch (SetPage Home)) [ PreventDefault ]
                             text "Home"
                         ]
                     ]
@@ -64,7 +63,6 @@ let Header (model, dispatch) =
                         ]
                         Html.a [
                             Attr.href "#/signin"
-                            //onClick (fun _ -> dispatch (SetPage SignIn)) [ PreventDefault ]
                             text "Sign In"
                         ]
                     ]
@@ -78,7 +76,6 @@ let Header (model, dispatch) =
                         ]
                         Html.a [
                             Attr.href "#/signup"
-                            //onClick (fun _ -> dispatch (SetPage SignUp)) [ PreventDefault ]
                             text "Sign Up"
                         ]
                     ]

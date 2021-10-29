@@ -4,8 +4,6 @@ open Sutil
 open Sutil.Attr
 open SubtleConduit.Utilities
 
-open Fable.Core
-
 open Tailwind
 open SubtleConduit.Services
 open Sutil.DOM

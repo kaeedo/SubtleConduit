@@ -7,15 +7,10 @@ open SubtleConduit.Components.Header
 open SubtleConduit.Pages.Home
 open SubtleConduit.Pages.SignIn
 open SubtleConduit.Pages.SignUp
+open SubtleConduit.Pages.Profile
 open Sutil.DOM
 open SubtleConduit.Types
 open SubtleConduit.Router
-
-// let viewPage model dispatch page =
-//     match page with
-//     | Home -> HomePage()
-//     | SignIn -> SignInPage dispatch
-//     | SignUp -> SignUpPage dispatch
 
 let view () =
 
@@ -30,7 +25,7 @@ let view () =
     Router.on "/signup" (fun _ -> navigateTo SignUp)
     |> ignore
 
-    Router.on "profile/:username" (fun (matchProfile: Match<ProfileData, _> option) ->
+    Router.on "/profile/:username" (fun (matchProfile: Match<ProfileData, _> option) ->
         match matchProfile with
         | Some mtc ->
             match mtc.data with
@@ -70,8 +65,7 @@ let view () =
                 | Page.Home -> HomePage()
                 | SignIn -> SignInPage dispatch
                 | SignUp -> SignUpPage dispatch
-                | Profile p -> HomePage()
-                | _ -> HomePage()
+                | Profile p -> ProfilePage p
         )
     ]
 

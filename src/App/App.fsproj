@@ -14,6 +14,7 @@
     <Compile Include="Components/Header/Header.fs" />
     <Compile Include="Pages/SignIn/SignIn.fs" />
     <Compile Include="Pages/SignUp/SignUp.fs" />
+    <Compile Include="Pages/Profile/Profile.fs" />
     <Compile Include="Pages/Home/Home.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
