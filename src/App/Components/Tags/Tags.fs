@@ -3,11 +3,12 @@ module SubtleConduit.Components.Tags
 open Sutil
 open Tailwind
 open Sutil.DOM
+open SubtleConduit.Types
 open SubtleConduit.Services
 open Sutil.Attr
 
 //let private tags: IStore<string list> = Store.make []
-let private tags = ObservablePromise<Api.Tags>()
+let private tags = ObservablePromise<Tags>()
 
 let private getTags () =
     tags.Run

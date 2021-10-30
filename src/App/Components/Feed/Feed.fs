@@ -5,7 +5,9 @@ open Sutil.Attr
 open SubtleConduit.Utilities
 
 open Tailwind
+open SubtleConduit.Types
 open SubtleConduit.Services
+open SubtleConduit.Router
 open Sutil.DOM
 open System
 open Fable.Core.JsInterop
@@ -13,7 +15,7 @@ open Fable.Core.JsInterop
 let private pageSize = 10
 let private offset = Store.make 0
 
-let private articles = ObservablePromise<Api.Articles>()
+let private articles = ObservablePromise<Articles>()
 
 let private getArticles pageSize newOffset filter =
     articles.Run
@@ -43,7 +45,7 @@ let private formateDate date =
 
     formatDateUS <| DateTime.Parse(date)
 
-let Feed (articleFilter: Api.ArticleFilter option) (setArticleFilter) =
+let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option) (setArticleFilter) =
     let heartIcon = importDefault "../../Images/heart.svg"
 
     let view =
@@ -133,12 +135,27 @@ let Feed (articleFilter: Api.ArticleFilter option) (setArticleFilter) =
                                                         tw.``flex-col``
                                                         tw.``ml-2``
                                                     ]
-                                                    Html.span [
+                                                    Html.a [
                                                         Attr.classes [
                                                             tw.``text-conduit-green``
                                                             tw.``font-semibold``
-                                                            tw.``cursor-pointer``
                                                         ]
+                                                        Attr.href $"javascript:void(0)"
+                                                        onClick
+                                                            (fun _ ->
+                                                                printfn $"{a.author}"
+
+                                                                let foo =
+                                                                    {| profile =
+                                                                        {| username = a.author.username
+                                                                           image = a.author.image
+                                                                           bio = None
+                                                                           following = false |} |}
+
+                                                                Router.navigate
+                                                                    $"profile/{a.author.username}"
+                                                                    (Some(foo :> obj)))
+                                                            []
                                                         text a.author.username
                                                     ]
                                                     Html.span [

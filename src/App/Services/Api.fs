@@ -1,18 +1,21 @@
 module SubtleConduit.Services.Api
 
-[<Literal>]
-let TAGS_URL = "./services/TagsSampleResponse.json"
-
-[<Literal>]
-let ARTICLES_URL = "./services/ArticlesSampleResponse.json"
-
-type Tags = Fable.JsonProvider.Generator<TAGS_URL>
-type Articles = Fable.JsonProvider.Generator<ARTICLES_URL>
+open SubtleConduit.Types
 
 type ArticleFilter =
     | Tag of string
     | User of string
 
+let getProfile username =
+
+    let url =
+        $"https://cirosantilli-realworld-next.herokuapp.com/api/profiles/{username}"
+
+    promise {
+        let! response = Fetch.fetch url []
+        let! profile = response.json<Profile> ()
+        return profile
+    }
 
 let getTags () =
     let url =
