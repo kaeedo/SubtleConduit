@@ -49,7 +49,8 @@ let ProfilePage (profile: Profile) =
                             tw.``font-light``
                             tw.``cursor-default``
                         ]
-                        text profile.profile.username
+                        text
+                        <| sprintf "%s - %A" profile.profile.username profile.profile.bio
                     ]
                 ]
             ]

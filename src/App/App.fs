@@ -1,7 +1,6 @@
 module App
 
 open Sutil
-
 open Sutil.Program
 open SubtleConduit.Services
 open SubtleConduit.Components.Header
@@ -12,6 +11,7 @@ open SubtleConduit.Pages.Profile
 open Sutil.DOM
 open SubtleConduit.Types
 open SubtleConduit.Router
+
 
 let view () =
     let model, dispatch = Store.makeElmish init update ignore ()
@@ -25,13 +25,16 @@ let view () =
     Router.on "/signup" (fun _ -> navigateTo SignUp)
     |> ignore
 
-    Router.on "/profile/:username" (fun (matchProfile: Match<Profile, _> option) ->
+    Router.on "/profile/:username" (fun (matchProfile: Match<Articles.Articles.Author, _> option) ->
         match matchProfile with
         | Some mtc ->
             match mtc.data with
             | Some profile ->
-                // GET PROFILE FRO MENDPOINT
-                navigateTo <| Profile profile
+                promise {
+                    let! profile = Api.getProfile profile.username
+                    navigateTo <| Profile profile
+                }
+                |> Promise.start
             | None -> navigateTo Home
         | None -> navigateTo Home)
     |> ignore

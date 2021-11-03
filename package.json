@@ -14,6 +14,9 @@
     "build": "dotnet fable ./src/App -o ./build/client --run vite build",
     "start": "dotnet fable watch ./src/App -s -o ./build/client --runFast vite --open"
   },
+  "dependencies": {
+    "navigo": "8.11.1"
+  },
   "devDependencies": {
     "autoprefixer": "10.3.7",
     "husky": "7.0.2",
@@ -39,8 +42,5 @@
   },
   "keywords": [],
   "author": "Kai Ito",
-  "license": "MIT",
-  "dependencies": {
-    "navigo": "8.11.1"
-  }
+  "license": "MIT"
 }
