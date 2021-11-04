@@ -10,16 +10,21 @@ let TAGS = "./services/TagsSampleResponse.json"
 let ARTICLES = "./services/ArticlesSampleResponse.json"
 
 [<Literal>]
+let ARTICLE = "./services/ArticleSampleResponse.json"
+
+[<Literal>]
 let PROFILE = "./services/ProfileSampleResponse.json"
 
 type Tags = Fable.JsonProvider.Generator<TAGS>
 type Articles = Fable.JsonProvider.Generator<ARTICLES>
+type Article = Fable.JsonProvider.Generator<ARTICLE>
 type Profile = Fable.JsonProvider.Generator<PROFILE>
 
 type Page =
     | Home
     | SignIn
     | SignUp
+    | Article of string
     | Profile of Profile
 
 type NavigablePage =

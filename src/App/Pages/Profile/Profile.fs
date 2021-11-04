@@ -1,16 +1,20 @@
 module SubtleConduit.Pages.Profile
 
 open Sutil
-open SubtleConduit.Components
+open SubtleConduit.Services.Api
 open SubtleConduit.Types
 open Tailwind
+open Sutil.DOM
+open SubtleConduit.Components
 
 let ProfilePage (profile: Profile) =
+    let articleFilter = User profile.profile.username
+
     let view =
         Html.div [
             Html.div [
                 Attr.classes [
-                    tw.``bg-conduit-green``
+                    tw.``bg-gray-100``
                     tw.``w-screen``
                     tw.``p-8``
                 ]
@@ -18,7 +22,7 @@ let ProfilePage (profile: Profile) =
                     Attr.classes [
                         tw.container
                         tw.``mx-auto``
-                        tw.``text-white``
+                        tw.``text-black``
                     ]
                     Html.h1 [
                         Attr.classes [
@@ -30,13 +34,14 @@ let ProfilePage (profile: Profile) =
                             tw.``text-shadow-lg``
                             tw.``mb-2``
                             tw.``cursor-default``
+                            tw.flex
+                            tw.``justify-center``
                         ]
                         Html.img [
                             Attr.classes [
-                                tw.``w-8``
-                                tw.``h-8``
-                                tw.``rounded-3xl``
-                                tw.``self-center``
+                                tw.``h-28``
+                                tw.``w-28``
+                                tw.``rounded-full``
                             ]
                             Attr.src profile.profile.image
                         ]
@@ -46,11 +51,10 @@ let ProfilePage (profile: Profile) =
                             tw.``mx-auto``
                             tw.``text-center``
                             tw.``text-2xl``
-                            tw.``font-light``
+                            tw.``font-bold``
                             tw.``cursor-default``
                         ]
-                        text
-                        <| sprintf "%s - %A" profile.profile.username profile.profile.bio
+                        text profile.profile.username
                     ]
                 ]
             ]
@@ -62,17 +66,8 @@ let ProfilePage (profile: Profile) =
                     tw.flex
                     tw.``justify-between``
                 ]
-                // Bind.el (
-                //     articleFilter,
-                //     (fun af ->
-                //         let setter = Store.set articleFilter
-
-                //         fragment [
-                //             Feed.Feed af setter
-                //             Tags.Tags af setter
-                //         ])
-                // )
-                ]
+                Feed.Feed ignore (Some articleFilter) (ignore)
+            ]
         ]
 
     view

@@ -7,6 +7,7 @@ open SubtleConduit.Components.Header
 open SubtleConduit.Pages.Home
 open SubtleConduit.Pages.SignIn
 open SubtleConduit.Pages.SignUp
+open SubtleConduit.Pages.Article
 open SubtleConduit.Pages.Profile
 open Sutil.DOM
 open SubtleConduit.Types
@@ -23,6 +24,15 @@ let view () =
     |> ignore
 
     Router.on "/signup" (fun _ -> navigateTo SignUp)
+    |> ignore
+
+    Router.on "/article/:slug" (fun (matchSlug: Match<{| slug: string |}, _> option) ->
+        match matchSlug with
+        | Some mtc ->
+            match mtc.data with
+            | Some slug -> navigateTo <| Article slug.slug
+            | None -> navigateTo Home
+        | None -> navigateTo Home)
     |> ignore
 
     Router.on "/profile/:username" (fun (matchProfile: Match<Articles.Articles.Author, _> option) ->
@@ -50,6 +60,7 @@ let view () =
         | [||] -> Page <| Page.Home
         | [| "signin" |] -> Page <| Page.SignIn
         | [| "signup" |] -> Page <| Page.SignUp
+        | [| "article"; slug |] -> Page <| Page.Article slug
         | [| "profile"; username |] ->
             EventualPage
             <| promise {
@@ -80,6 +91,7 @@ let view () =
                 | Page.Home -> HomePage dispatch
                 | SignIn -> SignInPage dispatch
                 | SignUp -> SignUpPage dispatch
+                | Article a -> ArticlePage a
                 | Profile p -> ProfilePage p
         )
     ]

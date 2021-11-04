@@ -143,9 +143,7 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option)
                                                         Attr.href $"javascript:void(0)"
                                                         onClick
                                                             (fun _ ->
-                                                                printfn $"{a.author}"
-
-                                                                let foo =
+                                                                let profile =
                                                                     {| profile =
                                                                         {| username = a.author.username
                                                                            image = a.author.image
@@ -154,7 +152,7 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option)
 
                                                                 Router.navigate
                                                                     $"profile/{a.author.username}"
-                                                                    (Some(foo :> obj)))
+                                                                    (Some(profile :> obj)))
                                                             []
                                                         text a.author.username
                                                     ]
@@ -229,7 +227,12 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option)
                                                     tw.``text-xs``
                                                     tw.``text-gray-300``
                                                 ]
-                                                Attr.href "#"
+                                                Attr.href $"javascript:void(0)"
+                                                onClick
+                                                    (fun _ ->
+                                                        Router.navigate $"article/{a.slug}"
+                                                        <| Some(a.slug :> obj))
+                                                    []
                                                 text "Read more..."
                                             ]
                                             Html.ul [
