@@ -13,8 +13,8 @@ let getProfile username =
 
     promise {
         let! response = Fetch.fetch url []
-        let! profile = response.json<Profile> ()
-        return profile
+        let! profile = response.json<JsonProfile> ()
+        return Profile.fromJsonProfile profile
     }
 
 let getTags () =
@@ -24,8 +24,9 @@ let getTags () =
     promise {
         let! response = Fetch.fetch url []
 
-        let! tags = response.json<Tags> ()
-        return tags
+        let! tags = response.json<JsonTags> ()
+
+        return Tags.fromJsonTags tags
     }
 
 let getArticles limit offset (filter: ArticleFilter option) =
@@ -42,6 +43,17 @@ let getArticles limit offset (filter: ArticleFilter option) =
     promise {
         let! response = Fetch.fetch url []
 
-        let! articles = response.json<Articles> ()
-        return articles
+        let! articles = response.json<JsonArticles> ()
+        return Articles.fromJsonArticles articles
+    }
+
+let getArticle slug =
+    let url =
+        $"https://cirosantilli-realworld-next.herokuapp.com/api/articles/{slug}"
+
+    promise {
+        let! response = Fetch.fetch url []
+
+        let! article = response.json<JsonArticle> ()
+        return Article.fromJsonArticle article
     }

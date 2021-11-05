@@ -35,13 +35,13 @@ let view () =
         | None -> navigateTo Home)
     |> ignore
 
-    Router.on "/profile/:username" (fun (matchProfile: Match<Articles.Articles.Author, _> option) ->
+    Router.on "/profile/:username" (fun (matchProfile: Match<Profile, _> option) ->
         match matchProfile with
         | Some mtc ->
             match mtc.data with
             | Some profile ->
                 promise {
-                    let! profile = Api.getProfile profile.username
+                    let! profile = Api.getProfile profile.Username
                     navigateTo <| Profile profile
                 }
                 |> Promise.start

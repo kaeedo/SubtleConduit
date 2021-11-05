@@ -8,7 +8,7 @@ open Sutil.DOM
 open SubtleConduit.Components
 
 let ProfilePage (profile: Profile) =
-    let articleFilter = User profile.profile.username
+    let articleFilter = User profile.Username
 
     let view =
         Html.div [
@@ -43,7 +43,7 @@ let ProfilePage (profile: Profile) =
                                 tw.``w-28``
                                 tw.``rounded-full``
                             ]
-                            Attr.src profile.profile.image
+                            Attr.src profile.Image
                         ]
                     ]
                     Html.h2 [
@@ -54,7 +54,7 @@ let ProfilePage (profile: Profile) =
                             tw.``font-bold``
                             tw.``cursor-default``
                         ]
-                        text profile.profile.username
+                        text profile.Username
                     ]
                 ]
             ]

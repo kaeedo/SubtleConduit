@@ -32,18 +32,15 @@ let private pageNumbers = // TODO refactor to array
         articles
         .> (function
         | Result a ->
-            Math.Ceiling(a.articlesCount / float pageSize)
+            Math.Ceiling(float a.ArticlesCount / float pageSize)
             |> int
         | _ -> 0)
 
     Store.zip currentPage total
     .> (fun (current, total) -> getPagesToDisplay current total)
 
-let private formateDate date =
-    let formatDateUS =
-        Date.Format.localFormat Date.Local.englishUS "MMMM dd, yyyy"
-
-    formatDateUS <| DateTime.Parse(date)
+let private formatDateUS =
+    Date.Format.localFormat Date.Local.englishUS "MMMM dd, yyyy"
 
 let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option) (setArticleFilter) =
     let heartIcon = importDefault "../../Images/heart.svg"
@@ -103,7 +100,7 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option)
                     | Error e -> text $"Error occured: {e.Message}"
                     | Result art ->
                         fragment [
-                            for a in art.articles do
+                            for a in art.Articles do
                                 Html.li [
                                     Attr.classes [
                                         tw.``border-t``
@@ -127,7 +124,7 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option)
                                                         tw.``rounded-3xl``
                                                         tw.``self-center``
                                                     ]
-                                                    Attr.src a.author.image
+                                                    Attr.src a.Author.Image
                                                 ]
                                                 Html.div [
                                                     Attr.classes [
@@ -145,23 +142,23 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option)
                                                             (fun _ ->
                                                                 let profile =
                                                                     {| profile =
-                                                                        {| username = a.author.username
-                                                                           image = a.author.image
+                                                                        {| username = a.Author.Username
+                                                                           image = a.Author.Image
                                                                            bio = None
                                                                            following = false |} |}
 
                                                                 Router.navigate
-                                                                    $"profile/{a.author.username}"
+                                                                    $"profile/{a.Author.Username}"
                                                                     (Some(profile :> obj)))
                                                             []
-                                                        text a.author.username
+                                                        text a.Author.Username
                                                     ]
                                                     Html.span [
                                                         Attr.classes [
                                                             tw.``text-xs``
                                                             tw.``text-gray-400``
                                                         ]
-                                                        text (formateDate a.createdAt)
+                                                        text (formatDateUS a.CreatedAt)
                                                     ]
                                                 ]
                                             ]
@@ -189,7 +186,7 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option)
                                                         ]
                                                     Attr.src heartIcon
                                                 ]
-                                                text (a.favoritesCount.ToString())
+                                                text (a.FavoritesCount.ToString())
                                             ]
                                         ]
                                         Html.div [
@@ -205,7 +202,7 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option)
                                                     tw.``mb-1``
                                                 ]
                                                 Attr.href "#"
-                                                text a.title
+                                                text a.Title
                                             ]
                                             Html.a [
                                                 Attr.classes [
@@ -213,7 +210,7 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option)
                                                     tw.``text-gray-400``
                                                 ]
                                                 Attr.href "#"
-                                                text a.description
+                                                text a.Description
                                             ]
                                         ]
                                         Html.div [
@@ -230,13 +227,13 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option)
                                                 Attr.href $"javascript:void(0)"
                                                 onClick
                                                     (fun _ ->
-                                                        Router.navigate $"article/{a.slug}"
-                                                        <| Some(a.slug :> obj))
+                                                        Router.navigate $"article/{a.Slug}"
+                                                        <| Some(a.Slug :> obj))
                                                     []
                                                 text "Read more..."
                                             ]
                                             Html.ul [
-                                                for tag in a.tagList do
+                                                for tag in a.Tags do
                                                     Html.li [
                                                         Attr.classes [
                                                             tw.``inline-flex``
