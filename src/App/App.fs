@@ -42,7 +42,11 @@ let view () =
             | Some profile ->
                 promise {
                     let! profile = Api.getProfile profile.Username
-                    navigateTo <| Profile profile
+
+                    match profile with
+                    | Result.Ok p -> navigateTo <| Profile p
+                    | Result.Error e -> failwith e
+
                 }
                 |> Promise.start
             | None -> navigateTo Home
@@ -65,7 +69,13 @@ let view () =
             EventualPage
             <| promise {
                 let! profile = Api.getProfile username
-                return Page.Profile profile
+
+                match profile with
+                | Result.Ok p -> return Page.Profile p
+                | Result.Error e ->
+                    failwith e
+                    return Unchecked.defaultof<Page>
+
                }
         | _ -> Page <| Page.Home
 

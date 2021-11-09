@@ -12,8 +12,10 @@ let private tags = ObservablePromise<Tags>()
 let private getTags () =
     tags.Run
     <| promise {
-        let! tagsFromApi = Api.getTags ()
-        return tagsFromApi
+        let! tags = Api.getTags ()
+        // Ask: How to cleanly break Thoth Result<ok, error> to observable promise rejection
+        let (Ok tags) = tags
+        return tags
        }
 
 let Tags (articleFilter: Api.ArticleFilter option) (setArticleFilter: Api.ArticleFilter option -> unit) =

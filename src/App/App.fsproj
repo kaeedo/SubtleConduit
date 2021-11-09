@@ -22,8 +22,8 @@
   <ItemGroup>
     <PackageReference Include="Fable.Date" Version="2.0.0-beta-001" />
     <PackageReference Include="Fable.Fetch" Version="2.4.0" />
-    <PackageReference Include="Fable.JsonProvider" Version="1.0.1" />
     <PackageReference Include="Sutil" Version="1.0.0-beta-012" />
+    <PackageReference Include="Thoth.Json" Version="6.0.0" />
     <PackageReference Include="Zanaptak.TypedCssClasses" Version="1.0.0" />
   </ItemGroup>
 </Project>

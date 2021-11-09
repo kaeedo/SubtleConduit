@@ -21,8 +21,15 @@ let private getArticles pageSize newOffset filter =
     articles.Run
     <| promise {
         let! articlesFromApi = Api.getArticles pageSize newOffset filter
-        offset <~ newOffset
-        return articlesFromApi // TODO Refactor to use array once Sutil supports it
+
+        match articlesFromApi with
+        | Result.Ok a ->
+            offset <~ newOffset
+            return a // TODO Refactor to use array once Sutil supports it
+        | Result.Error e ->
+            failwith e
+
+            return Unchecked.defaultof<Articles>
        }
 
 let private currentPage = offset .> fun o -> (o / pageSize) + 1
@@ -124,7 +131,7 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option)
                                                         tw.``rounded-3xl``
                                                         tw.``self-center``
                                                     ]
-                                                    Attr.src a.Author.Image
+                                                    Attr.src (a.Author.Image |> Option.defaultValue "")
                                                 ]
                                                 Html.div [
                                                     Attr.classes [
@@ -151,7 +158,7 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option)
                                                                     $"profile/{a.Author.Username}"
                                                                     (Some(profile :> obj)))
                                                             []
-                                                        text a.Author.Username
+                                                        text (a.Author.Username |> Option.defaultValue "")
                                                     ]
                                                     Html.span [
                                                         Attr.classes [
@@ -233,33 +240,34 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option)
                                                 text "Read more..."
                                             ]
                                             Html.ul [
-                                                for tag in a.Tags do
-                                                    Html.li [
-                                                        Attr.classes [
-                                                            tw.``inline-flex``
-                                                        ]
-                                                        Html.span [
+                                                if a.Tags.IsSome then
+                                                    for tag in a.Tags.Value do
+                                                        Html.li [
                                                             Attr.classes [
-                                                                tw.``px-2``
-                                                                tw.``py-1``
-                                                                tw.``rounded-xl``
-                                                                tw.``cursor-pointer``
-                                                                tw.``text-gray-300``
-                                                                tw.``mr-1``
-                                                                tw.``mb-1``
-                                                                tw.``text-xs``
-                                                                tw.border
-                                                                tw.rounded
-                                                                tw.``border-gray-300``
+                                                                tw.``inline-flex``
                                                             ]
-                                                            onClick
-                                                                (fun _ ->
-                                                                    setArticleFilter
-                                                                    <| Some(Api.ArticleFilter.Tag(tag.ToString())))
-                                                                []
-                                                            text (tag.ToString())
+                                                            Html.span [
+                                                                Attr.classes [
+                                                                    tw.``px-2``
+                                                                    tw.``py-1``
+                                                                    tw.``rounded-xl``
+                                                                    tw.``cursor-pointer``
+                                                                    tw.``text-gray-300``
+                                                                    tw.``mr-1``
+                                                                    tw.``mb-1``
+                                                                    tw.``text-xs``
+                                                                    tw.border
+                                                                    tw.rounded
+                                                                    tw.``border-gray-300``
+                                                                ]
+                                                                onClick
+                                                                    (fun _ ->
+                                                                        setArticleFilter
+                                                                        <| Some(Api.ArticleFilter.Tag(tag.ToString())))
+                                                                    []
+                                                                text (tag.ToString())
+                                                            ]
                                                         ]
-                                                    ]
                                             ]
                                         ]
                                     ]

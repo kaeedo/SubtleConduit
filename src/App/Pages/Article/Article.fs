@@ -38,10 +38,10 @@ let init _ =
       Favorited = false
       FavoritesCount = 0
       Author =
-        { Profile.Username = ""
+        { Profile.Username = None
           Bio = None
-          Image = ""
-          Following = false } },
+          Image = None
+          Following = None } },
     Cmd.none
 
 let mapResultToArticleState (result: Article) =
@@ -49,14 +49,21 @@ let mapResultToArticleState (result: Article) =
       Description = result.Description
       Body = result.Body
       CreatedAt = result.CreatedAt
-      Tags = result.Tags
+      Tags =
+        match result.Tags with
+        | Some t -> t
+        | None -> []
       Favorited = result.Favorited
       FavoritesCount = result.FavoritesCount
       Author = result.Author }
 
 let update msg state =
+    let setResult result =
+        let (Ok result) = result
+        Set result
+
     match msg with
-    | GetArticle slug -> state, Cmd.OfPromise.either getArticle slug (fun result -> Set result) (fun _ -> Error "error")
+    | GetArticle slug -> state, Cmd.OfPromise.either getArticle slug setResult (fun _ -> Error "error")
     | Set result ->
         let newState = mapResultToArticleState result
         newState, Cmd.none

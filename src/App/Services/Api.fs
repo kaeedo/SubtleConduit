@@ -1,5 +1,6 @@
 module SubtleConduit.Services.Api
 
+open Thoth.Json
 open SubtleConduit.Types
 
 type ArticleFilter =
@@ -13,8 +14,8 @@ let getProfile username =
 
     promise {
         let! response = Fetch.fetch url []
-        let! profile = response.json<JsonProfile> ()
-        return Profile.fromJsonProfile profile
+        let! profile = response.text ()
+        return Profile.fromJson profile
     }
 
 let getTags () =
@@ -24,9 +25,9 @@ let getTags () =
     promise {
         let! response = Fetch.fetch url []
 
-        let! tags = response.json<JsonTags> ()
+        let! tags = response.text ()
 
-        return Tags.fromJsonTags tags
+        return Tags.fromJson tags
     }
 
 let getArticles limit offset (filter: ArticleFilter option) =
@@ -43,8 +44,8 @@ let getArticles limit offset (filter: ArticleFilter option) =
     promise {
         let! response = Fetch.fetch url []
 
-        let! articles = response.json<JsonArticles> ()
-        return Articles.fromJsonArticles articles
+        let! articles = response.text ()
+        return Articles.fromJson articles
     }
 
 let getArticle slug =
@@ -54,6 +55,6 @@ let getArticle slug =
     promise {
         let! response = Fetch.fetch url []
 
-        let! article = response.json<JsonArticle> ()
-        return Article.fromJsonArticle article
+        let! article = response.text ()
+        return Article.fromJson article
     }

@@ -3,43 +3,21 @@ module SubtleConduit.Types
 open System
 open Sutil
 open Fable.Core.JS
+open Thoth.Json
 
-[<Literal>]
-let TAGS = "./services/TagsSampleResponse.json"
-
-[<Literal>]
-let ARTICLES = "./services/ArticlesSampleResponse.json"
-
-[<Literal>]
-let ARTICLE = "./services/ArticleSampleResponse.json"
-
-[<Literal>]
-let PROFILE = "./services/ProfileSampleResponse.json"
-
-type JsonTags = Fable.JsonProvider.Generator<TAGS>
 
 type Tags =
-    { Tags: string list } // TODO: Refactor to array
-    static member fromJsonTags(json: JsonTags) = { Tags = json.tags |> List.ofArray }
-
-type JsonProfile = Fable.JsonProvider.Generator<PROFILE>
+    { Tags: string list }
+    static member fromJson(json: string) : Result<Tags, string> =
+        Decode.Auto.fromString<Tags> (json, caseStrategy = CamelCase)
 
 type Profile =
-    { Username: string
+    { Username: string option
       Bio: string option
-      Image: string
-      Following: bool }
-    static member fromJsonProfile(json: JsonProfile) =
-        { Profile.Username = json.profile.username
-          Bio =
-            if json.profile.bio <> null then
-                Some(json.profile.bio :?> string)
-            else
-                None
-          Image = json.profile.image
-          Following = json.profile.following }
-
-type JsonArticle = Fable.JsonProvider.Generator<ARTICLE>
+      Image: string option
+      Following: bool option }
+    static member fromJson(json: string) =
+        Decode.Auto.fromString<Profile> (json, caseStrategy = CamelCase)
 
 type Article =
     { Slug: string
@@ -48,49 +26,18 @@ type Article =
       Body: string
       CreatedAt: DateTime
       UpdatedAt: DateTime
-      Tags: string list
+      Tags: string list option
       Favorited: bool
       FavoritesCount: int
       Author: Profile }
-    static member fromJsonArticle(json: JsonArticle) =
-        let profile =
-            { Profile.Username = json.article.author.username
-              Bio =
-                if json.article.author.bio <> null then
-                    Some(json.article.author.bio :?> string)
-                else
-                    None
-              Image = json.article.author.image
-              Following = json.article.author.following }
-
-        { Article.Slug = json.article.slug
-          Title = json.article.title
-          Description = json.article.description
-          Body = json.article.body
-          CreatedAt = DateTime.Parse(json.article.createdAt)
-          UpdatedAt = DateTime.Parse(json.article.updatedAt)
-          Tags =
-            json.article.tagList
-            |> Seq.cast<string>
-            |> List.ofSeq
-          Favorited = json.article.favorited
-          FavoritesCount = json.article.favoritesCount |> int
-          Author = profile }
-
-type JsonArticles = Fable.JsonProvider.Generator<ARTICLES>
+    static member fromJson(json: string) =
+        Decode.Auto.fromString<Article> (json, caseStrategy = CamelCase)
 
 type Articles =
     { Articles: Article list // TODO Refactor to array
       ArticlesCount: int }
-    static member fromJsonArticles(json: JsonArticles) =
-        let articles =
-            json.articles
-            |> Seq.cast<JsonArticle>
-            |> Seq.map (fun a -> Article.fromJsonArticle (a))
-            |> List.ofSeq
-
-        { Articles.Articles = articles
-          ArticlesCount = json.articlesCount |> int }
+    static member fromJson(json: string) =
+        Decode.Auto.fromString<Articles> (json, caseStrategy = CamelCase)
 
 
 type Page =
