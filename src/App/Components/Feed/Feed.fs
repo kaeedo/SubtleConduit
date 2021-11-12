@@ -21,15 +21,9 @@ let private getArticles pageSize newOffset filter =
     articles.Run
     <| promise {
         let! articlesFromApi = Api.getArticles pageSize newOffset filter
-
-        match articlesFromApi with
-        | Result.Ok a ->
-            offset <~ newOffset
-            return a // TODO Refactor to use array once Sutil supports it
-        | Result.Error e ->
-            failwith e
-
-            return Unchecked.defaultof<Articles>
+        // TODO handle error case
+        offset <~ newOffset
+        return articlesFromApi
        }
 
 let private currentPage = offset .> fun o -> (o / pageSize) + 1
@@ -147,16 +141,9 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option)
                                                         Attr.href $"javascript:void(0)"
                                                         onClick
                                                             (fun _ ->
-                                                                let profile =
-                                                                    {| profile =
-                                                                        {| username = a.Author.Username
-                                                                           image = a.Author.Image
-                                                                           bio = None
-                                                                           following = false |} |}
-
                                                                 Router.navigate
                                                                     $"profile/{a.Author.Username}"
-                                                                    (Some(profile :> obj)))
+                                                                    (Some(a.Author.Username :> obj)))
                                                             []
                                                         text a.Author.Username
                                                     ]

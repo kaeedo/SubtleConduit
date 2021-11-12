@@ -35,20 +35,12 @@ let view () =
         | None -> navigateTo Home)
     |> ignore
 
-    Router.on "/profile/:username" (fun (matchProfile: Match<Profile, _> option) ->
+    Router.on "/profile/:username" (fun (matchProfile: Match<{| username: string |}, _> option) ->
+        // when navigation
         match matchProfile with
         | Some mtc ->
             match mtc.data with
-            | Some profile ->
-                promise {
-                    let! profile = Api.getProfile profile.Username
-
-                    match profile with
-                    | Result.Ok p -> navigateTo <| Profile p
-                    | Result.Error e -> failwith e
-
-                }
-                |> Promise.start
+            | Some username -> navigateTo <| Profile username.username
             | None -> navigateTo Home
         | None -> navigateTo Home)
     |> ignore
@@ -58,6 +50,7 @@ let view () =
         .resolve ()
 
     let page: NavigablePage =
+        // When loading url from blank (or refresh)
         let location = getCurrentLocation ()
 
         match location with
@@ -65,28 +58,11 @@ let view () =
         | [| "signin" |] -> Page <| Page.SignIn
         | [| "signup" |] -> Page <| Page.SignUp
         | [| "article"; slug |] -> Page <| Page.Article slug
-        | [| "profile"; username |] ->
-            EventualPage
-            <| promise {
-                let! profile = Api.getProfile username
-
-                match profile with
-                | Result.Ok p -> return Page.Profile p
-                | Result.Error e ->
-                    failwith e
-                    return Unchecked.defaultof<Page>
-
-               }
+        | [| "profile"; username |] -> Page <| Page.Profile username
         | _ -> Page <| Page.Home
 
     match page with
     | Page p -> navigateTo p
-    | EventualPage p ->
-        promise {
-            let! page = p
-            navigateTo page
-        }
-        |> Promise.start
 
     fragment [
         disposeOnUnmount [

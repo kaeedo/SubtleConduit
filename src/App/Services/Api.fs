@@ -46,8 +46,7 @@ let getArticles limit offset (filter: ArticleFilter option) =
 
         let! articles = response.text ()
 
-        let articles = Articles.fromJson articles
-        return articles
+        return Articles.fromJson articles
     }
 
 let getArticle slug =
@@ -58,6 +57,5 @@ let getArticle slug =
         let! response = Fetch.fetch url []
 
         let! article = response.text ()
-        let article = Article.fromJson article
-        return article
+        return Article.fromJson article
     }

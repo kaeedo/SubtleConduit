@@ -36,7 +36,8 @@ type Profile =
                 get.Optional.Field "following" Decode.bool
                 |> Option.defaultValue false })
 
-    static member fromJson(json: string) = Decode.fromString Profile.Decoder json
+    static member fromJson(json: string) =
+        Decode.unsafeFromString (Decode.field "profile" Profile.Decoder) json
 
 type Article =
     { Slug: string
@@ -61,7 +62,7 @@ type Article =
     static member fromJson(json: string) =
         let decoder = Decode.field "article" Article.Decoder
 
-        Decode.fromString decoder json
+        Decode.unsafeFromString decoder json
 
 type Articles =
     { Articles: Article list // TODO Refactor to array
@@ -76,7 +77,8 @@ type Articles =
 
         decoder<Articles> extras
 
-    static member fromJson(json: string) = Decode.fromString Articles.Decoder json
+    static member fromJson(json: string) =
+        Decode.unsafeFromString Articles.Decoder json
 
 
 type Page =
@@ -84,11 +86,9 @@ type Page =
     | SignIn
     | SignUp
     | Article of string
-    | Profile of Profile
+    | Profile of string
 
-type NavigablePage =
-    | Page of Page
-    | EventualPage of Promise<Page>
+type NavigablePage = Page of Page
 
 type State = { Page: Page }
 

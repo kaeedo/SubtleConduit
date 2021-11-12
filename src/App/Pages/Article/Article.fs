@@ -29,7 +29,7 @@ type ArticleMsg =
     | Set of Article
     | Error of string
 
-let init _ =
+let init slug () =
     { ArticleState.Title = ""
       Description = ""
       Body = ""
@@ -42,7 +42,7 @@ let init _ =
           Bio = ""
           Image = ""
           Following = false } },
-    Cmd.ofMsg <| GetArticle "tokelau-e0qg6b"
+    Cmd.ofMsg <| GetArticle slug
 
 let mapResultToArticleState (result: Article) =
     { ArticleState.Title = result.Title
@@ -55,20 +55,17 @@ let mapResultToArticleState (result: Article) =
       Author = result.Author }
 
 let update msg state =
-    let setResult result =
-        let (Ok result) = result
-        Set result
-
     match msg with
-    | GetArticle slug -> state, Cmd.OfPromise.either getArticle slug setResult (fun _ -> Error "error")
+    | GetArticle slug -> state, Cmd.OfPromise.either getArticle slug (fun r -> Set r) (fun _ -> Error "error")
     | Set result ->
         let newState = mapResultToArticleState result
         newState, Cmd.none
-    | Error e -> state, Cmd.none
+    | Error e -> state, Cmd.none // TODO actually handle this
 
 
 let ArticlePage (slug: string) =
-    let state, dispatch = Store.makeElmish init update ignore ()
+    let state, dispatch =
+        Store.makeElmish (init slug) update ignore ()
 
     let view =
         Html.div [

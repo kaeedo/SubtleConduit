@@ -7,8 +7,44 @@ open Tailwind
 open Sutil.DOM
 open SubtleConduit.Components
 
-let ProfilePage (profile: Profile) =
-    let articleFilter = User profile.Username
+type ProfileState =
+    { Username: string
+      Image: string
+      Bio: string
+      Following: bool }
+
+type ProfileMsg =
+    | GetProfile of string
+    | Set of Profile
+    | Error of string
+
+let init username () =
+    { ProfileState.Username = ""
+      Image = ""
+      Bio = ""
+      Following = false },
+    Cmd.ofMsg <| GetProfile username
+
+let mapResultToProfileState (profile: Profile) =
+    { ProfileState.Username = profile.Username
+      Image = profile.Image
+      Bio = profile.Bio
+      Following = profile.Following }
+
+let update msg state =
+    match msg with
+    | GetProfile username -> state, Cmd.OfPromise.either getProfile username (fun r -> Set r) (fun e -> Error e.Message)
+    | Set result ->
+        let newState = mapResultToProfileState result
+        newState, Cmd.none
+    | Error e -> state, Cmd.none // TODO actually handle this
+
+
+let ProfilePage (username: string) =
+    let articleFilter = User username
+
+    let state, dispatch =
+        Store.makeElmish (init username) update ignore ()
 
     let view =
         Html.div [
@@ -43,7 +79,8 @@ let ProfilePage (profile: Profile) =
                                 tw.``w-28``
                                 tw.``rounded-full``
                             ]
-                            Attr.src profile.Image
+
+                            Bind.el (state, (fun s -> Attr.src s.Image))
                         ]
                     ]
                     Html.h2 [
@@ -54,7 +91,17 @@ let ProfilePage (profile: Profile) =
                             tw.``font-bold``
                             tw.``cursor-default``
                         ]
-                        text profile.Username
+                        Bind.el (state, (fun s -> text s.Username))
+                    ]
+                    Html.h4 [
+                        Attr.classes [
+                            tw.``mx-auto``
+                            tw.``text-center``
+                            tw.``text-sm``
+                            tw.``text-gray-400``
+                            tw.``cursor-default``
+                        ]
+                        Bind.el (state, (fun s -> text s.Bio))
                     ]
                 ]
             ]
