@@ -55,3 +55,6 @@ let getPagesToDisplay currentPage totalPages = // TODO make this an array
             pages
 
     pages
+
+let formatDateUS format =
+    Date.Format.localFormat Date.Local.englishUS format

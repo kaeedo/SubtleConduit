@@ -40,9 +40,6 @@ let private pageNumbers = // TODO refactor to array
     Store.zip currentPage total
     .> (fun (current, total) -> getPagesToDisplay current total)
 
-let private formatDateUS =
-    Date.Format.localFormat Date.Local.englishUS "MMMM dd, yyyy"
-
 let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option) (setArticleFilter) =
     let heartIcon = importDefault "../../Images/heart.svg"
 
@@ -152,7 +149,7 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option)
                                                             tw.``text-xs``
                                                             tw.``text-gray-400``
                                                         ]
-                                                        text (formatDateUS a.CreatedAt)
+                                                        text (a.CreatedAt |> formatDateUS "MMMM dd, yyyy")
                                                     ]
                                                 ]
                                             ]
