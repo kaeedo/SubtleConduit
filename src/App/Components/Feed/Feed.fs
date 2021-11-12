@@ -131,7 +131,7 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option)
                                                         tw.``rounded-3xl``
                                                         tw.``self-center``
                                                     ]
-                                                    Attr.src (a.Author.Image |> Option.defaultValue "")
+                                                    Attr.src a.Author.Image
                                                 ]
                                                 Html.div [
                                                     Attr.classes [
@@ -158,7 +158,7 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option)
                                                                     $"profile/{a.Author.Username}"
                                                                     (Some(profile :> obj)))
                                                             []
-                                                        text (a.Author.Username |> Option.defaultValue "")
+                                                        text a.Author.Username
                                                     ]
                                                     Html.span [
                                                         Attr.classes [
@@ -240,34 +240,33 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option)
                                                 text "Read more..."
                                             ]
                                             Html.ul [
-                                                if a.Tags.IsSome then
-                                                    for tag in a.Tags.Value do
-                                                        Html.li [
-                                                            Attr.classes [
-                                                                tw.``inline-flex``
-                                                            ]
-                                                            Html.span [
-                                                                Attr.classes [
-                                                                    tw.``px-2``
-                                                                    tw.``py-1``
-                                                                    tw.``rounded-xl``
-                                                                    tw.``cursor-pointer``
-                                                                    tw.``text-gray-300``
-                                                                    tw.``mr-1``
-                                                                    tw.``mb-1``
-                                                                    tw.``text-xs``
-                                                                    tw.border
-                                                                    tw.rounded
-                                                                    tw.``border-gray-300``
-                                                                ]
-                                                                onClick
-                                                                    (fun _ ->
-                                                                        setArticleFilter
-                                                                        <| Some(Api.ArticleFilter.Tag(tag.ToString())))
-                                                                    []
-                                                                text (tag.ToString())
-                                                            ]
+                                                for tag in a.TagList do
+                                                    Html.li [
+                                                        Attr.classes [
+                                                            tw.``inline-flex``
                                                         ]
+                                                        Html.span [
+                                                            Attr.classes [
+                                                                tw.``px-2``
+                                                                tw.``py-1``
+                                                                tw.``rounded-xl``
+                                                                tw.``cursor-pointer``
+                                                                tw.``text-gray-300``
+                                                                tw.``mr-1``
+                                                                tw.``mb-1``
+                                                                tw.``text-xs``
+                                                                tw.border
+                                                                tw.rounded
+                                                                tw.``border-gray-300``
+                                                            ]
+                                                            onClick
+                                                                (fun _ ->
+                                                                    setArticleFilter
+                                                                    <| Some(Api.ArticleFilter.Tag(tag.ToString())))
+                                                                []
+                                                            text (tag.ToString())
+                                                        ]
+                                                    ]
                                             ]
                                         ]
                                     ]

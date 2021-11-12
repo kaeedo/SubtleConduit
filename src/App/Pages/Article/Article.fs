@@ -38,21 +38,18 @@ let init _ =
       Favorited = false
       FavoritesCount = 0
       Author =
-        { Profile.Username = None
-          Bio = None
-          Image = None
-          Following = None } },
-    Cmd.none
+        { Profile.Username = ""
+          Bio = ""
+          Image = ""
+          Following = false } },
+    Cmd.ofMsg <| GetArticle "tokelau-e0qg6b"
 
 let mapResultToArticleState (result: Article) =
     { ArticleState.Title = result.Title
       Description = result.Description
       Body = result.Body
       CreatedAt = result.CreatedAt
-      Tags =
-        match result.Tags with
-        | Some t -> t
-        | None -> []
+      Tags = result.TagList
       Favorited = result.Favorited
       FavoritesCount = result.FavoritesCount
       Author = result.Author }
