@@ -1,11 +1,25 @@
 module SubtleConduit.Services.Api
 
-open Thoth.Json
 open SubtleConduit.Types
+open Fetch.Types
+open Fable.Core.JsInterop
 
 type ArticleFilter =
     | Tag of string
     | User of string
+
+
+let signUp (newUser: NewUser) =
+    let url =
+        "https://cirosantilli-realworld-next.herokuapp.com/api/users"
+
+    promise {
+        let json = newUser.toJson ()
+
+        let! response = Fetch.fetch url [ Method HttpMethod.POST; Body !^json ]
+        let! response = response.text ()
+        return User.fromJson response
+    }
 
 let getProfile username =
 
