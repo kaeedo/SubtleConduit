@@ -2,6 +2,9 @@ module SubtleConduit.Types
 
 open System
 open Sutil
+open Fable.Core
+open Fable.Core.JsInterop
+open Fable.Import
 open Fable.Core.JS
 open Thoth.Json
 
@@ -23,7 +26,7 @@ type User =
       Bio: string
       Image: string
       Following: bool }
-    static member Encoder = encoder<User>
+    static member Encoder = encoder<{|User: User|}>
 
     static member Decoder: Decoder<User> =
         Decode.object (fun get ->
@@ -42,6 +45,7 @@ type User =
 
     static member fromJson(json: string) =
         Decode.unsafeFromString (Decode.field "user" User.Decoder) json
+    member x.toJson () = Encode.Auto.toString (0, {| User = x |}, caseStrategy = CamelCase)
 
 type Profile =
     { Username: string
@@ -125,36 +129,3 @@ type ApiErrors =
         Decode.field
             "errors"
             (Decode.object (fun get -> { Body = get.Required.Field "body" (Decode.list Decode.string) }))
-
-type Page =
-    | Home
-    | SignIn
-    | SignUp
-    | Article of string
-    | Profile of string
-
-type NavigablePage = Page of Page
-
-type State = { Page: Page; User: User option }
-
-type Message =
-    | NavigateTo of Page
-    | SuccessfulLogin of User
-    | UnsuccessfulLogin of exn
-    | SignUp of NewUser * (NewUser -> Promise<User>)
-
-let init () =
-    { State.Page = Page.Home; User = None }, Cmd.none
-
-let update (msg: Message) (state: State) =
-    match msg with
-    | NavigateTo page -> { state with Page = page }, Cmd.none
-    | SuccessfulLogin user -> { state with User = Some user }, Cmd.ofMsg (NavigateTo Page.Home)
-    | UnsuccessfulLogin errors -> state, Cmd.none
-    | SignUp (newUser, apiFn) ->
-        let successFn response = SuccessfulLogin response
-        let errorFn error = UnsuccessfulLogin error
-
-        state, Cmd.OfPromise.either apiFn newUser (fun r -> SuccessfulLogin r) (fun e -> UnsuccessfulLogin e)
-
-let navigateTo dispatch page = NavigateTo page |> dispatch

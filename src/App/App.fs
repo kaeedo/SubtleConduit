@@ -2,7 +2,7 @@ module App
 
 open Sutil
 open Sutil.Program
-open SubtleConduit.Services
+open SubtleConduit.Elmish
 open SubtleConduit.Components.Header
 open SubtleConduit.Pages.Home
 open SubtleConduit.Pages.SignIn
@@ -10,7 +10,6 @@ open SubtleConduit.Pages.SignUp
 open SubtleConduit.Pages.Article
 open SubtleConduit.Pages.Profile
 open Sutil.DOM
-open SubtleConduit.Types
 open SubtleConduit.Router
 
 

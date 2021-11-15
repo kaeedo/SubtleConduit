@@ -8,6 +8,8 @@
     <Compile Include="Utilities.fs" />
     <Compile Include="Router.fs" />
     <Compile Include="Services/Api.fs" />
+    <Compile Include="Services/LocalStorage.fs" />
+    <Compile Include="Services/Elmish.fs" />
     <Compile Include="Components/Feed/Feed.fs" />
     <Compile Include="Components/Tags/Tags.fs" />
     <Compile Include="Components/Header/Header.fs" />

@@ -8,7 +8,6 @@ type ArticleFilter =
     | Tag of string
     | User of string
 
-
 let signUp (newUser: NewUser) =
     let url =
         "https://cirosantilli-realworld-next.herokuapp.com/api/users"
@@ -16,7 +15,7 @@ let signUp (newUser: NewUser) =
     promise {
         let json = newUser.toJson ()
 
-        let! response = Fetch.fetch url [ Method HttpMethod.POST; Body !^json ]
+        let! response = Fetch.fetch url [ Method HttpMethod.POST; Fetch.requestHeaders [ContentType "application/json"]; Body !^json ]
         let! response = response.text ()
         return User.fromJson response
     }

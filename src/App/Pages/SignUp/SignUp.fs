@@ -1,10 +1,10 @@
 module SubtleConduit.Pages.SignUp
 
 open Sutil
-open SubtleConduit.Components
+open SubtleConduit.Types
+open SubtleConduit.Elmish
 open Tailwind
 open Sutil.Attr
-open SubtleConduit.Types
 
 let SignUpPage dispatch =
     let view =
@@ -121,13 +121,9 @@ let SignUpPage dispatch =
                         onClick
                             (fun _ ->
                                 dispatch (
-                                    SignUp(
-                                        { NewUser.Username = username.Value
-                                          Email = email.Value
-                                          Password = password.Value },
-                                        SubtleConduit.Services.Api.signUp
-                                    )
-                                ))
+                                    SignUp { NewUser.Username = username.Value
+                                             Email = email.Value
+                                             Password = password.Value }))
                             []
                         text "Sign up"
                     ]

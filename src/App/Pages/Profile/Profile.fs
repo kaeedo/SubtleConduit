@@ -18,20 +18,20 @@ type ProfileMsg =
     | Set of Profile
     | Error of string
 
-let init username () =
+let private init username () =
     { ProfileState.Username = ""
       Image = ""
       Bio = ""
       Following = false },
     Cmd.ofMsg <| GetProfile username
 
-let mapResultToProfileState (profile: Profile) =
+let private mapResultToProfileState (profile: Profile) =
     { ProfileState.Username = profile.Username
       Image = profile.Image
       Bio = profile.Bio
       Following = profile.Following }
 
-let update msg state =
+let private update msg state =
     match msg with
     | GetProfile username -> state, Cmd.OfPromise.either getProfile username (fun r -> Set r) (fun e -> Error e.Message)
     | Set result ->

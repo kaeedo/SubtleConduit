@@ -11,6 +11,7 @@ open SubtleConduit.Router
 open Sutil.DOM
 open System
 open Fable.Core.JsInterop
+open SubtleConduit.Elmish
 
 let private pageSize = 10
 let private offset = Store.make 0

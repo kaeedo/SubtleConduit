@@ -3,12 +3,106 @@ module SubtleConduit.Components.Header
 open Sutil
 open Sutil.Attr
 open SubtleConduit.Types
+open SubtleConduit.Elmish
 open Tailwind
 
 let Header (model, dispatch) =
     let isHome = model .> fun m -> m.Page = Page.Home
     let isSignIn = model .> fun m -> m.Page = Page.SignIn
     let isSignUp = model .> fun m -> m.Page = Page.SignUp
+
+    let loggedOutMenuItems =
+        Html.ul [
+            Attr.classes [
+                tw.flex
+                tw.``flex-row``
+            ]
+            Html.li [
+                Bind.toggleClass (isHome, tw.``text-gray-700``, tw.``text-gray-400``)
+
+                Attr.classes [
+                    tw.``h-auto``
+                    tw.``hover:text-gray-700``
+                ]
+                Html.a [
+                    Attr.href "#/home"
+                    text "Home"
+                ]
+            ]
+            Html.li [
+                Bind.toggleClass (isSignIn, tw.``text-gray-700``, tw.``text-gray-400``)
+
+                Attr.classes [
+                    tw.``h-auto``
+                    tw.``ml-4``
+                    tw.``hover:text-gray-700``
+                ]
+                Html.a [
+                    Attr.href "#/signin"
+                    text "Sign In"
+                ]
+            ]
+            Html.li [
+                Bind.toggleClass (isSignUp, tw.``text-gray-700``, tw.``text-gray-400``)
+
+                Attr.classes [
+                    tw.``h-auto``
+                    tw.``ml-4``
+                    tw.``hover:text-gray-700``
+                ]
+                Html.a [
+                    Attr.href "#/signup"
+                    text "Sign Up"
+                ]
+            ]
+        ]
+
+    let loggedInMenuItems =
+        Html.ul [
+            Attr.classes [
+                tw.flex
+                tw.``flex-row``
+            ]
+            Html.li [
+                Bind.toggleClass (isHome, tw.``text-gray-700``, tw.``text-gray-400``)
+
+                Attr.classes [
+                    tw.``h-auto``
+                    tw.``hover:text-gray-700``
+                ]
+                Html.a [
+                    Attr.href "#/home"
+                    text "Home"
+                ]
+            ]
+            Html.li [
+                Bind.toggleClass (isSignIn, tw.``text-gray-700``, tw.``text-gray-400``)
+
+                Attr.classes [
+                    tw.``h-auto``
+                    tw.``ml-4``
+                    tw.``hover:text-gray-700``
+                ]
+                Html.a [
+                    Attr.href "#/signin"
+                    text "New Article"
+                ]
+            ]
+            Html.li [
+                Bind.toggleClass (isSignUp, tw.``text-gray-700``, tw.``text-gray-400``)
+
+                Attr.classes [
+                    tw.``h-auto``
+                    tw.``ml-4``
+                    tw.``hover:text-gray-700``
+                ]
+                Html.a [
+                    Attr.href "#/signup"
+                    text "Settings"
+                ]
+            ]
+        ]
+
 
     let view =
         Html.nav [
@@ -36,50 +130,11 @@ let Header (model, dispatch) =
                     tw.``content-center``
                     tw.``h-auto``
                 ]
-                Html.ul [
-                    Attr.classes [
-                        tw.flex
-                        tw.``flex-row``
-                    ]
-                    Html.li [
-                        Bind.toggleClass (isHome, tw.``text-gray-700``, tw.``text-gray-400``)
-
-                        Attr.classes [
-                            tw.``h-auto``
-                            tw.``hover:text-gray-700``
-                        ]
-                        Html.a [
-                            Attr.href "#/home"
-                            text "Home"
-                        ]
-                    ]
-                    Html.li [
-                        Bind.toggleClass (isSignIn, tw.``text-gray-700``, tw.``text-gray-400``)
-
-                        Attr.classes [
-                            tw.``h-auto``
-                            tw.``ml-4``
-                            tw.``hover:text-gray-700``
-                        ]
-                        Html.a [
-                            Attr.href "#/signin"
-                            text "Sign In"
-                        ]
-                    ]
-                    Html.li [
-                        Bind.toggleClass (isSignUp, tw.``text-gray-700``, tw.``text-gray-400``)
-
-                        Attr.classes [
-                            tw.``h-auto``
-                            tw.``ml-4``
-                            tw.``hover:text-gray-700``
-                        ]
-                        Html.a [
-                            Attr.href "#/signup"
-                            text "Sign Up"
-                        ]
-                    ]
-                ]
+                Bind.el(model, fun m ->
+                    match m.User with
+                    | Some u -> loggedInMenuItems
+                    | None -> loggedOutMenuItems
+                )
             ]
         ]
 

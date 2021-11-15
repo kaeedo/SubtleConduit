@@ -1,11 +1,5 @@
 module SubtleConduit.Pages.Article
 
-// open Fable.Core
-// open Fable.Core.JsInterop
-// open Feliz
-// open Feliz.UseElmish
-// open Elmish
-
 open System
 open Sutil
 open SubtleConduit.Services.Api
@@ -32,7 +26,7 @@ type ArticleMsg =
     | Set of Article
     | Error of string
 
-let init slug () =
+let private init slug () =
     { ArticleState.Title = ""
       Description = ""
       Body = ""
@@ -47,7 +41,7 @@ let init slug () =
           Following = false } },
     Cmd.ofMsg <| GetArticle slug
 
-let mapResultToArticleState (result: Article) =
+let private mapResultToArticleState (result: Article) =
     { ArticleState.Title = result.Title
       Description = result.Description
       Body = result.Body
@@ -57,7 +51,7 @@ let mapResultToArticleState (result: Article) =
       FavoritesCount = result.FavoritesCount
       Author = result.Author }
 
-let update msg state =
+let private update msg state =
     match msg with
     | GetArticle slug -> state, Cmd.OfPromise.either getArticle slug (fun r -> Set r) (fun _ -> Error "error")
     | Set result ->
