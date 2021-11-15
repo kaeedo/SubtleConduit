@@ -3,6 +3,7 @@ module SubtleConduit.Pages.SignIn
 open Sutil
 open SubtleConduit.Components
 open Tailwind
+open Sutil.Attr
 
 let SignInPage dispatch =
     let view =
@@ -42,13 +43,39 @@ let SignInPage dispatch =
                     Attr.classes [
                         tw.``mb-4``
                     ]
-                    TextInput.TextInput { TextInput.Props.Placeholder = "Email" }
+                    Html.input [
+                        Attr.classes [
+                            tw.``border-2``
+                            tw.``border-solid``
+                            tw.rounded
+                            tw.``border-gray-200``
+                            tw.``px-6``
+                            tw.``py-3``
+                            tw.``w-full``
+                        ]
+                        type' "text"
+                        //Bind.attr ("value", password)
+                        Attr.placeholder "Email"
+                    ]
                 ]
                 Html.div [
                     Attr.classes [
                         tw.``mb-4``
                     ]
-                    TextInput.TextInput { TextInput.Props.Placeholder = "Password" }
+                    Html.input [
+                        Attr.classes [
+                            tw.``border-2``
+                            tw.``border-solid``
+                            tw.rounded
+                            tw.``border-gray-200``
+                            tw.``px-6``
+                            tw.``py-3``
+                            tw.``w-full``
+                        ]
+                        type' "text"
+                        //Bind.attr ("value", password)
+                        Attr.placeholder "Password"
+                    ]
                 ]
                 Html.div [
                     Attr.classes [

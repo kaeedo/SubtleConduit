@@ -3,9 +3,15 @@ module SubtleConduit.Pages.SignUp
 open Sutil
 open SubtleConduit.Components
 open Tailwind
+open Sutil.Attr
+open SubtleConduit.Types
 
 let SignUpPage dispatch =
     let view =
+        let username = Store.make ""
+        let email = Store.make ""
+        let password = Store.make ""
+
         Html.div [
             Attr.classes [
                 tw.container
@@ -42,19 +48,58 @@ let SignUpPage dispatch =
                     Attr.classes [
                         tw.``mb-4``
                     ]
-                    TextInput.TextInput { TextInput.Props.Placeholder = "Your Name" }
+                    Html.input [
+                        Attr.classes [
+                            tw.``border-2``
+                            tw.``border-solid``
+                            tw.rounded
+                            tw.``border-gray-200``
+                            tw.``px-6``
+                            tw.``py-3``
+                            tw.``w-full``
+                        ]
+                        type' "text"
+                        Bind.attr ("value", username)
+                        Attr.placeholder "Username"
+                    ]
                 ]
                 Html.div [
                     Attr.classes [
                         tw.``mb-4``
                     ]
-                    TextInput.TextInput { TextInput.Props.Placeholder = "Email" }
+                    Html.input [
+                        Attr.classes [
+                            tw.``border-2``
+                            tw.``border-solid``
+                            tw.rounded
+                            tw.``border-gray-200``
+                            tw.``px-6``
+                            tw.``py-3``
+                            tw.``w-full``
+                        ]
+                        type' "text"
+                        Bind.attr ("value", email)
+                        Attr.placeholder "Email"
+                    ]
                 ]
                 Html.div [
                     Attr.classes [
                         tw.``mb-4``
                     ]
-                    TextInput.TextInput { TextInput.Props.Placeholder = "Password" }
+                    Html.input [
+                        Attr.classes [
+                            tw.``border-2``
+                            tw.``border-solid``
+                            tw.rounded
+                            tw.``border-gray-200``
+                            tw.``px-6``
+                            tw.``py-3``
+                            tw.``w-full``
+                        ]
+                        type' "text"
+                        Bind.attr ("value", password)
+                        Attr.placeholder "Password"
+                    ]
                 ]
                 Html.div [
                     Attr.classes [
@@ -72,6 +117,18 @@ let SignUpPage dispatch =
                             tw.``py-3``
                             tw.``text-xl``
                         ]
+                        Attr.typeSubmit
+                        onClick
+                            (fun _ ->
+                                dispatch (
+                                    SignUp(
+                                        { NewUser.Username = username.Value
+                                          Email = email.Value
+                                          Password = password.Value },
+                                        SubtleConduit.Services.Api.signUp
+                                    )
+                                ))
+                            []
                         text "Sign up"
                     ]
                 ]

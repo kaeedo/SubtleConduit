@@ -16,6 +16,33 @@ type Tags =
     static member fromJson(json: string) : Result<Tags, string> =
         Decode.Auto.fromString<Tags> (json, caseStrategy = CamelCase)
 
+type User =
+    { Email: string
+      Token: string
+      Username: string
+      Bio: string
+      Image: string
+      Following: bool }
+    static member Encoder = encoder<User>
+
+    static member Decoder: Decoder<User> =
+        Decode.object (fun get ->
+            { User.Username = get.Required.Field "username" Decode.string
+              User.Email = get.Required.Field "email" Decode.string
+              User.Token = get.Required.Field "token" Decode.string
+              Bio =
+                get.Optional.Field "bio" Decode.string
+                |> Option.defaultValue ""
+              Image =
+                get.Optional.Field "image" Decode.string
+                |> Option.defaultValue ""
+              Following =
+                get.Optional.Field "following" Decode.bool
+                |> Option.defaultValue false })
+
+    static member fromJson(json: string) =
+        Decode.unsafeFromString (Decode.field "user" User.Decoder) json
+
 type Profile =
     { Username: string
       Bio: string
@@ -80,6 +107,24 @@ type Articles =
     static member fromJson(json: string) =
         Decode.unsafeFromString Articles.Decoder json
 
+type NewUser =
+    { Username: string
+      Email: string
+      Password: string }
+
+    static member Encoder = encoder<{| User: NewUser |}>
+    static member Decoder = decoder<NewUser> Extra.empty
+
+    member this.toJson() =
+        NewUser.Encoder {| User = this |}
+        |> Encode.toString 0
+
+type ApiErrors =
+    { Body: string list } // TODO refactor this to array
+    static member Decoder =
+        Decode.field
+            "errors"
+            (Decode.object (fun get -> { Body = get.Required.Field "body" (Decode.list Decode.string) }))
 
 type Page =
     | Home
@@ -90,14 +135,26 @@ type Page =
 
 type NavigablePage = Page of Page
 
-type State = { Page: Page }
+type State = { Page: Page; User: User option }
 
-type Message = NavigateTo of Page
+type Message =
+    | NavigateTo of Page
+    | SuccessfulLogin of User
+    | UnsuccessfulLogin of exn
+    | SignUp of NewUser * (NewUser -> Promise<User>)
 
-let init () = { State.Page = Page.Home }, Cmd.none
+let init () =
+    { State.Page = Page.Home; User = None }, Cmd.none
 
 let update (msg: Message) (state: State) =
     match msg with
     | NavigateTo page -> { state with Page = page }, Cmd.none
+    | SuccessfulLogin user -> { state with User = Some user }, Cmd.ofMsg (NavigateTo Page.Home)
+    | UnsuccessfulLogin errors -> state, Cmd.none
+    | SignUp (newUser, apiFn) ->
+        let successFn response = SuccessfulLogin response
+        let errorFn error = UnsuccessfulLogin error
+
+        state, Cmd.OfPromise.either apiFn newUser (fun r -> SuccessfulLogin r) (fun e -> UnsuccessfulLogin e)
 
 let navigateTo dispatch page = NavigateTo page |> dispatch

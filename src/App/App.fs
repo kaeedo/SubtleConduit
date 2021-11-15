@@ -23,7 +23,7 @@ let view () =
     Router.on "/signin" (fun _ -> navigateTo SignIn)
     |> ignore
 
-    Router.on "/signup" (fun _ -> navigateTo SignUp)
+    Router.on "/signup" (fun _ -> navigateTo Page.SignUp)
     |> ignore
 
     Router.on "/article/:slug" (fun (matchSlug: Match<{| slug: string |}, _> option) ->
@@ -76,7 +76,7 @@ let view () =
                 match m.Page with
                 | Page.Home -> HomePage dispatch
                 | SignIn -> SignInPage dispatch
-                | SignUp -> SignUpPage dispatch
+                | Page.SignUp -> SignUpPage dispatch
                 | Article a -> ArticlePage a
                 | Profile p -> ProfilePage p
         )
