@@ -33,7 +33,8 @@ let private mapResultToProfileState (profile: Profile) =
 
 let private update msg state =
     match msg with
-    | GetProfile username -> state, Cmd.OfPromise.either getProfile username (fun r -> Set r) (fun e -> Error e.Message)
+    | GetProfile username ->
+        state, Cmd.OfPromise.either ProfileApi.getProfile username (fun r -> Set r) (fun e -> Error e.Message)
     | Set result ->
         let newState = mapResultToProfileState result
         newState, Cmd.none
@@ -41,7 +42,7 @@ let private update msg state =
 
 
 let ProfilePage (username: string) =
-    let articleFilter = User username
+    let articleFilter = ArticleApi.User username
 
     let state, dispatch =
         Store.makeElmish (init username) update ignore ()

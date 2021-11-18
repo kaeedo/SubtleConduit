@@ -2,7 +2,7 @@ module SubtleConduit.Elmish
 
 open Types
 open Sutil
-open SubtleConduit.Services
+open SubtleConduit.Services.Api
 open LocalStorage
 
 type Page =
@@ -26,20 +26,21 @@ let init () =
     let user =
         LocalStorage.tryGetItem LocalStorageKeys.User
         |> Option.map (User.fromJson)
+
     { State.Page = Page.Home; User = user }, Cmd.none
 
 let update (msg: Message) (state: State) =
     match msg with
     | NavigateTo page -> { state with Page = page }, Cmd.none
-    | SuccessfulLogin user ->
-        { state with User = Some user }, Cmd.ofMsg (NavigateTo Page.Home)
+    | SuccessfulLogin user -> { state with User = Some user }, Cmd.ofMsg (NavigateTo Page.Home)
     | UnsuccessfulLogin errors -> state, Cmd.none
     | SignUp newUser ->
         let successFn (response: User) =
-            LocalStorage.setItem LocalStorageKeys.User (response.toJson())
+            LocalStorage.setItem LocalStorageKeys.User (response.toJson ())
             SuccessfulLogin response
+
         let errorFn error = UnsuccessfulLogin error
 
-        state, Cmd.OfPromise.either Api.signUp newUser successFn (fun e -> UnsuccessfulLogin e)
+        state, Cmd.OfPromise.either ProfileApi.signUp newUser successFn (fun e -> UnsuccessfulLogin e)
 
 let navigateTo dispatch page = NavigateTo page |> dispatch

@@ -8,6 +8,7 @@ open Tailwind
 open SubtleConduit.Types
 open SubtleConduit.Services
 open SubtleConduit.Router
+open SubtleConduit.Services.Api
 open Sutil.DOM
 open System
 open Fable.Core.JsInterop
@@ -21,7 +22,7 @@ let private articles = ObservablePromise<Articles>()
 let private getArticles pageSize newOffset filter =
     articles.Run
     <| promise {
-        let! articlesFromApi = Api.getArticles pageSize newOffset filter
+        let! articlesFromApi = ArticleApi.getArticles pageSize newOffset filter
         // TODO handle error case
         offset <~ newOffset
         return articlesFromApi
@@ -41,7 +42,7 @@ let private pageNumbers = // TODO refactor to array
     Store.zip currentPage total
     .> (fun (current, total) -> getPagesToDisplay current total)
 
-let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option) (setArticleFilter) =
+let Feed (dispatch: Dispatch<Message>) (articleFilter: ArticleApi.ArticleFilter option) (setArticleFilter) =
     let heartIcon = importDefault "../../Images/heart.svg"
 
     let view =
@@ -76,7 +77,7 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option)
                     text "Global Feed"
                 ]
                 match articleFilter with
-                | Some (Api.Tag t) ->
+                | Some (ArticleApi.Tag t) ->
                     Html.div [
                         Attr.classes [
                             tw.``text-conduit-green``
@@ -247,7 +248,9 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: Api.ArticleFilter option)
                                                             onClick
                                                                 (fun _ ->
                                                                     setArticleFilter
-                                                                    <| Some(Api.ArticleFilter.Tag(tag.ToString())))
+                                                                    <| Some(
+                                                                        ArticleApi.ArticleFilter.Tag(tag.ToString())
+                                                                    ))
                                                                 []
                                                             text (tag.ToString())
                                                         ]

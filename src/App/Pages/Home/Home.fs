@@ -3,11 +3,11 @@ module SubtleConduit.Pages.Home
 open Sutil
 open Tailwind
 open SubtleConduit.Components
-open SubtleConduit.Services
+open SubtleConduit.Services.Api
 open Sutil.DOM
 
 let private articleFilter =
-    Store.make<Api.ArticleFilter option> None
+    Store.make<ArticleApi.ArticleFilter option> None
 
 let HomePage dispatch =
     let view =

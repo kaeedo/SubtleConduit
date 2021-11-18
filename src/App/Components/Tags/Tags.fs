@@ -4,7 +4,7 @@ open Sutil
 open Tailwind
 open Sutil.DOM
 open SubtleConduit.Types
-open SubtleConduit.Services
+open SubtleConduit.Services.Api
 open Sutil.Attr
 
 let private tags = ObservablePromise<Tags>()
@@ -12,13 +12,13 @@ let private tags = ObservablePromise<Tags>()
 let private getTags () =
     tags.Run
     <| promise {
-        let! tags = Api.getTags ()
+        let! tags = ArticleApi.getTags ()
         // Ask: How to cleanly break Thoth Result<ok, error> to observable promise rejection
         let (Ok tags) = tags
         return tags
        }
 
-let Tags (articleFilter: Api.ArticleFilter option) (setArticleFilter: Api.ArticleFilter option -> unit) =
+let Tags (articleFilter: ArticleApi.ArticleFilter option) (setArticleFilter: ArticleApi.ArticleFilter option -> unit) =
     let view =
         Html.div [
             onMount (fun _ -> getTags ()) [ Once ]
@@ -64,7 +64,11 @@ let Tags (articleFilter: Api.ArticleFilter option) (setArticleFilter: Api.Articl
                                                 tw.``mb-1``
                                                 tw.``text-xs``
                                             ]
-                                            onClick (fun _ -> setArticleFilter <| Some(Api.ArticleFilter.Tag t)) []
+                                            onClick
+                                                (fun _ ->
+                                                    setArticleFilter
+                                                    <| Some(ArticleApi.ArticleFilter.Tag t))
+                                                []
                                             text t
                                         ]
                                     ]

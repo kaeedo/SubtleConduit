@@ -53,7 +53,8 @@ let private mapResultToArticleState (result: Article) =
 
 let private update msg state =
     match msg with
-    | GetArticle slug -> state, Cmd.OfPromise.either getArticle slug (fun r -> Set r) (fun _ -> Error "error")
+    | GetArticle slug ->
+        state, Cmd.OfPromise.either ArticleApi.getArticle slug (fun r -> Set r) (fun _ -> Error "error")
     | Set result ->
         let newState = mapResultToArticleState result
         newState, Cmd.none
