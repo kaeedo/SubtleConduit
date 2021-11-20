@@ -1,5 +1,6 @@
 module SubtleConduit.Pages.SignUp
 
+open System
 open Sutil
 open SubtleConduit.Types
 open SubtleConduit.Elmish
@@ -96,7 +97,7 @@ let SignUpPage dispatch =
                             tw.``py-3``
                             tw.``w-full``
                         ]
-                        type' "text"
+                        type' "password"
                         Bind.attr ("value", password)
                         Attr.placeholder "Password"
                     ]
@@ -121,7 +122,9 @@ let SignUpPage dispatch =
                         onClick
                             (fun _ ->
                                 dispatch (
-                                    SignUp { NewUser.Username = username.Value
+                                    SignUp { UpsertUser.Username = username.Value
+                                             Image = String.Empty
+                                             Bio = String.Empty
                                              Email = email.Value
                                              Password = password.Value }))
                             []

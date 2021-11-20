@@ -14,3 +14,6 @@ let tryGetItem (key: LocalStorageKeys) =
     if Browser.WebStorage.localStorage.getItem (key.ToString()) = Fable.Core.JS.undefined
     then None
     else Some <| Browser.WebStorage.localStorage.getItem(key.ToString())
+
+let removeItem (key: LocalStorageKeys) =
+    Browser.WebStorage.localStorage.removeItem(key.ToString())

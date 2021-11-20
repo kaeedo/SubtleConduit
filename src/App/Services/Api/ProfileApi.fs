@@ -4,12 +4,12 @@ open SubtleConduit.Types
 open Fetch.Types
 open Fable.Core.JsInterop
 
-let signUp (newUser: NewUser) =
+let signUp (upsertUser: UpsertUser) =
     let url =
         "https://cirosantilli-realworld-next.herokuapp.com/api/users"
 
     promise {
-        let json = newUser.toJson ()
+        let json = upsertUser.toJson ()
 
         let! response =
             Fetch.fetch

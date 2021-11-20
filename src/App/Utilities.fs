@@ -58,3 +58,13 @@ let getPagesToDisplay currentPage totalPages = // TODO make this an array
 
 let formatDateUS format =
     Date.Format.localFormat Date.Local.englishUS format
+
+module Option =
+    let ofString s =
+        if String.IsNullOrWhiteSpace s
+        then None
+        else Some s
+
+// Add a member to Variant as an extension
+type Option<'a> with
+    member x.ofString s = Option.ofString s

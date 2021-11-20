@@ -97,7 +97,7 @@ let Header (model, dispatch) =
                     tw.``hover:text-gray-700``
                 ]
                 Html.a [
-                    Attr.href "#/signup"
+                    Attr.href "#/settings"
                     text "Settings"
                 ]
             ]

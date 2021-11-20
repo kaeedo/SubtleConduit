@@ -7,6 +7,7 @@ open SubtleConduit.Components.Header
 open SubtleConduit.Pages.Home
 open SubtleConduit.Pages.SignIn
 open SubtleConduit.Pages.SignUp
+open SubtleConduit.Pages.Settings
 open SubtleConduit.Pages.Article
 open SubtleConduit.Pages.Profile
 open Sutil.DOM
@@ -14,7 +15,7 @@ open SubtleConduit.Router
 
 
 let view () =
-    let model, dispatch = Store.makeElmish init update ignore ()
+    let model, dispatch = elmishStore
     let navigateTo = navigateTo dispatch
 
     Router.on "/" (fun _ -> navigateTo Home) |> ignore
@@ -23,6 +24,9 @@ let view () =
     |> ignore
 
     Router.on "/signup" (fun _ -> navigateTo Page.SignUp)
+    |> ignore
+
+    Router.on "/settings" (fun _ -> navigateTo Page.Settings)
     |> ignore
 
     Router.on "/article/:slug" (fun (matchSlug: Match<{| slug: string |}, _> option) ->
@@ -56,6 +60,7 @@ let view () =
         | [||] -> Page <| Page.Home
         | [| "signin" |] -> Page <| Page.SignIn
         | [| "signup" |] -> Page <| Page.SignUp
+        | [| "settings" |] -> Page <| Page.Settings
         | [| "article"; slug |] -> Page <| Page.Article slug
         | [| "profile"; username |] -> Page <| Page.Profile username
         | _ -> Page <| Page.Home
@@ -76,6 +81,7 @@ let view () =
                 | Page.Home -> HomePage dispatch
                 | SignIn -> SignInPage dispatch
                 | Page.SignUp -> SignUpPage dispatch
+                | Page.Settings -> SettingsPage m dispatch
                 | Article a -> ArticlePage a
                 | Profile p -> ProfilePage p
         )

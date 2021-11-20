@@ -7,6 +7,7 @@ open Fable.Core.JsInterop
 open Fable.Import
 open Fable.Core.JS
 open Thoth.Json
+open SubtleConduit.Utilities
 
 let inline private encoder<'T> =
     Encode.Auto.generateEncoderCached<'T> (caseStrategy = CamelCase)
@@ -111,17 +112,27 @@ type Articles =
     static member fromJson(json: string) =
         Decode.unsafeFromString Articles.Decoder json
 
-type NewUser =
+type UpsertUser =
     { Username: string
+      Image: string
+      Bio: string
       Email: string
       Password: string }
 
-    static member Encoder = encoder<{| User: NewUser |}>
-    static member Decoder = decoder<NewUser> Extra.empty
+    static member Encoder (user: UpsertUser) =
+        let userEncoder =
+            Encode.object [
+                "username", Encode.string user.Username
+                "image", Encode.option Encode.string (Option.ofString user.Image)
+                "bio", Encode.option Encode.string (Option.ofString user.Bio)
+                "email", Encode.string user.Email
+                "password", Encode.option Encode.string (Option.ofString user.Password)
+            ]
+        Encode.object [ "user", userEncoder ]
+    static member Decoder = decoder<UpsertUser> Extra.empty
 
     member this.toJson() =
-        NewUser.Encoder {| User = this |}
-        |> Encode.toString 0
+        Encode.toString 0 (UpsertUser.Encoder this)
 
 type ApiErrors =
     { Body: string list } // TODO refactor this to array

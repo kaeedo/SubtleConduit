@@ -53,7 +53,7 @@ let SignInPage dispatch =
                             tw.``py-3``
                             tw.``w-full``
                         ]
-                        type' "text"
+                        type' "password"
                         //Bind.attr ("value", password)
                         Attr.placeholder "Email"
                     ]
