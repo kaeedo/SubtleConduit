@@ -125,6 +125,7 @@ let SignUpPage dispatch =
                                     SignUp { UpsertUser.Username = username.Value
                                              Image = String.Empty
                                              Bio = String.Empty
+                                             Token = None
                                              Email = email.Value
                                              Password = password.Value }))
                             []

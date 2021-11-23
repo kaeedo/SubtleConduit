@@ -116,6 +116,7 @@ type UpsertUser =
     { Username: string
       Image: string
       Bio: string
+      Token: string option
       Email: string
       Password: string }
 
@@ -126,7 +127,10 @@ type UpsertUser =
                 "image", Encode.option Encode.string (Option.ofString user.Image)
                 "bio", Encode.option Encode.string (Option.ofString user.Bio)
                 "email", Encode.string user.Email
-                "password", Encode.option Encode.string (Option.ofString user.Password)
+                if not (String.IsNullOrWhiteSpace user.Password)
+                then "password", Encode.string user.Password
+                if user.Token.IsSome
+                then "token", Encode.option Encode.string user.Token
             ]
         Encode.object [ "user", userEncoder ]
     static member Decoder = decoder<UpsertUser> Extra.empty

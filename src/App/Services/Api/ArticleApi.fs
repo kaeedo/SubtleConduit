@@ -10,7 +10,7 @@ type ArticleFilter =
 
 let getTags () =
     let url =
-        "https://cirosantilli-realworld-next.herokuapp.com/api/tags"
+        "https://conduit.productionready.io/api/tags"
 
     promise {
         let! response = Fetch.fetch url []
@@ -22,7 +22,7 @@ let getTags () =
 
 let getArticles limit offset (filter: ArticleFilter option) =
     let url =
-        "https://cirosantilli-realworld-next.herokuapp.com/api/articles"
+        "https://conduit.productionready.io/api/articles"
 
     let url =
         $"{url}?limit={limit}&offset={offset}"
@@ -41,7 +41,7 @@ let getArticles limit offset (filter: ArticleFilter option) =
 
 let getArticle slug =
     let url =
-        $"https://cirosantilli-realworld-next.herokuapp.com/api/articles/{slug}"
+        $"https://conduit.productionready.io/api/articles/{slug}"
 
     promise {
         let! response = Fetch.fetch url []

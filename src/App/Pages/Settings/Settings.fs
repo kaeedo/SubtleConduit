@@ -34,6 +34,8 @@ let SettingsPage (model: State) dispatch =
     //let updateProfile
     let view =
         let user = model.User.Value
+        let token =  user.Token
+
         //let state, dispatch = Store.makeElmish (init model) update ignore ()
         let url = Store.make user.Image
         let username = Store.make user.Username
@@ -187,6 +189,7 @@ let SettingsPage (model: State) dispatch =
                                     UpdateUser { UpsertUser.Username = username.Value
                                                  Image = url.Value
                                                  Bio = bio.Value
+                                                 Token = Some token
                                                  Email = email.Value
                                                  Password = password.Value }))
                             []

@@ -53,7 +53,7 @@ let private update (msg: Message) (state: State) =
 
         let errorFn error = UnsuccessfulLogin error
 
-        state, Cmd.OfPromise.either ProfileApi.signUp upsertUser successFn (fun e -> UnsuccessfulLogin e)
+        state, Cmd.OfPromise.either ProfileApi.updateUser upsertUser successFn (fun e -> UnsuccessfulLogin e)
     | Logout ->
         LocalStorage.removeItem LocalStorageKeys.User
 
