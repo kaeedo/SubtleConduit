@@ -1,13 +1,23 @@
 module SubtleConduit.Pages.SignIn
 
+open System
 open Sutil
-open SubtleConduit.Components
 open Tailwind
 open Sutil.Attr
+open Sutil.DOM
+open SubtleConduit.Elmish
 
 let SignInPage dispatch =
     let view =
+        let email = Store.make String.Empty
+        let password = Store.make String.Empty
+
         Html.div [
+            disposeOnUnmount [
+                email
+                password
+            ]
+
             Attr.classes [
                 tw.container
                 tw.``mx-auto``
@@ -53,8 +63,8 @@ let SignInPage dispatch =
                             tw.``py-3``
                             tw.``w-full``
                         ]
-                        type' "password"
-                        //Bind.attr ("value", password)
+                        type' "text"
+                        Bind.attr ("value", email)
                         Attr.placeholder "Email"
                     ]
                 ]
@@ -72,8 +82,8 @@ let SignInPage dispatch =
                             tw.``py-3``
                             tw.``w-full``
                         ]
-                        type' "text"
-                        //Bind.attr ("value", password)
+                        type' "password"
+                        Bind.attr ("value", password)
                         Attr.placeholder "Password"
                     ]
                 ]
@@ -93,6 +103,12 @@ let SignInPage dispatch =
                             tw.``py-3``
                             tw.``text-xl``
                         ]
+                        Attr.typeSubmit
+                        onClick
+                            (fun _ ->
+                                dispatch (
+                                    Message.SignIn (email.Value, password.Value )))
+                            []
                         text "Sign in"
                     ]
                 ]

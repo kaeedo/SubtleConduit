@@ -20,7 +20,7 @@ let view () =
 
     Router.on "/" (fun _ -> navigateTo Home) |> ignore
 
-    Router.on "/signin" (fun _ -> navigateTo SignIn)
+    Router.on "/signin" (fun _ -> navigateTo Page.SignIn)
     |> ignore
 
     Router.on "/signup" (fun _ -> navigateTo Page.SignUp)
@@ -79,7 +79,7 @@ let view () =
             fun m ->
                 match m.Page with
                 | Page.Home -> HomePage dispatch
-                | SignIn -> SignInPage dispatch
+                | Page.SignIn -> SignInPage dispatch
                 | Page.SignUp -> SignUpPage dispatch
                 | Page.Settings -> SettingsPage m dispatch
                 | Article a -> ArticlePage a

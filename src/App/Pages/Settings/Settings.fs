@@ -8,28 +8,6 @@ open Tailwind
 open Sutil.Attr
 open Sutil.DOM
 
-// type private SettingsState =
-//     { Url: string option
-//       Bio: string option
-//       Username: string
-//       Email: string
-//       NewPassword: string option }
-
-// type private SettingsMessage =
-//     | Increment
-
-// let private init (model: State) _ =
-//     let user = model.User.Value
-//     { Url = if String.IsNullOrWhiteSpace user.Image then None else Some user.Image
-//       Bio = if String.IsNullOrWhiteSpace user.Bio then None else Some user.Bio
-//       Username = user.Username
-//       Email = user.Email
-//       NewPassword = None }, Cmd.none
-
-// let private update msg (state: SettingsState) =
-//     match msg with
-//     | Increment -> state, Cmd.none
-
 let SettingsPage (model: State) dispatch =
     //let updateProfile
     let view =
