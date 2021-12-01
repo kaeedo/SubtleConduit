@@ -11,6 +11,11 @@ let Header (model, dispatch) =
     let isSignIn = model .> fun m -> m.Page = Page.SignIn
     let isSignUp = model .> fun m -> m.Page = Page.SignUp
 
+    let isSettings = model .> fun m -> m.Page = Page.Settings
+
+    let isNewArticle =
+        model .> fun m -> m.Page = Page.NewArticle
+
     let loggedOutMenuItems =
         Html.ul [
             Attr.classes [
@@ -76,7 +81,7 @@ let Header (model, dispatch) =
                 ]
             ]
             Html.li [
-                Bind.toggleClass (isSignIn, tw.``text-gray-700``, tw.``text-gray-400``)
+                Bind.toggleClass (isNewArticle, tw.``text-gray-700``, tw.``text-gray-400``)
 
                 Attr.classes [
                     tw.``h-auto``
@@ -84,12 +89,12 @@ let Header (model, dispatch) =
                     tw.``hover:text-gray-700``
                 ]
                 Html.a [
-                    Attr.href "#/signin"
+                    Attr.href "#/editor"
                     text "New Article"
                 ]
             ]
             Html.li [
-                Bind.toggleClass (isSignUp, tw.``text-gray-700``, tw.``text-gray-400``)
+                Bind.toggleClass (isSettings, tw.``text-gray-700``, tw.``text-gray-400``)
 
                 Attr.classes [
                     tw.``h-auto``
@@ -130,10 +135,12 @@ let Header (model, dispatch) =
                     tw.``content-center``
                     tw.``h-auto``
                 ]
-                Bind.el(model, fun m ->
-                    match m.User with
-                    | Some u -> loggedInMenuItems
-                    | None -> loggedOutMenuItems
+                Bind.el (
+                    model,
+                    fun m ->
+                        match m.User with
+                        | Some u -> loggedInMenuItems
+                        | None -> loggedOutMenuItems
                 )
             ]
         ]

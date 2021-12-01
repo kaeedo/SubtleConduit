@@ -12,6 +12,7 @@ open SubtleConduit.Pages.Article
 open SubtleConduit.Pages.Profile
 open Sutil.DOM
 open SubtleConduit.Router
+open SubtleConduit.Pages.NewArticle
 
 
 let view () =
@@ -27,6 +28,9 @@ let view () =
     |> ignore
 
     Router.on "/settings" (fun _ -> navigateTo Page.Settings)
+    |> ignore
+
+    Router.on "/editor" (fun _ -> navigateTo Page.NewArticle)
     |> ignore
 
     Router.on "/article/:slug" (fun (matchSlug: Match<{| slug: string |}, _> option) ->
@@ -61,6 +65,7 @@ let view () =
         | [| "signin" |] -> Page <| Page.SignIn
         | [| "signup" |] -> Page <| Page.SignUp
         | [| "settings" |] -> Page <| Page.Settings
+        | [| "editor" |] -> Page <| Page.NewArticle
         | [| "article"; slug |] -> Page <| Page.Article slug
         | [| "profile"; username |] -> Page <| Page.Profile username
         | _ -> Page <| Page.Home
@@ -82,6 +87,7 @@ let view () =
                 | Page.SignIn -> SignInPage dispatch
                 | Page.SignUp -> SignUpPage dispatch
                 | Page.Settings -> SettingsPage m dispatch
+                | Page.NewArticle -> NewArticlePage m
                 | Article a -> ArticlePage a
                 | Profile p -> ProfilePage p
         )

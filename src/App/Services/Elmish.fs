@@ -10,6 +10,7 @@ type Page =
     | SignIn
     | SignUp
     | Settings
+    | NewArticle
     | Article of string
     | Profile of string
 
@@ -48,6 +49,7 @@ let private update (msg: Message) (state: State) =
         state, Cmd.OfPromise.either ProfileApi.signUp upsertUser successFn (fun e -> UnsuccessfulLogin e)
     | SignIn (email, password) ->
         let credentials = (email, password)
+
         let successFn (response: User) =
             LocalStorage.setItem LocalStorageKeys.User (response.toJson ())
             SuccessfulLogin response

@@ -17,6 +17,7 @@
     <Compile Include="Pages/Settings/Settings.fs" />
     <Compile Include="Pages/SignIn/SignIn.fs" />
     <Compile Include="Pages/SignUp/SignUp.fs" />
+    <Compile Include="Pages/NewArticle/NewArticle.fs" />
     <Compile Include="Pages/Article/Article.fs" />
     <Compile Include="Pages/Profile/Profile.fs" />
     <Compile Include="Pages/Home/Home.fs" />
