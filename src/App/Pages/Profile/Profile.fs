@@ -104,6 +104,31 @@ let ProfilePage model (username: string) =
                         ]
                         Bind.el (state, (fun s -> text s.Bio))
                     ]
+                    Html.div [
+                        Attr.classes [
+                            tw.flex
+                            tw.``justify-end``
+                        ]
+                        Html.div [
+                            Attr.classes [
+                                tw.``cursor-pointer``
+                                tw.``pl-1``
+                                tw.``pr-2``
+                                tw.``ml-6``
+                                tw.``rounded-sm``
+                                tw.``text-base``
+                                tw.``leading-6``
+                                tw.``h-7``
+                                tw.border
+                                tw.rounded
+                                tw.``text-gray-400``
+                                tw.``border-gray-300``
+                                tw.``hover:bg-gray-300``
+                                tw.``hover:text-white``
+                            ]
+                            Bind.el (state, (fun s -> text $"+ Follow {s.Username}"))
+                        ]
+                    ]
                 ]
             ]
             Html.div [

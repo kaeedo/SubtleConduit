@@ -14,6 +14,9 @@ let Header (model, dispatch) =
 
     let isSettings = model .> fun m -> m.Page = Page.Settings
 
+    let isMyProfile (u: User) =
+        model .> fun m -> m.Page = Page.Profile u.Username
+
     let isNewArticle =
         model
         .> fun m -> m.Page = Page.NewArticle String.Empty
@@ -64,7 +67,7 @@ let Header (model, dispatch) =
             ]
         ]
 
-    let loggedInMenuItems =
+    let loggedInMenuItems (u: User) =
         Html.ul [
             Attr.classes [
                 tw.flex
@@ -108,6 +111,19 @@ let Header (model, dispatch) =
                     text "Settings"
                 ]
             ]
+            Html.li [
+                Bind.toggleClass (isMyProfile u, tw.``text-gray-700``, tw.``text-gray-400``)
+
+                Attr.classes [
+                    tw.``h-auto``
+                    tw.``ml-4``
+                    tw.``hover:text-gray-700``
+                ]
+                Html.a [
+                    Attr.href $"#/profile/{u.Username}"
+                    text u.Username
+                ]
+            ]
         ]
 
 
@@ -141,7 +157,7 @@ let Header (model, dispatch) =
                     model,
                     fun m ->
                         match m.User with
-                        | Some u -> loggedInMenuItems
+                        | Some u -> loggedInMenuItems u
                         | None -> loggedOutMenuItems
                 )
             ]
