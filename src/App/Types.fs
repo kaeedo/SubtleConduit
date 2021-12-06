@@ -27,7 +27,7 @@ type User =
       Bio: string
       Image: string
       Following: bool }
-    static member Encoder = encoder<{|User: User|}>
+    static member Encoder = encoder<{| User: User |}>
 
     static member Decoder: Decoder<User> =
         Decode.object (fun get ->
@@ -46,7 +46,9 @@ type User =
 
     static member fromJson(json: string) =
         Decode.unsafeFromString (Decode.field "user" User.Decoder) json
-    member x.toJson () = Encode.Auto.toString (0, {| User = x |}, caseStrategy = CamelCase)
+
+    member x.toJson() =
+        Encode.Auto.toString (0, {| User = x |}, caseStrategy = CamelCase)
 
 type Profile =
     { Username: string
@@ -120,23 +122,59 @@ type UpsertUser =
       Email: string
       Password: string }
 
-    static member Encoder (user: UpsertUser) =
+    static member Encoder(user: UpsertUser) =
         let userEncoder =
             Encode.object [
                 "username", Encode.string user.Username
                 "image", Encode.option Encode.string (Option.ofString user.Image)
                 "bio", Encode.option Encode.string (Option.ofString user.Bio)
                 "email", Encode.string user.Email
-                if not (String.IsNullOrWhiteSpace user.Password)
-                then "password", Encode.string user.Password
-                if user.Token.IsSome
-                then "token", Encode.option Encode.string user.Token
+                if not (String.IsNullOrWhiteSpace user.Password) then
+                    "password", Encode.string user.Password
+                if user.Token.IsSome then
+                    "token", Encode.option Encode.string user.Token
             ]
-        Encode.object [ "user", userEncoder ]
+
+        Encode.object [
+            "user", userEncoder
+        ]
+
     static member Decoder = decoder<UpsertUser> Extra.empty
 
     member this.toJson() =
         Encode.toString 0 (UpsertUser.Encoder this)
+
+type UpsertArticle =
+    { Title: string
+      Description: string
+      Body: string
+      TagList: string list
+      Token: string }
+
+    static member Encoder(article: UpsertArticle) =
+        let articleEncoder =
+            Encode.object [
+                if not (String.IsNullOrWhiteSpace article.Title) then
+                    "title", Encode.string article.Title
+                if not (String.IsNullOrWhiteSpace article.Description) then
+                    "description", Encode.string article.Description
+                if not (String.IsNullOrWhiteSpace article.Body) then
+                    "body", Encode.string article.Body
+                if not (String.IsNullOrWhiteSpace article.Token) then
+                    "token", Encode.string article.Token
+
+                if article.TagList |> List.isEmpty |> not then
+                    "tagList", Encode.list (article.TagList |> List.map (Encode.string))
+            ]
+
+        Encode.object [
+            "article", articleEncoder
+        ]
+
+    static member Decoder = decoder<UpsertArticle> Extra.empty
+
+    member this.toJson() =
+        Encode.toString 0 (UpsertArticle.Encoder this)
 
 type ApiErrors =
     { Body: string list } // TODO refactor this to array

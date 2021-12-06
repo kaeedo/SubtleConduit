@@ -19,10 +19,10 @@ let private offset = Store.make 0
 
 let private articles = ObservablePromise<Articles>()
 
-let private getArticles pageSize newOffset filter =
+let private getArticles user pageSize newOffset filter =
     articles.Run
     <| promise {
-        let! articlesFromApi = ArticleApi.getArticles pageSize newOffset filter
+        let! articlesFromApi = ArticleApi.getArticles user pageSize newOffset filter
         // TODO handle error case
         offset <~ newOffset
         return articlesFromApi
@@ -42,12 +42,17 @@ let private pageNumbers = // TODO refactor to array
     Store.zip currentPage total
     .> (fun (current, total) -> getPagesToDisplay current total)
 
-let Feed (dispatch: Dispatch<Message>) (articleFilter: ArticleApi.ArticleFilter option) (setArticleFilter) =
+let Feed
+    (model: State)
+    (dispatch: Dispatch<Message>)
+    (articleFilter: ArticleApi.ArticleFilter option)
+    (setArticleFilter)
+    =
     let heartIcon = importDefault "../../Images/heart.svg"
 
     let view =
         Html.div [
-            onMount (fun _ -> getArticles pageSize 0 articleFilter) [ Once ]
+            onMount (fun _ -> getArticles model.User pageSize 0 articleFilter) [ Once ]
             disposeOnUnmount [
                 offset
             ]
@@ -288,7 +293,7 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: ArticleApi.ArticleFilter 
                                         if offset.Value = 0 then
                                             ()
                                         else
-                                            getArticles pageSize (offset.Value - pageSize) articleFilter)
+                                            getArticles model.User pageSize (offset.Value - pageSize) articleFilter)
                                     []
                                 text "<"
                             ]
@@ -308,7 +313,10 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: ArticleApi.ArticleFilter 
                                         tw.``border-gray-300``
                                         tw.``border-r-0``
                                     ]
-                                    onClick (fun _ -> getArticles pageSize (int pn * pageSize - 10) articleFilter) []
+                                    onClick
+                                        (fun _ ->
+                                            getArticles model.User pageSize (int pn * pageSize - 10) articleFilter)
+                                        []
                                     text pn
                                 ]
 
@@ -326,7 +334,7 @@ let Feed (dispatch: Dispatch<Message>) (articleFilter: ArticleApi.ArticleFilter 
                                         if (offset.Value / pageSize + 1) = int lastPage then
                                             ()
                                         else
-                                            getArticles pageSize (offset.Value + pageSize) articleFilter)
+                                            getArticles model.User pageSize (offset.Value + pageSize) articleFilter)
 
                                     []
 

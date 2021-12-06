@@ -9,7 +9,7 @@ open Sutil.DOM
 let private articleFilter =
     Store.make<ArticleApi.ArticleFilter option> None
 
-let HomePage dispatch =
+let HomePage model dispatch =
     let view =
         Html.div [
             Html.div [
@@ -63,7 +63,7 @@ let HomePage dispatch =
                         let setter = Store.set articleFilter
 
                         fragment [
-                            Feed.Feed dispatch af setter
+                            Feed.Feed model dispatch af setter
                             Tags.Tags af setter
                         ])
                 )

@@ -83,13 +83,13 @@ let view () =
             model,
             fun m ->
                 match m.Page with
-                | Page.Home -> HomePage dispatch
+                | Page.Home -> HomePage m dispatch
                 | Page.SignIn -> SignInPage dispatch
                 | Page.SignUp -> SignUpPage dispatch
                 | Page.Settings -> SettingsPage m dispatch
                 | Page.NewArticle -> NewArticlePage m
                 | Article a -> ArticlePage a
-                | Profile p -> ProfilePage p
+                | Profile p -> ProfilePage m p
         )
     ]
 

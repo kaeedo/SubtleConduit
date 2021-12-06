@@ -41,7 +41,7 @@ let private update msg state =
     | Error e -> state, Cmd.none // TODO actually handle this
 
 
-let ProfilePage (username: string) =
+let ProfilePage model (username: string) =
     let articleFilter = ArticleApi.User username
 
     let state, dispatch =
@@ -114,7 +114,7 @@ let ProfilePage (username: string) =
                     tw.flex
                     tw.``justify-between``
                 ]
-                Feed.Feed ignore (Some articleFilter) (ignore)
+                Feed.Feed model ignore (Some articleFilter) (ignore)
             ]
         ]
 

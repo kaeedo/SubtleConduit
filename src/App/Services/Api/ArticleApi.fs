@@ -20,7 +20,7 @@ let getTags () =
         return Tags.fromJson tags
     }
 
-let getArticles limit offset (filter: ArticleFilter option) =
+let getArticles (user: User option) limit offset (filter: ArticleFilter option) =
     let url =
         "https://conduit.productionready.io/api/articles"
 
@@ -32,7 +32,14 @@ let getArticles limit offset (filter: ArticleFilter option) =
           | Some (User u) -> $"&author={u}"
 
     promise {
-        let! response = Fetch.fetch url []
+        let! response =
+            Fetch.fetch
+                url
+                [ Fetch.requestHeaders [
+                      match user with
+                      | None -> ()
+                      | Some u -> Authorization $"Token {u.Token}"
+                  ] ]
 
         let! articles = response.text ()
 
@@ -48,4 +55,28 @@ let getArticle slug =
 
         let! article = response.text ()
         return Article.fromJson article
+    }
+
+let createArticle (article: UpsertArticle) =
+    let url =
+        "https://conduit.productionready.io/api/articles"
+
+    promise {
+        let json = article.toJson ()
+
+        Fable.Core.JS.console.log (json)
+
+        let! response =
+            Fetch.fetch
+                url
+                [ Method HttpMethod.POST
+                  Fetch.requestHeaders [
+                      Authorization $"Token {article.Token}"
+                      ContentType "application/json"
+                  ]
+                  Body !^json ]
+
+        let! response = response.text ()
+
+        return response
     }
