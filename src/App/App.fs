@@ -88,7 +88,7 @@ let view () =
                 | Page.SignUp -> SignUpPage dispatch
                 | Page.Settings -> SettingsPage m dispatch
                 | Page.NewArticle -> NewArticlePage m
-                | Article a -> ArticlePage a
+                | Article a -> ArticlePage m a
                 | Profile p -> ProfilePage m p
         )
     ]

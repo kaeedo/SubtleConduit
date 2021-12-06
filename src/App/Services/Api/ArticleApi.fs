@@ -9,8 +9,7 @@ type ArticleFilter =
     | User of string
 
 let getTags () =
-    let url =
-        "https://conduit.productionready.io/api/tags"
+    let url = "https://api.realworld.io/api/tags"
 
     promise {
         let! response = Fetch.fetch url []
@@ -21,8 +20,7 @@ let getTags () =
     }
 
 let getArticles (user: User option) limit offset (filter: ArticleFilter option) =
-    let url =
-        "https://conduit.productionready.io/api/articles"
+    let url = "https://api.realworld.io/api/articles"
 
     let url =
         $"{url}?limit={limit}&offset={offset}"
@@ -48,7 +46,7 @@ let getArticles (user: User option) limit offset (filter: ArticleFilter option) 
 
 let getArticle slug =
     let url =
-        $"https://conduit.productionready.io/api/articles/{slug}"
+        $"https://api.realworld.io/api/articles/{slug}"
 
     promise {
         let! response = Fetch.fetch url []
@@ -57,9 +55,24 @@ let getArticle slug =
         return Article.fromJson article
     }
 
-let createArticle (article: UpsertArticle) =
+let deleteArticle slug token =
     let url =
-        "https://conduit.productionready.io/api/articles"
+        $"https://api.realworld.io/api/articles/{slug}"
+
+    promise {
+        let! response =
+            Fetch.fetch
+                url
+                [ Method HttpMethod.DELETE
+                  Fetch.requestHeaders [
+                      Authorization $"Token {token}"
+                  ] ]
+
+        return ()
+    }
+
+let createArticle (article: UpsertArticle) =
+    let url = "https://api.realworld.io/api/articles"
 
     promise {
         let json = article.toJson ()
@@ -77,6 +90,6 @@ let createArticle (article: UpsertArticle) =
                   Body !^json ]
 
         let! response = response.text ()
-
+        // TODO: Redirect to new article
         return response
     }

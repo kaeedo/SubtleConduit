@@ -6,8 +6,7 @@ open Fable.Core.JsInterop
 open Thoth.Json
 
 let signUp (upsertUser: UpsertUser) =
-    let url =
-        "https://conduit.productionready.io/api/users"
+    let url = "https://api.realworld.io/api/users"
 
     promise {
         let json = upsertUser.toJson ()
@@ -27,7 +26,7 @@ let signUp (upsertUser: UpsertUser) =
 
 let signIn (email, password) =
     let url =
-        "https://conduit.productionready.io/api/users/login"
+        "https://api.realworld.io/api/users/login"
 
     promise {
         let json =
@@ -36,7 +35,12 @@ let signIn (email, password) =
                     "email", Encode.string email
                     "password", Encode.string password
                 ]
-            Encode.toString 0 (Encode.object ["user", encoder])
+
+            Encode.toString
+                0
+                (Encode.object [
+                    "user", encoder
+                 ])
 
         let! response =
             Fetch.fetch
@@ -53,8 +57,7 @@ let signIn (email, password) =
     }
 
 let updateUser (upsertUser: UpsertUser) =
-    let url =
-        "https://conduit.productionready.io/api/user"
+    let url = "https://api.realworld.io/api/user"
 
     promise {
         let json = upsertUser.toJson ()
@@ -77,7 +80,7 @@ let updateUser (upsertUser: UpsertUser) =
 let getProfile username =
 
     let url =
-        $"https://conduit.productionready.io/api/profiles/{username}"
+        $"https://api.realworld.io/api/profiles/{username}"
 
     promise {
         let! response = Fetch.fetch url []

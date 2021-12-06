@@ -4,6 +4,7 @@ open System
 open Sutil
 open SubtleConduit.Services.Api
 open SubtleConduit.Types
+open SubtleConduit.Elmish
 open Tailwind
 open Sutil.DOM
 open SubtleConduit.Router
@@ -61,12 +62,134 @@ let private update msg state =
     | Error e -> state, Cmd.none // TODO actually handle this
 
 
-let ArticlePage (slug: string) =
+let ArticlePage (model: State) (slug: string) =
     let state, dispatch =
         Store.makeElmish (init slug) update ignore ()
 
     let tags = state .> (fun s -> s.Tags)
     let heartIcon = importDefault "../../Images/heart.svg"
+
+    let otherArticleActions =
+        Html.div [
+            Attr.classes [
+                tw.flex
+            ]
+            Html.div [
+                Attr.classes [
+                    tw.``self-center``
+                    tw.``pl-1``
+                    tw.``pr-2``
+                    tw.``ml-6``
+                    tw.``rounded-sm``
+                    tw.``text-base``
+                    tw.``leading-6``
+                    tw.``h-7``
+                    tw.border
+                    tw.rounded
+                    tw.``text-gray-400``
+                    tw.``border-gray-300``
+                    tw.``hover:bg-gray-300``
+                    tw.``hover:text-white``
+                ]
+                Bind.el (state, (fun s -> text $"+ Follow {s.Author.Username}"))
+                onClick (ignore) []
+            ]
+            Html.div [
+                Attr.classes [
+                    tw.flex
+                    tw.``self-center``
+                    tw.``pl-1``
+                    tw.``pr-2``
+                    tw.``ml-2``
+                    tw.``rounded-sm``
+                    tw.``text-base``
+                    tw.``leading-6``
+                    tw.``h-7``
+                    tw.``w-max``
+                    tw.border
+                    tw.rounded
+                    tw.``text-conduit-green``
+                    tw.``border-conduit-green``
+                    tw.``hover:bg-conduit-green``
+                    tw.``hover:text-white``
+                ]
+                Html.img [
+                    Attr.classes [
+                        tw.``w-4``
+                        tw.``mr-1``
+                        // tw.``hover:text-white``
+                        // tw.``text-conduit-green``
+                        // tw.``fill-current``
+                        ]
+                    Attr.src heartIcon
+                ]
+                Bind.el (state, (fun s -> text $"Favorite Article ({s.FavoritesCount})"))
+                onClick (ignore) []
+            ]
+        ]
+
+    let myArticleActions token =
+        Html.div [
+            Attr.classes [
+                tw.flex
+            ]
+            Html.div [
+                Attr.classes [
+                    tw.``self-center``
+                    tw.``pl-1``
+                    tw.``pr-2``
+                    tw.``ml-6``
+                    tw.``rounded-sm``
+                    tw.``text-base``
+                    tw.``leading-6``
+                    tw.``h-7``
+                    tw.border
+                    tw.rounded
+                    tw.``text-gray-400``
+                    tw.``border-gray-300``
+                    tw.``hover:bg-gray-300``
+                    tw.``hover:text-white``
+                ]
+                text "Edit article"
+                onClick (ignore) []
+            ]
+            Html.div [
+                Attr.classes [
+                    tw.flex
+                    tw.``self-center``
+                    tw.``pl-1``
+                    tw.``pr-2``
+                    tw.``ml-2``
+                    tw.``rounded-sm``
+                    tw.``text-base``
+                    tw.``leading-6``
+                    tw.``h-7``
+                    tw.``w-max``
+                    tw.border
+                    tw.rounded
+                    tw.``text-red-500``
+                    tw.``border-red-500``
+                    tw.``hover:bg-red-500``
+                    tw.``hover:text-white``
+                ]
+                Html.img [
+                    Attr.classes [
+                        tw.``w-4``
+                        tw.``mr-1``
+                    ]
+                    Attr.src heartIcon
+                ]
+                text "Delete article"
+                onClick
+                    (fun _ ->
+                        promise {
+                            let! _ = ArticleApi.deleteArticle slug token
+                            Router.navigate "home" None
+                        }
+                        |> ignore)
+                    []
+            ]
+        ]
 
     let articleInfo =
         Html.div [
@@ -118,62 +241,15 @@ let ArticlePage (slug: string) =
                     Bind.el (state, (fun s -> text (s.CreatedAt |> formatDateUS "MMMM dd, yyyy")))
                 ]
             ]
-            Html.div [
-                Attr.classes [
-                    tw.flex
-                ]
-                Html.div [
-                    Attr.classes [
-                        tw.``self-center``
-                        tw.``pl-1``
-                        tw.``pr-2``
-                        tw.``ml-6``
-                        tw.``rounded-sm``
-                        tw.``text-base``
-                        tw.``leading-6``
-                        tw.``h-7``
-                        tw.border
-                        tw.rounded
-                        tw.``text-gray-400``
-                        tw.``border-gray-300``
-                        tw.``hover:bg-gray-300``
-                        tw.``hover:text-white``
-                    ]
-                    Bind.el (state, (fun s -> text $"+ Follow {s.Author.Username}"))
-                ]
-                Html.div [
-                    Attr.classes [
-                        tw.flex
-                        tw.``self-center``
-                        tw.``pl-1``
-                        tw.``pr-2``
-                        tw.``ml-2``
-                        tw.``rounded-sm``
-                        tw.``text-base``
-                        tw.``leading-6``
-                        tw.``h-7``
-                        tw.``w-max``
-                        tw.border
-                        tw.rounded
-                        tw.``text-conduit-green``
-                        tw.``border-conduit-green``
-                        tw.``hover:bg-conduit-green``
-                        tw.``hover:text-white``
-                    ]
-                    Html.img [
-                        Attr.classes [
-                            tw.``w-4``
-                            tw.``mr-1``
-                            // tw.``hover:text-white``
-                            // tw.``text-conduit-green``
-                            // tw.``fill-current``
-                            ]
-                        Attr.src heartIcon
-                    ]
-                    Bind.el (state, (fun s -> text $"Favorite Article ({s.FavoritesCount})"))
-                ]
+            Bind.el (
+                state,
+                fun s ->
+                    match model.User with
+                    | Some u when u.Username = s.Author.Username -> myArticleActions u.Token
+                    | _ -> otherArticleActions
+            )
+
             ]
-        ]
 
     let view =
         Html.div [
