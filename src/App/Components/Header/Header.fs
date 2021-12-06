@@ -1,5 +1,6 @@
 module SubtleConduit.Components.Header
 
+open System
 open Sutil
 open Sutil.Attr
 open SubtleConduit.Types
@@ -14,7 +15,8 @@ let Header (model, dispatch) =
     let isSettings = model .> fun m -> m.Page = Page.Settings
 
     let isNewArticle =
-        model .> fun m -> m.Page = Page.NewArticle
+        model
+        .> fun m -> m.Page = Page.NewArticle String.Empty
 
     let loggedOutMenuItems =
         Html.ul [

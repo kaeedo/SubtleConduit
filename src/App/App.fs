@@ -1,5 +1,6 @@
 module App
 
+open System
 open Sutil
 open Sutil.Program
 open SubtleConduit.Elmish
@@ -30,7 +31,16 @@ let view () =
     Router.on "/settings" (fun _ -> navigateTo Page.Settings)
     |> ignore
 
-    Router.on "/editor" (fun _ -> navigateTo Page.NewArticle)
+    Router.on "/editor" (fun _ -> navigateTo <| Page.NewArticle String.Empty)
+    |> ignore
+
+    Router.on "/editor/:slug" (fun (matchSlug: Match<{| slug: string |}, _> option) ->
+        match matchSlug with
+        | Some mtc ->
+            match mtc.data with
+            | Some slug -> navigateTo <| NewArticle slug.slug
+            | None -> navigateTo <| NewArticle String.Empty
+        | None -> navigateTo Home)
     |> ignore
 
     Router.on "/article/:slug" (fun (matchSlug: Match<{| slug: string |}, _> option) ->
@@ -65,7 +75,8 @@ let view () =
         | [| "signin" |] -> Page <| Page.SignIn
         | [| "signup" |] -> Page <| Page.SignUp
         | [| "settings" |] -> Page <| Page.Settings
-        | [| "editor" |] -> Page <| Page.NewArticle
+        | [| "editor" |] -> Page <| Page.NewArticle String.Empty
+        | [| "editor"; slug |] -> Page <| Page.NewArticle slug
         | [| "article"; slug |] -> Page <| Page.Article slug
         | [| "profile"; username |] -> Page <| Page.Profile username
         | _ -> Page <| Page.Home
@@ -87,9 +98,9 @@ let view () =
                 | Page.SignIn -> SignInPage dispatch
                 | Page.SignUp -> SignUpPage dispatch
                 | Page.Settings -> SettingsPage m dispatch
-                | Page.NewArticle -> NewArticlePage m
-                | Article a -> ArticlePage m a
-                | Profile p -> ProfilePage m p
+                | Page.NewArticle slug -> NewArticlePage m slug
+                | Page.Article a -> ArticlePage m a
+                | Page.Profile p -> ProfilePage m p
         )
     ]
 

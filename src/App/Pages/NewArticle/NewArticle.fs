@@ -10,7 +10,7 @@ open Sutil.Attr
 open SubtleConduit.Services.Api
 open SubtleConduit.Router
 
-let NewArticlePage (model: State) =
+let NewArticlePage (model: State) (slug: string) =
     let view =
         let user = model.User.Value
         let token = user.Token
@@ -40,12 +40,33 @@ let NewArticlePage (model: State) =
                   Token = token }
 
             promise {
-                let! _ = ArticleApi.createArticle article
-                Router.navigate "home" None
+                let! newSlug =
+                    if String.IsNullOrWhiteSpace(slug) then
+                        ArticleApi.createArticle article
+                    else
+                        ArticleApi.editArticle slug article
+
+                Router.navigate $"article/{newSlug}"
+                <| Some(newSlug :> obj)
+            }
+            |> ignore
+
+        let getArticleToEdit slug =
+            promise {
+                let! article = ArticleApi.getArticle slug
+                title <~ article.Title
+                description <~ article.Description
+                body <~ article.Body
+                tags <~ article.TagList
             }
             |> ignore
 
         Html.div [
+            onMount
+                (fun _ ->
+                    if not (String.IsNullOrWhiteSpace(slug)) then
+                        getArticleToEdit slug)
+                [ Once ]
             disposeOnUnmount [
                 title
                 description
@@ -218,7 +239,12 @@ let NewArticlePage (model: State) =
                             tw.``text-xl``
                         ]
                         type' "submit"
-                        text "Publish Article"
+                        text (
+                            if String.IsNullOrWhiteSpace(slug) then
+                                "Publish Article"
+                            else
+                                "Edit Article"
+                        )
                     ]
                 ]
             ]

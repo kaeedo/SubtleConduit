@@ -10,7 +10,7 @@ type Page =
     | SignIn
     | SignUp
     | Settings
-    | NewArticle
+    | NewArticle of string
     | Article of string
     | Profile of string
 

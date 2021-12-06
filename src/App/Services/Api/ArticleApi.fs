@@ -77,8 +77,6 @@ let createArticle (article: UpsertArticle) =
     promise {
         let json = article.toJson ()
 
-        Fable.Core.JS.console.log (json)
-
         let! response =
             Fetch.fetch
                 url
@@ -90,6 +88,32 @@ let createArticle (article: UpsertArticle) =
                   Body !^json ]
 
         let! response = response.text ()
-        // TODO: Redirect to new article
-        return response
+
+        let article = Article.fromJson response
+
+        return article.Slug
+    }
+
+let editArticle slug (article: UpsertArticle) =
+    let url =
+        $"https://api.realworld.io/api/articles/{slug}"
+
+    promise {
+        let json = article.toJson ()
+
+        let! response =
+            Fetch.fetch
+                url
+                [ Method HttpMethod.PUT
+                  Fetch.requestHeaders [
+                      Authorization $"Token {article.Token}"
+                      ContentType "application/json"
+                  ]
+                  Body !^json ]
+
+        let! response = response.text ()
+
+        let article = Article.fromJson response
+
+        return article.Slug
     }

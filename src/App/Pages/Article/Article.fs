@@ -76,6 +76,7 @@ let ArticlePage (model: State) (slug: string) =
             ]
             Html.div [
                 Attr.classes [
+                    tw.``cursor-pointer``
                     tw.``self-center``
                     tw.``pl-1``
                     tw.``pr-2``
@@ -96,6 +97,7 @@ let ArticlePage (model: State) (slug: string) =
             ]
             Html.div [
                 Attr.classes [
+                    tw.``cursor-pointer``
                     tw.flex
                     tw.``self-center``
                     tw.``pl-1``
@@ -135,6 +137,7 @@ let ArticlePage (model: State) (slug: string) =
             ]
             Html.div [
                 Attr.classes [
+                    tw.``cursor-pointer``
                     tw.``self-center``
                     tw.``pl-1``
                     tw.``pr-2``
@@ -151,10 +154,11 @@ let ArticlePage (model: State) (slug: string) =
                     tw.``hover:text-white``
                 ]
                 text "Edit article"
-                onClick (ignore) []
+                onClick (fun _ -> Router.navigate $"editor/{slug}" (Some(slug :> obj))) []
             ]
             Html.div [
                 Attr.classes [
+                    tw.``cursor-pointer``
                     tw.flex
                     tw.``self-center``
                     tw.``pl-1``
