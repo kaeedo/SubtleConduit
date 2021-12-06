@@ -14,33 +14,7 @@ open System
 open Fable.Core.JsInterop
 open SubtleConduit.Elmish
 
-let private pageSize = 10
-let private offset = Store.make 0
 
-let private articles = ObservablePromise<Articles>()
-
-let private getArticles user pageSize newOffset filter =
-    articles.Run
-    <| promise {
-        let! articlesFromApi = ArticleApi.getArticles user pageSize newOffset filter
-        // TODO handle error case
-        offset <~ newOffset
-        return articlesFromApi
-       }
-
-let private currentPage = offset .> fun o -> (o / pageSize) + 1
-
-let private pageNumbers = // TODO refactor to array
-    let total =
-        articles
-        .> (function
-        | Result a ->
-            Math.Ceiling(float a.ArticlesCount / float pageSize)
-            |> int
-        | _ -> 0)
-
-    Store.zip currentPage total
-    .> (fun (current, total) -> getPagesToDisplay current total)
 
 let Feed
     (model: State)
@@ -48,6 +22,34 @@ let Feed
     (articleFilter: ArticleApi.ArticleFilter option)
     (setArticleFilter)
     =
+    let pageSize = 10
+    let offset = Store.make 0
+
+    let articles = ObservablePromise<Articles>()
+
+    let getArticles user pageSize newOffset filter =
+        articles.Run
+        <| promise {
+            let! articlesFromApi = ArticleApi.getArticles user pageSize newOffset filter
+            // TODO handle error case
+            offset <~ newOffset
+            return articlesFromApi
+           }
+
+    let currentPage = offset .> fun o -> (o / pageSize) + 1
+
+    let pageNumbers = // TODO refactor to array
+        let total =
+            articles
+            .> (function
+            | Result a ->
+                Math.Ceiling(float a.ArticlesCount / float pageSize)
+                |> int
+            | _ -> 0)
+
+        Store.zip currentPage total
+        .> (fun (current, total) -> getPagesToDisplay current total)
+
     let heartIcon = importDefault "../../Images/heart.svg"
 
     let view =

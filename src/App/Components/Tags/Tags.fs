@@ -14,6 +14,7 @@ let private getTags () =
     <| promise {
         let! tags = ArticleApi.getTags ()
         // Ask: How to cleanly break Thoth Result<ok, error> to observable promise rejection
+        Fable.Core.JS.console.log (tags)
         let (Ok tags) = tags
         return tags
        }

@@ -77,13 +77,41 @@ let updateUser (upsertUser: UpsertUser) =
         return User.fromJson response
     }
 
-let getProfile username =
-
+let getProfile (token, username) =
     let url =
         $"https://api.realworld.io/api/profiles/{username}"
 
     promise {
-        let! response = Fetch.fetch url []
+        let! response =
+            Fetch.fetch
+                url
+                [ Fetch.requestHeaders [
+                      Authorization $"Token {token}"
+                  ] ]
+
         let! profile = response.text ()
+        return Profile.fromJson profile
+    }
+
+let setFollow (followUsername: string * string * bool) =
+    let token, username, shouldFollow = followUsername
+
+    let url =
+        $"https://api.realworld.io/api/profiles/{username}/follow"
+
+    promise {
+        let! response =
+            Fetch.fetch
+                url
+                [ if shouldFollow then
+                      Method HttpMethod.POST
+                  else
+                      Method HttpMethod.DELETE
+                  Fetch.requestHeaders [
+                      Authorization $"Token {token}"
+                  ] ]
+
+        let! profile = response.text ()
+
         return Profile.fromJson profile
     }
