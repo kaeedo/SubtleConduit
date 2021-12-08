@@ -14,8 +14,6 @@ open System
 open Fable.Core.JsInterop
 open SubtleConduit.Elmish
 
-
-
 let Feed
     (model: State)
     (dispatch: Dispatch<Message>)
@@ -51,6 +49,18 @@ let Feed
         .> (fun (current, total) -> getPagesToDisplay current total)
 
     let heartIcon = importDefault "../../Images/heart.svg"
+
+    let favoriteArticle slug isFavorited _ =
+        match model.User with
+        | None -> ()
+        | Some u ->
+            promise {
+                let! _ = ArticleApi.favoriteArticle slug isFavorited u.Token
+                // TODO Ask how to update single value in observable promise
+                getArticles model.User pageSize offset.Value articleFilter
+                return ()
+            }
+            |> Promise.start
 
     let view =
         Html.div [
@@ -175,17 +185,18 @@ let Feed
                                                     tw.``text-conduit-green``
                                                     tw.``text-xs``
                                                     tw.``items-center``
+                                                    if a.Favorited then
+                                                        tw.``bg-conduit-green``
+                                                        tw.``text-white``
                                                 ]
                                                 Html.img [
                                                     Attr.classes [
                                                         tw.``w-4``
                                                         tw.``mr-1``
-                                                        // tw.``hover:text-white``
-                                                        // tw.``text-conduit-green``
-                                                        // tw.``fill-current``
-                                                        ]
+                                                    ]
                                                     Attr.src heartIcon
                                                 ]
+                                                onClick (favoriteArticle a.Slug a.Favorited) []
                                                 text (a.FavoritesCount.ToString())
                                             ]
                                         ]
@@ -232,6 +243,7 @@ let Feed
                                                     []
                                                 text "Read more..."
                                             ]
+
                                             Html.ul [
                                                 for tag in a.TagList do
                                                     Html.li [

@@ -24,6 +24,7 @@ type ArticleState =
 
 type ArticleMsg =
     | GetArticle of string
+    | UpdateFavorite of bool * int
     | Set of Article
     | Error of string
 
@@ -52,22 +53,50 @@ let private mapResultToArticleState (result: Article) =
       FavoritesCount = result.FavoritesCount
       Author = result.Author }
 
-let private update msg state =
+let private update (user: User option) msg state =
+    let token = user |> Option.map (fun u -> u.Token)
+
     match msg with
     | GetArticle slug ->
-        state, Cmd.OfPromise.either ArticleApi.getArticle slug (fun r -> Set r) (fun _ -> Error "error")
+        state,
+        Cmd.OfPromise.either
+            ArticleApi.getArticle
+            (slug, (token |> Option.defaultValue ""))
+            (fun r -> Set r)
+            (fun _ -> Error "error")
     | Set result ->
         let newState = mapResultToArticleState result
+        newState, Cmd.none
+    | UpdateFavorite (isFavorited, favoriteCount) ->
+        let newState =
+            { state with
+                Favorited = isFavorited
+                FavoritesCount = favoriteCount }
+
         newState, Cmd.none
     | Error e -> state, Cmd.none // TODO actually handle this
 
 
 let ArticlePage (model: State) (slug: string) =
     let state, dispatch =
-        Store.makeElmish (init slug) update ignore ()
+        Store.makeElmish (init slug) (update model.User) ignore ()
 
     let tags = state .> (fun s -> s.Tags)
     let heartIcon = importDefault "../../Images/heart.svg"
+
+    let favoriteArticle slug isFavorited _ =
+        match model.User with
+        | None -> ()
+        | Some u ->
+            promise {
+                let! article = ArticleApi.favoriteArticle slug isFavorited u.Token
+
+                dispatch
+                <| UpdateFavorite(article.Favorited, article.FavoritesCount)
+
+                return ()
+            }
+            |> Promise.start
 
     let otherArticleActions =
         Html.div [
@@ -96,6 +125,11 @@ let ArticlePage (model: State) (slug: string) =
                 onClick (ignore) []
             ]
             Html.div [
+                Bind.toggleClass (
+                    (state .> fun s -> s.Favorited),
+                    $"{tw.``bg-conduit-green``} {tw.``text-white``}",
+                    $"{tw.``hover:bg-conduit-green``} {tw.``hover:text-white``}"
+                )
                 Attr.classes [
                     tw.``cursor-pointer``
                     tw.flex
@@ -112,21 +146,25 @@ let ArticlePage (model: State) (slug: string) =
                     tw.rounded
                     tw.``text-conduit-green``
                     tw.``border-conduit-green``
-                    tw.``hover:bg-conduit-green``
-                    tw.``hover:text-white``
                 ]
                 Html.img [
                     Attr.classes [
                         tw.``w-4``
                         tw.``mr-1``
-                        // tw.``hover:text-white``
-                        // tw.``text-conduit-green``
-                        // tw.``fill-current``
-                        ]
+                    ]
                     Attr.src heartIcon
                 ]
-                Bind.el (state, (fun s -> text $"Favorite Article ({s.FavoritesCount})"))
-                onClick (ignore) []
+                Bind.el (
+                    state,
+                    (fun s ->
+                        fragment [
+                            if s.Favorited then
+                                text $"Unfavorite Article ({s.FavoritesCount})"
+                            else
+                                text $"Favorite Article ({s.FavoritesCount})"
+                            onClick (favoriteArticle slug s.Favorited) []
+                        ])
+                )
             ]
         ]
 

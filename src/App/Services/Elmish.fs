@@ -29,7 +29,7 @@ type Message =
 
 let private init () =
     let user =
-        LocalStorage.tryGetItem LocalStorageKeys.User
+        LocalStorage.tryGetItem SessionStorageKeys.User
         |> Option.map (User.fromJson)
 
     { State.Page = Page.Home; User = user }, Cmd.none
@@ -41,7 +41,7 @@ let private update (msg: Message) (state: State) =
     | UnsuccessfulLogin errors -> state, Cmd.none
     | SignUp upsertUser ->
         let successFn (response: User) =
-            LocalStorage.setItem LocalStorageKeys.User (response.toJson ())
+            LocalStorage.setItem SessionStorageKeys.User (response.toJson ())
             SuccessfulLogin response
 
         let errorFn error = UnsuccessfulLogin error
@@ -51,7 +51,7 @@ let private update (msg: Message) (state: State) =
         let credentials = (email, password)
 
         let successFn (response: User) =
-            LocalStorage.setItem LocalStorageKeys.User (response.toJson ())
+            LocalStorage.setItem SessionStorageKeys.User (response.toJson ())
             SuccessfulLogin response
 
         let errorFn error = UnsuccessfulLogin error
@@ -60,14 +60,14 @@ let private update (msg: Message) (state: State) =
     | UpdateUser upsertUser ->
         // TODO Create update user api call
         let successFn (response: User) =
-            LocalStorage.setItem LocalStorageKeys.User (response.toJson ())
+            LocalStorage.setItem SessionStorageKeys.User (response.toJson ())
             SuccessfulLogin response
 
         let errorFn error = UnsuccessfulLogin error
 
         state, Cmd.OfPromise.either ProfileApi.updateUser upsertUser successFn (fun e -> UnsuccessfulLogin e)
     | Logout ->
-        LocalStorage.removeItem LocalStorageKeys.User
+        LocalStorage.removeItem SessionStorageKeys.User
 
         { state with User = None }, Cmd.ofMsg (NavigateTo Page.Home)
 

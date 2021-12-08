@@ -53,7 +53,7 @@ let NewArticlePage (model: State) (slug: string) =
 
         let getArticleToEdit slug =
             promise {
-                let! article = ArticleApi.getArticle slug
+                let! article = ArticleApi.getArticle (slug, "")
                 title <~ article.Title
                 description <~ article.Description
                 body <~ article.Body

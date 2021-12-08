@@ -3,17 +3,17 @@ module SubtleConduit.LocalStorage
 open Fable.Core
 
 [<StringEnum>]
-type LocalStorageKeys =
+type SessionStorageKeys =
 | User
 
 
-let setItem (key: LocalStorageKeys) item =
-    Browser.WebStorage.localStorage.setItem(key.ToString(), item)
+let setItem (key: SessionStorageKeys) item =
+    Browser.WebStorage.sessionStorage.setItem(key.ToString(), item)
 
-let tryGetItem (key: LocalStorageKeys) =
-    if Browser.WebStorage.localStorage.getItem (key.ToString()) = Fable.Core.JS.undefined
+let tryGetItem (key: SessionStorageKeys) =
+    if Browser.WebStorage.sessionStorage.getItem (key.ToString()) = Fable.Core.JS.undefined
     then None
-    else Some <| Browser.WebStorage.localStorage.getItem(key.ToString())
+    else Some <| Browser.WebStorage.sessionStorage.getItem(key.ToString())
 
-let removeItem (key: LocalStorageKeys) =
-    Browser.WebStorage.localStorage.removeItem(key.ToString())
+let removeItem (key: SessionStorageKeys) =
+    Browser.WebStorage.sessionStorage.removeItem(key.ToString())

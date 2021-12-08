@@ -44,12 +44,18 @@ let getArticles (user: User option) limit offset (filter: ArticleFilter option) 
         return Articles.fromJson articles
     }
 
-let getArticle slug =
+let getArticle (slug, token) =
     let url =
         $"https://api.realworld.io/api/articles/{slug}"
 
     promise {
-        let! response = Fetch.fetch url []
+        let! response =
+            Fetch.fetch
+                url
+                [ Method HttpMethod.GET
+                  Fetch.requestHeaders [
+                      Authorization $"Token {token}"
+                  ] ]
 
         let! article = response.text ()
         return Article.fromJson article
@@ -116,4 +122,30 @@ let editArticle slug (article: UpsertArticle) =
         let article = Article.fromJson response
 
         return article.Slug
+    }
+
+let favoriteArticle slug isFavorited token =
+    let url =
+        $"https://api.realworld.io/api/articles/{slug}/favorite"
+
+    promise {
+        let! response =
+            Fetch.fetch
+                url
+                [ Method(
+                    if isFavorited then
+                        HttpMethod.DELETE
+                    else
+                        HttpMethod.POST
+                  )
+                  Fetch.requestHeaders [
+                      Authorization $"Token {token}"
+                      ContentType "application/json"
+                  ] ]
+
+        let! response = response.text ()
+
+        let article = Article.fromJson response
+
+        return article
     }

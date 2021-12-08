@@ -1,5 +1,6 @@
 module SubtleConduit.Components.Tags
 
+open System
 open Sutil
 open Tailwind
 open Sutil.DOM
@@ -13,10 +14,10 @@ let private getTags () =
     tags.Run
     <| promise {
         let! tags = ArticleApi.getTags ()
-        // Ask: How to cleanly break Thoth Result<ok, error> to observable promise rejection
-        Fable.Core.JS.console.log (tags)
-        let (Ok tags) = tags
-        return tags
+        // TODO Logging
+        match tags with
+        | Ok t -> return t
+        | Result.Error e -> return { Tags.Tags = [] }
        }
 
 let Tags (articleFilter: ArticleApi.ArticleFilter option) (setArticleFilter: ArticleApi.ArticleFilter option -> unit) =
@@ -45,6 +46,10 @@ let Tags (articleFilter: ArticleApi.ArticleFilter option) (setArticleFilter: Art
                         (function
                         | Waiting -> text "Loading"
                         | Error e -> text $"Error occured: {e.Message}"
+                        | Result { Tags = [] } ->
+                            fragment [
+                                text "Nothing to show"
+                            ]
                         | Result tagsResult ->
                             fragment [
                                 for t in tagsResult.Tags do
