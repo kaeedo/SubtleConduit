@@ -37,6 +37,8 @@ let getArticles (user: User option) limit offset (filter: ArticleFilter option) 
                       match user with
                       | None -> ()
                       | Some u -> Authorization $"Token {u.Token}"
+                      Accept "application/json; charset=utf-8"
+                      ContentType "application/json; charset=utf-8"
                   ] ]
 
         let! articles = response.text ()
@@ -55,6 +57,8 @@ let getArticle (slug, token) =
                 [ Method HttpMethod.GET
                   Fetch.requestHeaders [
                       Authorization $"Token {token}"
+                      Accept "application/json; charset=utf-8"
+                      ContentType "application/json; charset=utf-8"
                   ] ]
 
         let! article = response.text ()
@@ -89,7 +93,8 @@ let createArticle (article: UpsertArticle) =
                 [ Method HttpMethod.POST
                   Fetch.requestHeaders [
                       Authorization $"Token {article.Token}"
-                      ContentType "application/json"
+                      Accept "application/json; charset=utf-8"
+                      ContentType "application/json; charset=utf-8"
                   ]
                   Body !^json ]
 
@@ -113,7 +118,8 @@ let editArticle slug (article: UpsertArticle) =
                 [ Method HttpMethod.PUT
                   Fetch.requestHeaders [
                       Authorization $"Token {article.Token}"
-                      ContentType "application/json"
+                      Accept "application/json; charset=utf-8"
+                      ContentType "application/json; charset=utf-8"
                   ]
                   Body !^json ]
 
@@ -140,7 +146,8 @@ let favoriteArticle slug isFavorited token =
                   )
                   Fetch.requestHeaders [
                       Authorization $"Token {token}"
-                      ContentType "application/json"
+                      Accept "application/json; charset=utf-8"
+                      ContentType "application/json; charset=utf-8"
                   ] ]
 
         let! response = response.text ()

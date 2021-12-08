@@ -16,7 +16,8 @@ let signUp (upsertUser: UpsertUser) =
                 url
                 [ Method HttpMethod.POST
                   Fetch.requestHeaders [
-                      ContentType "application/json"
+                      Accept "application/json; charset=utf-8"
+                      ContentType "application/json; charset=utf-8"
                   ]
                   Body !^json ]
 
@@ -47,8 +48,8 @@ let signIn (email, password) =
                 url
                 [ Method HttpMethod.POST
                   Fetch.requestHeaders [
-                      Accept "application/json"
-                      ContentType "application/json"
+                      Accept "application/json; charset=utf-8"
+                      ContentType "application/json; charset=utf-8"
                   ]
                   Body !^json ]
 
@@ -67,9 +68,9 @@ let updateUser (upsertUser: UpsertUser) =
                 url
                 [ Method HttpMethod.PUT
                   Fetch.requestHeaders [
-                      Accept "application/json"
                       Authorization $"Token {upsertUser.Token.Value}"
-                      ContentType "application/json"
+                      Accept "application/json; charset=utf-8"
+                      ContentType "application/json; charset=utf-8"
                   ]
                   Body !^json ]
 
@@ -87,6 +88,8 @@ let getProfile (token, username) =
                 url
                 [ Fetch.requestHeaders [
                       Authorization $"Token {token}"
+                      Accept "application/json; charset=utf-8"
+                      ContentType "application/json; charset=utf-8"
                   ] ]
 
         let! profile = response.text ()
@@ -109,35 +112,11 @@ let setFollow (followUsername: string * string * bool) =
                       Method HttpMethod.DELETE
                   Fetch.requestHeaders [
                       Authorization $"Token {token}"
+                      Accept "application/json; charset=utf-8"
+                      ContentType "application/json; charset=utf-8"
                   ] ]
 
         let! profile = response.text ()
 
         return Profile.fromJson profile
-    }
-
-let followUser username isFollowing token =
-    let url =
-        $"https://api.realworld.io/api/profiles/{username}/follow"
-
-    promise {
-        let! response =
-            Fetch.fetch
-                url
-                [ Method(
-                    if isFollowing then
-                        HttpMethod.DELETE
-                    else
-                        HttpMethod.POST
-                  )
-                  Fetch.requestHeaders [
-                      Authorization $"Token {token}"
-                      ContentType "application/json"
-                  ] ]
-
-        let! response = response.text ()
-
-        let profile = Profile.fromJson response
-
-        return profile
     }

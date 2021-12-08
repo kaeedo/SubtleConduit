@@ -109,7 +109,7 @@ let ArticlePage (model: State) (slug: string) =
         | None -> ()
         | Some u ->
             promise {
-                let! profile = ProfileApi.followUser author isFollowing u.Token
+                let! profile = ProfileApi.setFollow (u.Token, author, isFollowing)
 
                 dispatch <| UpdateFollowing profile.Following
 
