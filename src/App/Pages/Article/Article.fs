@@ -25,6 +25,7 @@ type ArticleState =
 type ArticleMsg =
     | GetArticle of string
     | UpdateFavorite of bool * int
+    | UpdateFollowing of bool
     | Set of Article
     | Error of string
 
@@ -74,6 +75,11 @@ let private update (user: User option) msg state =
                 FavoritesCount = favoriteCount }
 
         newState, Cmd.none
+    | UpdateFollowing isFollowing ->
+        let newState =
+            { state with Author = { state.Author with Following = isFollowing } }
+
+        newState, Cmd.none
     | Error e -> state, Cmd.none // TODO actually handle this
 
 
@@ -98,12 +104,30 @@ let ArticlePage (model: State) (slug: string) =
             }
             |> Promise.start
 
+    let followAuthor author isFollowing _ =
+        match model.User with
+        | None -> ()
+        | Some u ->
+            promise {
+                let! profile = ProfileApi.followUser author isFollowing u.Token
+
+                dispatch <| UpdateFollowing profile.Following
+
+                return ()
+            }
+            |> Promise.start
+
     let otherArticleActions =
         Html.div [
             Attr.classes [
                 tw.flex
             ]
             Html.div [
+                Bind.toggleClass (
+                    (state .> fun s -> s.Author.Following),
+                    $"{tw.``bg-gray-300``} {tw.``text-white``}",
+                    tw.``text-gray-400``
+                )
                 Attr.classes [
                     tw.``cursor-pointer``
                     tw.``self-center``
@@ -116,12 +140,21 @@ let ArticlePage (model: State) (slug: string) =
                     tw.``h-7``
                     tw.border
                     tw.rounded
-                    tw.``text-gray-400``
                     tw.``border-gray-300``
                     tw.``hover:bg-gray-300``
                     tw.``hover:text-white``
                 ]
-                Bind.el (state, (fun s -> text $"+ Follow {s.Author.Username}"))
+                Bind.el (
+                    state,
+                    (fun s ->
+                        fragment [
+                            if s.Author.Following then
+                                text $"- Unfollow {s.Author.Username}"
+                            else
+                                text $"+ Follow {s.Author.Username}"
+                            onClick (followAuthor s.Author.Username s.Author.Following) []
+                        ])
+                )
                 onClick (ignore) []
             ]
             Html.div [

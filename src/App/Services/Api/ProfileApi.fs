@@ -115,3 +115,29 @@ let setFollow (followUsername: string * string * bool) =
 
         return Profile.fromJson profile
     }
+
+let followUser username isFollowing token =
+    let url =
+        $"https://api.realworld.io/api/profiles/{username}/follow"
+
+    promise {
+        let! response =
+            Fetch.fetch
+                url
+                [ Method(
+                    if isFollowing then
+                        HttpMethod.DELETE
+                    else
+                        HttpMethod.POST
+                  )
+                  Fetch.requestHeaders [
+                      Authorization $"Token {token}"
+                      ContentType "application/json"
+                  ] ]
+
+        let! response = response.text ()
+
+        let profile = Profile.fromJson response
+
+        return profile
+    }
