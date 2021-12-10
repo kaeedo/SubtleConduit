@@ -6,8 +6,7 @@ open SubtleConduit.Components
 open SubtleConduit.Services.Api
 open Sutil.DOM
 
-let private articleFilter =
-    Store.make<ArticleApi.ArticleFilter option> None
+let private articleFilter = Store.make None
 
 let HomePage model dispatch =
     let view =
@@ -15,7 +14,7 @@ let HomePage model dispatch =
             Html.div [
                 Attr.classes [
                     tw.``bg-conduit-green``
-                    tw.``w-screen``
+                    tw.``w-full``
                     tw.``p-8``
                 ]
                 Html.div [

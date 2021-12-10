@@ -82,7 +82,7 @@ let ProfilePage (model: State) (username: string) =
             Html.div [
                 Attr.classes [
                     tw.``bg-gray-100``
-                    tw.``w-screen``
+                    tw.``w-full``
                     tw.``p-8``
                 ]
                 Html.div [

@@ -109,7 +109,7 @@ let ArticlePage (model: State) (slug: string) =
         | None -> ()
         | Some u ->
             promise {
-                let! profile = ProfileApi.setFollow (u.Token, author, isFollowing)
+                let! profile = ProfileApi.setFollow (u.Token, author, not isFollowing)
 
                 dispatch <| UpdateFollowing profile.Following
 
@@ -334,7 +334,7 @@ let ArticlePage (model: State) (slug: string) =
             Html.div [
                 Attr.classes [
                     tw.``bg-gray-800``
-                    tw.``w-screen``
+                    tw.``w-full``
                     tw.``p-8``
                     tw.``text-white``
                 ]

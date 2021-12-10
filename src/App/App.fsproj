@@ -11,6 +11,7 @@
     <Compile Include="Services/Api/ArticleApi.fs" />
     <Compile Include="Services/LocalStorage.fs" />
     <Compile Include="Services/Elmish.fs" />
+    <Compile Include="Components\Feed\FeedItems.fs" />
     <Compile Include="Components/Feed/Feed.fs" />
     <Compile Include="Components/Tags/Tags.fs" />
     <Compile Include="Components/Header/Header.fs" />

@@ -6,13 +6,11 @@ open SubtleConduit.Utilities
 
 open Tailwind
 open SubtleConduit.Types
-open SubtleConduit.Services
-open SubtleConduit.Router
 open SubtleConduit.Services.Api
 open Sutil.DOM
 open System
-open Fable.Core.JsInterop
 open SubtleConduit.Elmish
+open SubtleConduit.Components.FeedItems
 
 let Feed
     (model: State)
@@ -23,12 +21,14 @@ let Feed
     let pageSize = 10
     let offset = Store.make 0
 
+    let isFeedSelected = Store.make false
+
     let articles = ObservablePromise<Articles>()
 
-    let getArticles user pageSize newOffset filter =
+    let getArticles user pageSize newOffset filter showFeed =
         articles.Run
         <| promise {
-            let! articlesFromApi = ArticleApi.getArticles user pageSize newOffset filter
+            let! articlesFromApi = ArticleApi.getArticles user pageSize newOffset filter showFeed
             // TODO handle error case
             offset <~ newOffset
             return articlesFromApi
@@ -48,7 +48,6 @@ let Feed
         Store.zip currentPage total
         .> (fun (current, total) -> getPagesToDisplay current total)
 
-    let heartIcon = importDefault "../../Images/heart.svg"
 
     let favoriteArticle slug isFavorited _ =
         match model.User with
@@ -57,230 +56,87 @@ let Feed
             promise {
                 let! _ = ArticleApi.favoriteArticle slug isFavorited u.Token
                 // TODO Ask how to update single value in observable promise
-                getArticles model.User pageSize offset.Value articleFilter
+                getArticles model.User pageSize offset.Value articleFilter isFeedSelected.Value
                 return ()
             }
             |> Promise.start
 
-    let view =
+    let tabs () =
         Html.div [
-            onMount (fun _ -> getArticles model.User pageSize 0 articleFilter) [ Once ]
-            disposeOnUnmount [
-                offset
-            ]
-
             Attr.classes [
-                tw.``flex-auto``
-                tw.``mr-6``
+                tw.flex
             ]
-
-            Html.div [
-                Attr.classes [
-                    tw.flex
+            match model.User with
+            | None -> ()
+            | Some u ->
+                Html.div [
+                    Bind.toggleClass (isFeedSelected, $"{tw.``border-b-2``} {tw.``border-conduit-green``}")
+                    Attr.classes [
+                        tw.``text-conduit-green``
+                        tw.``w-max``
+                        tw.``py-2``
+                        tw.``px-4``
+                        tw.``box-content``
+                        tw.``cursor-pointer``
+                    ]
+                    onClick
+                        (fun _ ->
+                            getArticles model.User pageSize offset.Value articleFilter true
+                            isFeedSelected <~ true)
+                        []
+                    text "Your Feed"
                 ]
+            Html.div [
+                Bind.toggleClass (
+                    (isFeedSelected
+                     .> fun f -> not f && articleFilter.IsNone),
+                    $"{tw.``border-b-2``} {tw.``border-conduit-green``}"
+                )
+                Attr.classes [
+                    tw.``text-conduit-green``
+                    tw.``w-max``
+                    tw.``py-2``
+                    tw.``px-4``
+                    tw.``cursor-pointer``
+                ]
+                onClick
+                    (fun _ ->
+                        isFeedSelected <~ false
+                        setArticleFilter None)
+                    []
+                text "Global Feed"
+            ]
+            match articleFilter with
+            | Some (ArticleApi.Tag t) ->
                 Html.div [
                     Attr.classes [
                         tw.``text-conduit-green``
                         tw.``w-max``
                         tw.``py-2``
                         tw.``px-4``
-                        tw.``cursor-pointer``
-
-                        if articleFilter.IsNone then
-                            tw.``border-b-2``
-                            tw.``border-conduit-green``
+                        tw.``border-b-2``
+                        tw.``box-content``
+                        tw.``border-conduit-green``
                     ]
-                    onClick (fun _ -> setArticleFilter None) []
-                    text "Global Feed"
+                    text t
                 ]
-                match articleFilter with
-                | Some (ArticleApi.Tag t) ->
-                    Html.div [
-                        Attr.classes [
-                            tw.``text-conduit-green``
-                            tw.``w-max``
-                            tw.``py-2``
-                            tw.``px-4``
-                            tw.``border-b-2``
-                            tw.``box-content``
-                            tw.``border-conduit-green``
-                        ]
-                        text t
-                    ]
-                | _ -> ()
-            ]
-            Html.ul [
-                Bind.el (
-                    articles,
-                    function
-                    | Waiting -> text "Loading"
-                    | Error e -> text $"Error occured: {e.Message}"
-                    | Result art ->
-                        fragment [
-                            for a in art.Articles do
-                                Html.li [
-                                    Attr.classes [
-                                        tw.``border-t``
-                                        tw.``py-6``
-                                    ]
-                                    Html.div [
-                                        Html.div [
-                                            Attr.classes [
-                                                tw.flex
-                                                tw.``justify-between``
-                                            ]
-                                            Html.div [
-                                                Attr.classes [
-                                                    tw.flex
-                                                    tw.``mb-4``
-                                                ]
-                                                Html.img [
-                                                    Attr.classes [
-                                                        tw.``w-8``
-                                                        tw.``h-8``
-                                                        tw.``rounded-3xl``
-                                                        tw.``self-center``
-                                                    ]
-                                                    Attr.src a.Author.Image
-                                                ]
-                                                Html.div [
-                                                    Attr.classes [
-                                                        tw.flex
-                                                        tw.``flex-col``
-                                                        tw.``ml-2``
-                                                    ]
-                                                    Html.a [
-                                                        Attr.classes [
-                                                            tw.``text-conduit-green``
-                                                            tw.``font-semibold``
-                                                        ]
-                                                        Attr.href $"javascript:void(0)"
-                                                        onClick
-                                                            (fun _ ->
-                                                                Router.navigate
-                                                                    $"profile/{a.Author.Username}"
-                                                                    (Some(a.Author.Username :> obj)))
-                                                            []
-                                                        text a.Author.Username
-                                                    ]
-                                                    Html.span [
-                                                        Attr.classes [
-                                                            tw.``text-xs``
-                                                            tw.``text-gray-400``
-                                                        ]
-                                                        text (a.CreatedAt |> formatDateUS "MMMM dd, yyyy")
-                                                    ]
-                                                ]
-                                            ]
-                                            Html.button [
-                                                Attr.classes [
-                                                    tw.border
-                                                    tw.rounded
-                                                    tw.``border-conduit-green``
-                                                    tw.``hover:bg-conduit-green``
-                                                    tw.``h-8``
-                                                    tw.flex
-                                                    tw.``px-2``
-                                                    tw.``hover:text-white``
-                                                    tw.``text-conduit-green``
-                                                    tw.``text-xs``
-                                                    tw.``items-center``
-                                                    if a.Favorited then
-                                                        tw.``bg-conduit-green``
-                                                        tw.``text-white``
-                                                ]
-                                                Html.img [
-                                                    Attr.classes [
-                                                        tw.``w-4``
-                                                        tw.``mr-1``
-                                                    ]
-                                                    Attr.src heartIcon
-                                                ]
-                                                onClick (favoriteArticle a.Slug a.Favorited) []
-                                                text (a.FavoritesCount.ToString())
-                                            ]
-                                        ]
-                                        Html.div [
-                                            Attr.classes [
-                                                tw.``mb-4``
-                                                tw.flex
-                                                tw.``flex-col``
-                                            ]
-                                            Html.a [
-                                                Attr.classes [
-                                                    tw.``text-2xl``
-                                                    tw.``font-semibold``
-                                                    tw.``mb-1``
-                                                ]
-                                                Attr.href "#"
-                                                text a.Title
-                                            ]
-                                            Html.a [
-                                                Attr.classes [
-                                                    tw.``text-sm``
-                                                    tw.``text-gray-400``
-                                                ]
-                                                Attr.href "#"
-                                                text a.Description
-                                            ]
-                                        ]
-                                        Html.div [
-                                            Attr.classes [
-                                                tw.flex
-                                                tw.``justify-between``
-                                                tw.``items-baseline``
-                                            ]
-                                            Html.a [
-                                                Attr.classes [
-                                                    tw.``text-xs``
-                                                    tw.``text-gray-300``
-                                                ]
-                                                Attr.href $"javascript:void(0)"
-                                                onClick
-                                                    (fun _ ->
-                                                        Router.navigate $"article/{a.Slug}"
-                                                        <| Some(a.Slug :> obj))
-                                                    []
-                                                text "Read more..."
-                                            ]
+            | _ -> ()
+        ]
 
-                                            Html.ul [
-                                                for tag in a.TagList do
-                                                    Html.li [
-                                                        Attr.classes [
-                                                            tw.``inline-flex``
-                                                        ]
-                                                        Html.span [
-                                                            Attr.classes [
-                                                                tw.``px-2``
-                                                                tw.``py-1``
-                                                                tw.``rounded-xl``
-                                                                tw.``cursor-pointer``
-                                                                tw.``text-gray-300``
-                                                                tw.``mr-1``
-                                                                tw.``mb-1``
-                                                                tw.``text-xs``
-                                                                tw.border
-                                                                tw.rounded
-                                                                tw.``border-gray-300``
-                                                            ]
-                                                            onClick
-                                                                (fun _ ->
-                                                                    setArticleFilter
-                                                                    <| Some(
-                                                                        ArticleApi.ArticleFilter.Tag(tag.ToString())
-                                                                    ))
-                                                                []
-                                                            text (tag.ToString())
-                                                        ]
-                                                    ]
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                        ]
-                )
+    let view =
+        Html.div [
+            onMount (fun _ -> getArticles model.User pageSize 0 articleFilter false) [ Once ]
+            disposeOnUnmount [
+                offset
+                isFeedSelected
             ]
+
+            Attr.classes [
+                tw.``flex-auto``
+                tw.``mr-6``
+            ]
+            tabs ()
+            FeedItems articles favoriteArticle setArticleFilter
             Html.ul [
                 Attr.classes [
                     tw.flex
@@ -307,7 +163,12 @@ let Feed
                                         if offset.Value = 0 then
                                             ()
                                         else
-                                            getArticles model.User pageSize (offset.Value - pageSize) articleFilter)
+                                            getArticles
+                                                model.User
+                                                pageSize
+                                                (offset.Value - pageSize)
+                                                articleFilter
+                                                isFeedSelected.Value)
                                     []
                                 text "<"
                             ]
@@ -329,7 +190,12 @@ let Feed
                                     ]
                                     onClick
                                         (fun _ ->
-                                            getArticles model.User pageSize (int pn * pageSize - 10) articleFilter)
+                                            getArticles
+                                                model.User
+                                                pageSize
+                                                (int pn * pageSize - 10)
+                                                articleFilter
+                                                isFeedSelected.Value)
                                         []
                                     text pn
                                 ]
@@ -348,7 +214,12 @@ let Feed
                                         if (offset.Value / pageSize + 1) = int lastPage then
                                             ()
                                         else
-                                            getArticles model.User pageSize (offset.Value + pageSize) articleFilter)
+                                            getArticles
+                                                model.User
+                                                pageSize
+                                                (offset.Value + pageSize)
+                                                articleFilter
+                                                isFeedSelected.Value)
 
                                     []
 
