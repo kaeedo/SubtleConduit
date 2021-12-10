@@ -8,7 +8,8 @@ open Fable.Core.JsInterop
 
 type ArticleFilter =
     | Tag of string
-    | User of string
+    | Author of string
+    | Favorited of string
 
 let getTags () =
     let url =
@@ -34,7 +35,8 @@ let getArticles (user: User option) limit offset (filter: ArticleFilter option) 
         + match filter with
           | None -> ""
           | Some (Tag t) -> $"&tag={t}"
-          | Some (User u) -> $"&author={u}"
+          | Some (Author u) -> $"&author={u}"
+          | Some (Favorited u) -> $"&favorited={u}"
 
     promise {
         let! response =

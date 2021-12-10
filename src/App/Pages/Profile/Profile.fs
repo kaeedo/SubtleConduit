@@ -67,7 +67,7 @@ let private update msg (state: ProfileState) =
 
 
 let ProfilePage (model: State) (username: string) =
-    let articleFilter = ArticleApi.User username
+    let articleFilter = ArticleApi.Author username
 
     let state, dispatch =
         match model.User with

@@ -11,6 +11,20 @@ open Sutil.DOM
 open System
 open SubtleConduit.Elmish
 open SubtleConduit.Components.FeedItems
+open SubtleConduit.Components.FeedTab
+
+
+type TabsToShow =
+    | Home of isLoggedIn: bool * tag: string option
+    | MyProfile
+    | OtherProfile
+
+type SelectedTab =
+    | Feed
+    | Articles
+    | Tag
+    | MyPosts
+    | FavoritedPosts
 
 let Feed
     (model: State)
@@ -21,9 +35,34 @@ let Feed
     let pageSize = 10
     let offset = Store.make 0
 
-    let isFeedSelected = Store.make false
+    let tabsToShow =
+        Store.make (
+            match model.Page, model.User with
+            | Page.Home, _ ->
+                let tag =
+                    match articleFilter with
+                    | Some (ArticleApi.ArticleFilter.Tag t) -> Some t
+                    | _ -> None
+
+                TabsToShow.Home(model.User.IsSome, tag)
+            | Page.Profile p, Some u when p = u.Username -> TabsToShow.MyProfile
+            | Page.Profile _, _ -> TabsToShow.MyProfile
+            | _ -> TabsToShow.Home(false, None)
+        )
 
     let articles = ObservablePromise<Articles>()
+
+    let selectedTab = Store.make SelectedTab.Articles
+
+    /////////////////////////
+    let articlesSubscription =
+        Store.subscribe
+            (fun (articles) ->
+                match articleFilter with
+                | Some (ArticleApi.ArticleFilter.Tag _) -> selectedTab <~ SelectedTab.Tag
+                | _ -> selectedTab <~ SelectedTab.Articles)
+            articles
+    /////////////////////////
 
     let getArticles user pageSize newOffset filter showFeed =
         articles.Run
@@ -56,7 +95,7 @@ let Feed
             promise {
                 let! _ = ArticleApi.favoriteArticle slug isFavorited u.Token
                 // TODO Ask how to update single value in observable promise
-                getArticles model.User pageSize offset.Value articleFilter isFeedSelected.Value
+                getArticles model.User pageSize offset.Value articleFilter false
                 return ()
             }
             |> Promise.start
@@ -66,61 +105,54 @@ let Feed
             Attr.classes [
                 tw.flex
             ]
-            match model.User with
-            | None -> ()
-            | Some u ->
-                Html.div [
-                    Bind.toggleClass (isFeedSelected, $"{tw.``border-b-2``} {tw.``border-conduit-green``}")
-                    Attr.classes [
-                        tw.``text-conduit-green``
-                        tw.``w-max``
-                        tw.``py-2``
-                        tw.``px-4``
-                        tw.``box-content``
-                        tw.``cursor-pointer``
-                    ]
-                    onClick
-                        (fun _ ->
-                            getArticles model.User pageSize offset.Value articleFilter true
-                            isFeedSelected <~ true)
-                        []
-                    text "Your Feed"
-                ]
-            Html.div [
-                Bind.toggleClass (
-                    (isFeedSelected
-                     .> fun f -> not f && articleFilter.IsNone),
-                    $"{tw.``border-b-2``} {tw.``border-conduit-green``}"
-                )
-                Attr.classes [
-                    tw.``text-conduit-green``
-                    tw.``w-max``
-                    tw.``py-2``
-                    tw.``px-4``
-                    tw.``cursor-pointer``
-                ]
-                onClick
-                    (fun _ ->
-                        isFeedSelected <~ false
-                        setArticleFilter None)
-                    []
-                text "Global Feed"
-            ]
-            match articleFilter with
-            | Some (ArticleApi.Tag t) ->
-                Html.div [
-                    Attr.classes [
-                        tw.``text-conduit-green``
-                        tw.``w-max``
-                        tw.``py-2``
-                        tw.``px-4``
-                        tw.``border-b-2``
-                        tw.``box-content``
-                        tw.``border-conduit-green``
-                    ]
-                    text t
-                ]
-            | _ -> ()
+            Bind.el (
+                tabsToShow,
+                fun t ->
+                    match t with
+                    | TabsToShow.Home (isLoggedIn, tag) ->
+                        fragment [
+                            if isLoggedIn then
+                                FeedTab
+                                    "Your Feed"
+                                    (fun _ -> selectedTab <~ SelectedTab.Feed)
+                                    (selectedTab .> fun st -> st = SelectedTab.Feed)
+                            FeedTab
+                                "Global Feed"
+                                (fun _ -> selectedTab <~ SelectedTab.Articles)
+                                (selectedTab .> fun st -> st = SelectedTab.Articles)
+                            match tag with
+                            | Some t ->
+                                FeedTab
+                                    t
+                                    (fun _ -> selectedTab <~ SelectedTab.Tag)
+                                    (selectedTab .> fun st -> st = SelectedTab.Tag)
+                            | None -> ()
+                        ]
+                    | TabsToShow.MyProfile ->
+                        fragment [
+                            FeedTab
+                                "My Posts"
+                                (fun _ -> selectedTab <~ SelectedTab.MyPosts)
+                                (selectedTab .> fun st -> st = SelectedTab.MyPosts)
+                            FeedTab
+                                "Favorited Posts"
+                                (fun _ -> selectedTab <~ SelectedTab.FavoritedPosts)
+                                (selectedTab
+                                 .> fun st -> st = SelectedTab.FavoritedPosts)
+                        ]
+                    | TabsToShow.OtherProfile ->
+                        fragment [
+                            FeedTab
+                                "Posts"
+                                (fun _ -> selectedTab <~ SelectedTab.MyPosts)
+                                (selectedTab .> fun st -> st = SelectedTab.MyPosts)
+                            FeedTab
+                                "Favorited Posts"
+                                (fun _ -> selectedTab <~ SelectedTab.FavoritedPosts)
+                                (selectedTab
+                                 .> fun st -> st = SelectedTab.FavoritedPosts)
+                        ]
+            )
         ]
 
     let view =
@@ -128,7 +160,9 @@ let Feed
             onMount (fun _ -> getArticles model.User pageSize 0 articleFilter false) [ Once ]
             disposeOnUnmount [
                 offset
-                isFeedSelected
+                selectedTab
+                tabsToShow
+                articlesSubscription
             ]
 
             Attr.classes [
@@ -168,7 +202,7 @@ let Feed
                                                 pageSize
                                                 (offset.Value - pageSize)
                                                 articleFilter
-                                                isFeedSelected.Value)
+                                                false)
                                     []
                                 text "<"
                             ]
@@ -190,12 +224,7 @@ let Feed
                                     ]
                                     onClick
                                         (fun _ ->
-                                            getArticles
-                                                model.User
-                                                pageSize
-                                                (int pn * pageSize - 10)
-                                                articleFilter
-                                                isFeedSelected.Value)
+                                            getArticles model.User pageSize (int pn * pageSize - 10) articleFilter false)
                                         []
                                     text pn
                                 ]
@@ -219,7 +248,7 @@ let Feed
                                                 pageSize
                                                 (offset.Value + pageSize)
                                                 articleFilter
-                                                isFeedSelected.Value)
+                                                false)
 
                                     []
 
