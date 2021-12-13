@@ -6,7 +6,7 @@ open SubtleConduit.Utilities
 
 open Tailwind
 open SubtleConduit.Types
-open SubtleConduit.Services.Api
+open SubtleConduit.Services.Api.ArticleApi
 open Sutil.DOM
 open System
 open SubtleConduit.Elmish
@@ -26,12 +26,7 @@ type SelectedTab =
     | MyPosts
     | FavoritedPosts
 
-let Feed
-    (model: State)
-    (dispatch: Dispatch<Message>)
-    (articleFilter: ArticleApi.ArticleFilter option)
-    (setArticleFilter)
-    =
+let Feed (model: State) (dispatch: Dispatch<Message>) (articleFilter: ArticleFilter option) (setArticleFilter) =
     let pageSize = 10
     let offset = Store.make 0
 
@@ -41,7 +36,7 @@ let Feed
             | Page.Home, _ ->
                 let tag =
                     match articleFilter with
-                    | Some (ArticleApi.ArticleFilter.Tag t) -> Some t
+                    | Some (ArticleFilter.Tag t) -> Some t
                     | _ -> None
 
                 TabsToShow.Home(model.User.IsSome, tag)
@@ -52,26 +47,33 @@ let Feed
 
     let articles = ObservablePromise<Articles>()
 
-    let selectedTab = Store.make SelectedTab.Articles
-
-    /////////////////////////
-    let articlesSubscription =
-        Store.subscribe
-            (fun (articles) ->
-                match articleFilter with
-                | Some (ArticleApi.ArticleFilter.Tag _) -> selectedTab <~ SelectedTab.Tag
-                | _ -> selectedTab <~ SelectedTab.Articles)
-            articles
-    /////////////////////////
+    let selectedTab =
+        Store.make (
+            match articleFilter with
+            | Some (ArticleFilter.Tag t) -> SelectedTab.Tag
+            | _ -> SelectedTab.Articles
+        )
 
     let getArticles user pageSize newOffset filter showFeed =
         articles.Run
         <| promise {
-            let! articlesFromApi = ArticleApi.getArticles user pageSize newOffset filter showFeed
+            let! articlesFromApi = getArticles user pageSize newOffset filter showFeed
             // TODO handle error case
             offset <~ newOffset
             return articlesFromApi
            }
+
+    let tabSubscription =
+        selectedTab
+        |> Store.subscribe (fun st ->
+            let articleFilter =
+                match st with
+                | SelectedTab.Tag -> articleFilter
+                | _ -> None
+
+            let showFeed = st = SelectedTab.Feed
+
+            getArticles model.User pageSize offset.Value articleFilter showFeed)
 
     let currentPage = offset .> fun o -> (o / pageSize) + 1
 
@@ -93,7 +95,7 @@ let Feed
         | None -> ()
         | Some u ->
             promise {
-                let! _ = ArticleApi.favoriteArticle slug isFavorited u.Token
+                let! _ = favoriteArticle slug isFavorited u.Token
                 // TODO Ask how to update single value in observable promise
                 getArticles model.User pageSize offset.Value articleFilter false
                 return ()
@@ -114,17 +116,23 @@ let Feed
                             if isLoggedIn then
                                 FeedTab
                                     "Your Feed"
-                                    (fun _ -> selectedTab <~ SelectedTab.Feed)
+                                    (fun _ ->
+                                        Fable.Core.JS.console.log ("your f")
+                                        selectedTab <~ SelectedTab.Feed)
                                     (selectedTab .> fun st -> st = SelectedTab.Feed)
                             FeedTab
                                 "Global Feed"
-                                (fun _ -> selectedTab <~ SelectedTab.Articles)
+                                (fun _ ->
+                                    Fable.Core.JS.console.log ("global feed")
+                                    selectedTab <~ SelectedTab.Articles)
                                 (selectedTab .> fun st -> st = SelectedTab.Articles)
                             match tag with
                             | Some t ->
                                 FeedTab
                                     t
-                                    (fun _ -> selectedTab <~ SelectedTab.Tag)
+                                    (fun _ ->
+                                        Fable.Core.JS.console.log ("tag " + t)
+                                        selectedTab <~ SelectedTab.Tag)
                                     (selectedTab .> fun st -> st = SelectedTab.Tag)
                             | None -> ()
                         ]
@@ -162,7 +170,7 @@ let Feed
                 offset
                 selectedTab
                 tabsToShow
-                articlesSubscription
+                tabSubscription
             ]
 
             Attr.classes [

@@ -46,7 +46,7 @@ let Tags (articleFilter: ArticleApi.ArticleFilter option) (setArticleFilter: Art
                         (function
                         | Waiting -> text "Loading"
                         | Error e -> text $"Error occured: {e.Message}"
-                        | Result { Tags = [] } ->
+                        | Result t when t.Tags |> List.isEmpty ->
                             fragment [
                                 text "Nothing to show"
                             ]
