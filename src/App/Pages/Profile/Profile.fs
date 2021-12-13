@@ -39,8 +39,6 @@ let private update msg (state: ProfileState) =
         state,
         Cmd.OfPromise.either ProfileApi.getProfile (state.Token, username) (fun r -> Set r) (fun e -> Error e.Message)
     | Set result ->
-        Fable.Core.JS.console.log (result)
-
         let newState =
             { state with
                 Username = result.Username

@@ -41,7 +41,7 @@ let Feed (model: State) (dispatch: Dispatch<Message>) (articleFilter: ArticleFil
 
                 TabsToShow.Home(model.User.IsSome, tag)
             | Page.Profile p, Some u when p = u.Username -> TabsToShow.MyProfile
-            | Page.Profile _, _ -> TabsToShow.MyProfile
+            | Page.Profile _, _ -> TabsToShow.OtherProfile
             | _ -> TabsToShow.Home(false, None)
         )
 
@@ -49,18 +49,26 @@ let Feed (model: State) (dispatch: Dispatch<Message>) (articleFilter: ArticleFil
 
     let selectedTab =
         Store.make (
-            match articleFilter with
-            | Some (ArticleFilter.Tag t) -> SelectedTab.Tag
-            | _ -> SelectedTab.Articles
+            match model.Page with
+            | Page.Home ->
+                match articleFilter with
+                | Some (ArticleFilter.Tag t) -> SelectedTab.Tag
+                | _ -> SelectedTab.Articles
+            | _ -> SelectedTab.MyPosts
         )
 
     let getArticles user pageSize newOffset filter showFeed =
         articles.Run
         <| promise {
-            let! articlesFromApi = getArticles user pageSize newOffset filter showFeed
-            // TODO handle error case
-            offset <~ newOffset
-            return articlesFromApi
+            try
+                let! articlesFromApi = getArticles user pageSize newOffset filter showFeed
+                offset <~ newOffset
+                return articlesFromApi
+            with
+            | :? exn ->
+                //failwith exn
+                return Unchecked.defaultof<Articles>
+           // TODO handle error case
            }
 
     let tabSubscription =
@@ -69,6 +77,10 @@ let Feed (model: State) (dispatch: Dispatch<Message>) (articleFilter: ArticleFil
             let articleFilter =
                 match st with
                 | SelectedTab.Tag -> articleFilter
+                | SelectedTab.MyPosts -> articleFilter
+                | SelectedTab.FavoritedPosts ->
+                    let (Profile currentProfile) = model.Page
+                    ArticleFilter.Favorited currentProfile |> Some
                 | _ -> None
 
             let showFeed = st = SelectedTab.Feed
@@ -116,23 +128,17 @@ let Feed (model: State) (dispatch: Dispatch<Message>) (articleFilter: ArticleFil
                             if isLoggedIn then
                                 FeedTab
                                     "Your Feed"
-                                    (fun _ ->
-                                        Fable.Core.JS.console.log ("your f")
-                                        selectedTab <~ SelectedTab.Feed)
+                                    (fun _ -> selectedTab <~ SelectedTab.Feed)
                                     (selectedTab .> fun st -> st = SelectedTab.Feed)
                             FeedTab
                                 "Global Feed"
-                                (fun _ ->
-                                    Fable.Core.JS.console.log ("global feed")
-                                    selectedTab <~ SelectedTab.Articles)
+                                (fun _ -> selectedTab <~ SelectedTab.Articles)
                                 (selectedTab .> fun st -> st = SelectedTab.Articles)
                             match tag with
                             | Some t ->
                                 FeedTab
                                     t
-                                    (fun _ ->
-                                        Fable.Core.JS.console.log ("tag " + t)
-                                        selectedTab <~ SelectedTab.Tag)
+                                    (fun _ -> selectedTab <~ SelectedTab.Tag)
                                     (selectedTab .> fun st -> st = SelectedTab.Tag)
                             | None -> ()
                         ]

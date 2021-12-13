@@ -17,7 +17,7 @@ let private getTags () =
         // TODO Logging
         match tags with
         | Ok t -> return t
-        | Result.Error e -> return { Tags.Tags = [] }
+        | Result.Error e -> return Unchecked.defaultof<Tags>
        }
 
 let Tags (articleFilter: ArticleApi.ArticleFilter option) (setArticleFilter: ArticleApi.ArticleFilter option -> unit) =
