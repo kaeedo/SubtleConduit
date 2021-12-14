@@ -8,7 +8,7 @@ An attempt at building a [RealWorld](https://github.com/gothinkster/realworld) a
 
 ## View the live demo here
 
-[https://cubeofshame.codeberg.page/SubtleConduit/](https://cubeofshame.codeberg.page/SubtleConduit/)
+[https://cubeofshame.codeberg.page/SubtleConduit/](https://cubeofshame.codeberg.page/SubtleConduit/){:target="_blank"}
 
 ---
 
@@ -42,8 +42,8 @@ To build for prod:
 
 ## TODO
 
-- [ ] Unit/Integration tests
-- [ ] Error handling within the application itself
-- [ ] Commenting system
-- [ ] Icons for header menu items when logged in
-- [ ] Routing (URL) is all sorts of janky
+* [ ] Unit/Integration tests
+* [ ] Error handling within the application itself
+* [ ] Commenting system
+* [ ] Icons for header menu items when logged in
+* [ ] Routing (URL) is all sorts of janky
