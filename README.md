@@ -8,7 +8,7 @@ An attempt at building a [RealWorld](https://github.com/gothinkster/realworld) a
 
 ## View the live demo here
 
-[https://cubeofshame.codeberg.page/SubtleConduit/](https://cubeofshame.codeberg.page/SubtleConduit/){:target="_blank"}
+<a href="https://cubeofshame.codeberg.page/SubtleConduit/" target="_blank">https://cubeofshame.codeberg.page/SubtleConduit/</a>
 
 ---
 
