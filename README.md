@@ -14,29 +14,19 @@ An attempt at building a [RealWorld](https://github.com/gothinkster/realworld) a
 
 ## Development
 
-The following tools are required:
+This poroject uses [Perla](), a build tool implemented in F# so you don't even need Node installed at all. You'll still need .Net 5.0 or later.
 
-* .Net 5.0
-* Node.js 14.x
-* PNPM 6.x
-
-For first time setup, run the following 
+For first time setup, run the following
 
     dotnet tool restore
-    dotnet restore
-    
-    # if you don't have pnpm installed:
-    npm i -g pnpm
-
-    pnpm install
 
 To run the project:
 
-    pnpm run start
+    dotnet perla serve
 
 To build for prod:
 
-    pnpm run build
+    dotnet perla build
 
 ---
 

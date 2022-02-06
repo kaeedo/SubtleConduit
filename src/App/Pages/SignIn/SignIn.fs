@@ -2,7 +2,6 @@ module SubtleConduit.Pages.SignIn
 
 open System
 open Sutil
-open Tailwind
 open Sutil.Attr
 open Sutil.DOM
 open SubtleConduit.Elmish
@@ -19,27 +18,27 @@ let SignInPage dispatch =
             ]
 
             Attr.classes [
-                tw.container
-                tw.``mx-auto``
-                tw.flex
-                tw.``flex-col``
-                tw.``items-center``
+                "container"
+                "mx-auto"
+                "flex"
+                "flex-col"
+                "items-center"
             ]
             Html.h1 [
                 Attr.classes [
-                    tw.``text-4xl``
-                    tw.``mb-2.5``
+                    "text-4xl"
+                    "mb-2.5"
                 ]
                 text "Sign In"
             ]
             Html.div [
                 Attr.classes [
-                    tw.``mb-4``
+                    "mb-4"
                 ]
                 Html.a [
                     Attr.classes [
-                        tw.``text-conduit-green``
-                        tw.``text-base``
+                        "text-conduit-green"
+                        "text-base"
                     ]
                     Attr.href "#signup"
                     text "Need an account?"
@@ -47,21 +46,21 @@ let SignInPage dispatch =
             ]
             Html.form [
                 Attr.classes [
-                    tw.``w-96``
+                    "w-96"
                 ]
                 Html.div [
                     Attr.classes [
-                        tw.``mb-4``
+                        "mb-4"
                     ]
                     Html.input [
                         Attr.classes [
-                            tw.``border-2``
-                            tw.``border-solid``
-                            tw.rounded
-                            tw.``border-gray-200``
-                            tw.``px-6``
-                            tw.``py-3``
-                            tw.``w-full``
+                            "border-2"
+                            "border-solid"
+                            "rounded"
+                            "border-gray-200"
+                            "px-6"
+                            "py-3"
+                            "w-full"
                         ]
                         type' "text"
                         Bind.attr ("value", email)
@@ -70,17 +69,17 @@ let SignInPage dispatch =
                 ]
                 Html.div [
                     Attr.classes [
-                        tw.``mb-4``
+                        "mb-4"
                     ]
                     Html.input [
                         Attr.classes [
-                            tw.``border-2``
-                            tw.``border-solid``
-                            tw.rounded
-                            tw.``border-gray-200``
-                            tw.``px-6``
-                            tw.``py-3``
-                            tw.``w-full``
+                            "border-2"
+                            "border-solid"
+                            "rounded"
+                            "border-gray-200"
+                            "px-6"
+                            "py-3"
+                            "w-full"
                         ]
                         type' "password"
                         Bind.attr ("value", password)
@@ -89,19 +88,19 @@ let SignInPage dispatch =
                 ]
                 Html.div [
                     Attr.classes [
-                        tw.flex
-                        tw.``justify-end``
+                        "flex"
+                        "justify-end"
                     ]
                     Html.button [
                         Attr.classes [
-                            tw.flex
-                            tw.``bg-conduit-green``
-                            tw.``hover:bg-conduit-green-500``
-                            tw.``text-white``
-                            tw.rounded
-                            tw.``px-6``
-                            tw.``py-3``
-                            tw.``text-xl``
+                            "flex"
+                            "bg-conduit-green"
+                            "hover:bg-conduit-green-500"
+                            "text-white"
+                            "rounded"
+                            "px-6"
+                            "py-3"
+                            "text-xl"
                         ]
                         Attr.typeSubmit
                         onClick

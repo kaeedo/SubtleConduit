@@ -4,7 +4,6 @@ open System
 open Sutil
 open SubtleConduit.Elmish
 open SubtleConduit.Types
-open Tailwind
 open Sutil.Attr
 open Sutil.DOM
 
@@ -31,36 +30,36 @@ let SettingsPage (model: State) dispatch =
             ]
 
             Attr.classes [
-                tw.container
-                tw.``mx-auto``
-                tw.flex
-                tw.``flex-col``
-                tw.``items-center``
+                "container"
+                "mx-auto"
+                "flex"
+                "flex-col"
+                "items-center"
             ]
             Html.h1 [
                 Attr.classes [
-                    tw.``text-4xl``
-                    tw.``mb-2.5``
+                    "text-4xl"
+                    "mb-2.5"
                 ]
                 text "Your Settings"
             ]
             Html.form [
                 Attr.classes [
-                    tw.``w-96``
+                    "w-96"
                 ]
                 Html.div [
                     Attr.classes [
-                        tw.``mb-4``
+                        "mb-4"
                     ]
                     Html.input [
                         Attr.classes [
-                            tw.``border-2``
-                            tw.``border-solid``
-                            tw.rounded
-                            tw.``border-gray-200``
-                            tw.``px-6``
-                            tw.``py-3``
-                            tw.``w-full``
+                            "border-2"
+                            "border-solid"
+                            "rounded"
+                            "border-gray-200"
+                            "px-6"
+                            "py-3"
+                            "w-full"
                         ]
                         type' "text"
                         Bind.attr ("value", url)
@@ -69,17 +68,17 @@ let SettingsPage (model: State) dispatch =
                 ]
                 Html.div [
                     Attr.classes [
-                        tw.``mb-4``
+                        "mb-4"
                     ]
                     Html.input [
                         Attr.classes [
-                            tw.``border-2``
-                            tw.``border-solid``
-                            tw.rounded
-                            tw.``border-gray-200``
-                            tw.``px-6``
-                            tw.``py-3``
-                            tw.``w-full``
+                            "border-2"
+                            "border-solid"
+                            "rounded"
+                            "border-gray-200"
+                            "px-6"
+                            "py-3"
+                            "w-full"
                         ]
                         type' "text"
                         Bind.attr ("value", username)
@@ -88,17 +87,17 @@ let SettingsPage (model: State) dispatch =
                 ]
                 Html.div [
                     Attr.classes [
-                        tw.``mb-4``
+                        "mb-4"
                     ]
                     Html.textarea [
                         Attr.classes [
-                            tw.``border-2``
-                            tw.``border-solid``
-                            tw.rounded
-                            tw.``border-gray-200``
-                            tw.``px-6``
-                            tw.``py-3``
-                            tw.``w-full``
+                            "border-2"
+                            "border-solid"
+                            "rounded"
+                            "border-gray-200"
+                            "px-6"
+                            "py-3"
+                            "w-full"
                         ]
                         Attr.rows 8
                         Bind.attr ("value", bio)
@@ -107,17 +106,17 @@ let SettingsPage (model: State) dispatch =
                 ]
                 Html.div [
                     Attr.classes [
-                        tw.``mb-4``
+                        "mb-4"
                     ]
                     Html.input [
                         Attr.classes [
-                            tw.``border-2``
-                            tw.``border-solid``
-                            tw.rounded
-                            tw.``border-gray-200``
-                            tw.``px-6``
-                            tw.``py-3``
-                            tw.``w-full``
+                            "border-2"
+                            "border-solid"
+                            "rounded"
+                            "border-gray-200"
+                            "px-6"
+                            "py-3"
+                            "w-full"
                         ]
                         type' "text"
                         Bind.attr ("value", email)
@@ -126,17 +125,17 @@ let SettingsPage (model: State) dispatch =
                 ]
                 Html.div [
                     Attr.classes [
-                        tw.``mb-4``
+                        "mb-4"
                     ]
                     Html.input [
                         Attr.classes [
-                            tw.``border-2``
-                            tw.``border-solid``
-                            tw.rounded
-                            tw.``border-gray-200``
-                            tw.``px-6``
-                            tw.``py-3``
-                            tw.``w-full``
+                            "border-2"
+                            "border-solid"
+                            "rounded"
+                            "border-gray-200"
+                            "px-6"
+                            "py-3"
+                            "w-full"
                         ]
                         type' "text"
                         Bind.attr ("value", password)
@@ -145,19 +144,19 @@ let SettingsPage (model: State) dispatch =
                 ]
                 Html.div [
                     Attr.classes [
-                        tw.flex
-                        tw.``justify-end``
+                        "flex"
+                        "justify-end"
                     ]
                     Html.button [
                         Attr.classes [
-                            tw.flex
-                            tw.``bg-conduit-green``
-                            tw.``hover:bg-conduit-green-500``
-                            tw.``text-white``
-                            tw.rounded
-                            tw.``px-6``
-                            tw.``py-3``
-                            tw.``text-xl``
+                            "flex"
+                            "bg-conduit-green"
+                            "hover:bg-conduit-green-500"
+                            "text-white"
+                            "rounded"
+                            "px-6"
+                            "py-3"
+                            "text-xl"
                         ]
                         type' "submit"
                         text "Update Settings"
@@ -175,26 +174,26 @@ let SettingsPage (model: State) dispatch =
                 ]
                 Html.hr [
                     Attr.classes [
-                        tw.``my-4``
+                        "my-4"
                     ]
                 ]
                 Html.div [
                     Attr.classes [
-                        tw.flex
+                        "flex"
                     ]
                     Html.button [
                         Attr.classes [
-                            tw.flex
-                            tw.border
-                            tw.``bg-white``
-                            tw.``border-red-700``
-                            tw.``hover:bg-red-700``
-                            tw.``text-red-700``
-                            tw.``hover:text-white``
-                            tw.rounded
-                            tw.``px-4``
-                            tw.``py-2``
-                            tw.``text-lg``
+                            "flex"
+                            "border"
+                            "bg-white"
+                            "border-red-700"
+                            "hover:bg-red-700"
+                            "text-red-700"
+                            "hover:text-white"
+                            "rounded"
+                            "px-4"
+                            "py-2"
+                            "text-lg"
                         ]
                         onClick (fun _ -> dispatch Logout) []
                         text "Or click here to logout"

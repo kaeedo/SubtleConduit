@@ -2,7 +2,6 @@ module SubtleConduit.Components.Tags
 
 open System
 open Sutil
-open Tailwind
 open Sutil.DOM
 open SubtleConduit.Types
 open SubtleConduit.Services.Api
@@ -25,17 +24,17 @@ let Tags (articleFilter: ArticleApi.ArticleFilter option) (setArticleFilter: Art
         Html.div [
             onMount (fun _ -> getTags ()) [ Once ]
             Attr.classes [
-                tw.``px-2``
-                tw.``pt-1``
-                tw.``pb-2``
-                tw.``bg-gray-100``
-                tw.rounded
-                tw.``w-40``
-                tw.``h-full``
+                "px-2"
+                "pt-1"
+                "pb-2"
+                "bg-gray-100"
+                "rounded"
+                "w-40"
+                "h-full"
             ]
             Html.h6 [
                 Attr.classes [
-                    tw.``mb-2``
+                    "mb-2"
                 ]
                 text "Popular Tags"
             ]
@@ -55,20 +54,20 @@ let Tags (articleFilter: ArticleApi.ArticleFilter option) (setArticleFilter: Art
                                 for t in tagsResult.Tags do
                                     Html.li [
                                         Attr.classes [
-                                            tw.``inline-flex``
+                                            "inline-flex"
                                         ]
                                         Html.span [
                                             Attr.classes [
-                                                tw.``px-2``
-                                                tw.``py-1``
-                                                tw.``rounded-xl``
-                                                tw.``cursor-pointer``
-                                                tw.``bg-gray-500``
-                                                tw.``hover:bg-gray-600``
-                                                tw.``text-white``
-                                                tw.``mr-1``
-                                                tw.``mb-1``
-                                                tw.``text-xs``
+                                                "px-2"
+                                                "py-1"
+                                                "rounded-xl"
+                                                "cursor-pointer"
+                                                "bg-gray-500"
+                                                "hover:bg-gray-600"
+                                                "text-white"
+                                                "mr-1"
+                                                "mb-1"
+                                                "text-xs"
                                             ]
                                             onClick
                                                 (fun _ ->

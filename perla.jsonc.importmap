@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "navigo": "https://cdn.skypack.dev/pin/navigo@v8.11.1-P7FrCxiJCiPJPMdihh6j/mode=imports/optimized/navigo.js"
+  },
+  "scopes": {}
+}

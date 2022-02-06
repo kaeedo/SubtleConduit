@@ -3,6 +3,7 @@ build/
 fableOut/
 node_modules/
 dist/
+*.fs.js
 
 # globs
 Makefile.in

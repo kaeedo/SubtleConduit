@@ -1,0 +1,10 @@
+{
+  "$schema": "https://raw.githubusercontent.com/AngelMunoz/Perla/v0.20.0/perla.schema.json",
+  "index": "./index.html",
+  "fable": {
+    "project": "./src/App/App.fsproj"
+  },
+  "packages": {
+    "navigo": "https://cdn.skypack.dev/pin/navigo@v8.11.1-P7FrCxiJCiPJPMdihh6j/mode=imports/optimized/navigo.js"
+  }
+}

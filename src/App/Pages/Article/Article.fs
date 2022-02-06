@@ -5,7 +5,6 @@ open Sutil
 open SubtleConduit.Services.Api
 open SubtleConduit.Types
 open SubtleConduit.Elmish
-open Tailwind
 open Sutil.DOM
 open SubtleConduit.Router
 open SubtleConduit.Utilities
@@ -88,7 +87,7 @@ let ArticlePage (model: State) (slug: string) =
         Store.makeElmish (init slug) (update model.User) ignore ()
 
     let tags = state .> (fun s -> s.Tags)
-    let heartIcon = importDefault "../../Images/heart.svg"
+    //let heartIcon = importDefault "../../Images/heart.svg"
 
     let favoriteArticle slug isFavorited _ =
         match model.User with
@@ -120,29 +119,29 @@ let ArticlePage (model: State) (slug: string) =
     let otherArticleActions =
         Html.div [
             Attr.classes [
-                tw.flex
+                "flex"
             ]
             Html.div [
                 Bind.toggleClass (
                     (state .> fun s -> s.Author.Following),
-                    $"{tw.``bg-gray-300``} {tw.``text-white``}",
-                    tw.``text-gray-400``
+                    $"bg-gray-300 text-white",
+                    "text-gray-400"
                 )
                 Attr.classes [
-                    tw.``cursor-pointer``
-                    tw.``self-center``
-                    tw.``pl-1``
-                    tw.``pr-2``
-                    tw.``ml-6``
-                    tw.``rounded-sm``
-                    tw.``text-base``
-                    tw.``leading-6``
-                    tw.``h-7``
-                    tw.border
-                    tw.rounded
-                    tw.``border-gray-300``
-                    tw.``hover:bg-gray-300``
-                    tw.``hover:text-white``
+                    "cursor-pointer"
+                    "self-center"
+                    "pl-1"
+                    "pr-2"
+                    "ml-6"
+                    "rounded-sm"
+                    "text-base"
+                    "leading-6"
+                    "h-7"
+                    "border"
+                    "rounded"
+                    "border-gray-300"
+                    "hover:bg-gray-300"
+                    "hover:text-white"
                 ]
                 Bind.el (
                     state,
@@ -160,32 +159,32 @@ let ArticlePage (model: State) (slug: string) =
             Html.div [
                 Bind.toggleClass (
                     (state .> fun s -> s.Favorited),
-                    $"{tw.``bg-conduit-green``} {tw.``text-white``}",
-                    $"{tw.``hover:bg-conduit-green``} {tw.``hover:text-white``}"
+                    "bg-conduit-green text-white",
+                    "hover:bg-conduit-green hover:text-white"
                 )
                 Attr.classes [
-                    tw.``cursor-pointer``
-                    tw.flex
-                    tw.``self-center``
-                    tw.``pl-1``
-                    tw.``pr-2``
-                    tw.``ml-2``
-                    tw.``rounded-sm``
-                    tw.``text-base``
-                    tw.``leading-6``
-                    tw.``h-7``
-                    tw.``w-max``
-                    tw.border
-                    tw.rounded
-                    tw.``text-conduit-green``
-                    tw.``border-conduit-green``
+                    "cursor-pointer"
+                    "flex"
+                    "self-center"
+                    "pl-1"
+                    "pr-2"
+                    "ml-2"
+                    "rounded-sm"
+                    "text-base"
+                    "leading-6"
+                    "h-7"
+                    "w-max"
+                    "border"
+                    "rounded"
+                    "text-conduit-green"
+                    "border-conduit-green"
                 ]
                 Html.img [
                     Attr.classes [
-                        tw.``w-4``
-                        tw.``mr-1``
+                        "w-4"
+                        "mr-1"
                     ]
-                    Attr.src heartIcon
+                    //Attr.src heartIcon
                 ]
                 Bind.el (
                     state,
@@ -204,55 +203,55 @@ let ArticlePage (model: State) (slug: string) =
     let myArticleActions token =
         Html.div [
             Attr.classes [
-                tw.flex
+                "flex"
             ]
             Html.div [
                 Attr.classes [
-                    tw.``cursor-pointer``
-                    tw.``self-center``
-                    tw.``pl-1``
-                    tw.``pr-2``
-                    tw.``ml-6``
-                    tw.``rounded-sm``
-                    tw.``text-base``
-                    tw.``leading-6``
-                    tw.``h-7``
-                    tw.border
-                    tw.rounded
-                    tw.``text-gray-400``
-                    tw.``border-gray-300``
-                    tw.``hover:bg-gray-300``
-                    tw.``hover:text-white``
+                    "cursor-pointer"
+                    "self-center"
+                    "pl-1"
+                    "pr-2"
+                    "ml-6"
+                    "rounded-sm"
+                    "text-base"
+                    "leading-6"
+                    "h-7"
+                    "border"
+                    "rounded"
+                    "text-gray-400"
+                    "border-gray-300"
+                    "hover:bg-gray-300"
+                    "hover:text-white"
                 ]
                 text "Edit article"
                 onClick (fun _ -> Router.navigate $"editor/{slug}" (Some(slug :> obj))) []
             ]
             Html.div [
                 Attr.classes [
-                    tw.``cursor-pointer``
-                    tw.flex
-                    tw.``self-center``
-                    tw.``pl-1``
-                    tw.``pr-2``
-                    tw.``ml-2``
-                    tw.``rounded-sm``
-                    tw.``text-base``
-                    tw.``leading-6``
-                    tw.``h-7``
-                    tw.``w-max``
-                    tw.border
-                    tw.rounded
-                    tw.``text-red-500``
-                    tw.``border-red-500``
-                    tw.``hover:bg-red-500``
-                    tw.``hover:text-white``
+                    "cursor-pointer"
+                    "flex"
+                    "self-center"
+                    "pl-1"
+                    "pr-2"
+                    "ml-2"
+                    "rounded-sm"
+                    "text-base"
+                    "leading-6"
+                    "h-7"
+                    "w-max"
+                    "border"
+                    "rounded"
+                    "text-red-500"
+                    "border-red-500"
+                    "hover:bg-red-500"
+                    "hover:text-white"
                 ]
                 Html.img [
                     Attr.classes [
-                        tw.``w-4``
-                        tw.``mr-1``
+                        "w-4"
+                        "mr-1"
                     ]
-                    Attr.src heartIcon
+                    //Attr.src heartIcon
                 ]
                 text "Delete article"
                 onClick
@@ -269,30 +268,30 @@ let ArticlePage (model: State) (slug: string) =
     let articleInfo =
         Html.div [
             Attr.classes [
-                tw.flex
-                tw.``w-max``
+                "flex"
+                "w-max"
             ]
             Html.img [
                 Attr.classes [
-                    tw.``w-8``
-                    tw.``h-8``
-                    tw.``rounded-3xl``
-                    tw.``self-center``
-                    tw.``mr-1``
+                    "w-8"
+                    "h-8"
+                    "rounded-3xl"
+                    "self-center"
+                    "mr-1"
                 ]
                 Bind.el (state, (fun s -> Attr.src s.Author.Image))
             ]
             Html.div [
                 Attr.classes [
-                    tw.flex
-                    tw.``flex-col``
+                    "flex"
+                    "flex-col"
                 ]
                 Html.a [
                     Attr.classes [
-                        tw.``text-sm``
-                        tw.``leading-none``
-                        tw.``font-bold``
-                        tw.``hover:underline``
+                        "text-sm"
+                        "leading-none"
+                        "font-bold"
+                        "hover:underline"
                     ]
                     Attr.href $"javascript:void(0)"
 
@@ -310,8 +309,8 @@ let ArticlePage (model: State) (slug: string) =
                 ]
                 Html.span [
                     Attr.classes [
-                        tw.``text-xs``
-                        tw.``text-gray-400``
+                        "text-xs"
+                        "text-gray-400"
                     ]
                     Bind.el (state, (fun s -> text (s.CreatedAt |> formatDateUS "MMMM dd, yyyy")))
                 ]
@@ -333,40 +332,40 @@ let ArticlePage (model: State) (slug: string) =
             ]
             Html.div [
                 Attr.classes [
-                    tw.``bg-gray-800``
-                    tw.``w-full``
-                    tw.``p-8``
-                    tw.``text-white``
+                    "bg-gray-800"
+                    "w-full"
+                    "p-8"
+                    "text-white"
                 ]
                 Html.div [
                     Attr.classes [
-                        tw.``mx-auto``
-                        tw.container
-                        tw.``mb-8``
+                        "mx-auto"
+                        "container"
+                        "mb-8"
                     ]
                     Html.h1 [
                         Attr.classes [
-                            tw.``text-4xl``
+                            "text-4xl"
                         ]
                         Bind.el (state, (fun s -> text s.Title))
                     ]
                 ]
                 Html.div [
                     Attr.classes [
-                        tw.``mx-auto``
-                        tw.container
+                        "mx-auto"
+                        "container"
                     ]
                     articleInfo
                 ]
             ]
             Html.div [
                 Attr.classes [
-                    tw.``mx-auto``
-                    tw.container
+                    "mx-auto"
+                    "container"
                 ]
                 Html.div [
                     Attr.classes [
-                        tw.``my-8``
+                        "my-8"
                     ]
                     Bind.el (state, (fun s -> text s.Body))
                 ]
@@ -376,20 +375,20 @@ let ArticlePage (model: State) (slug: string) =
                         fun t ->
                             Html.li [
                                 Attr.classes [
-                                    tw.``inline-flex``
+                                    "inline-flex"
                                 ]
                                 Html.span [
                                     Attr.classes [
-                                        tw.``px-2``
-                                        tw.``py-1``
-                                        tw.``rounded-xl``
-                                        tw.``text-gray-300``
-                                        tw.``mr-1``
-                                        tw.``mb-1``
-                                        tw.``text-xs``
-                                        tw.border
-                                        tw.rounded
-                                        tw.``border-gray-300``
+                                        "px-2"
+                                        "py-1"
+                                        "rounded-xl"
+                                        "text-gray-300"
+                                        "mr-1"
+                                        "mb-1"
+                                        "text-xs"
+                                        "border"
+                                        "rounded"
+                                        "border-gray-300"
                                     ]
 
                                     text t
@@ -399,15 +398,15 @@ let ArticlePage (model: State) (slug: string) =
                 ]
                 Html.div [
                     Attr.classes [
-                        tw.``my-8``
-                        tw.``border-b-2``
+                        "my-8"
+                        "border-b-2"
                     ]
                 ]
                 Html.div [
                     Attr.classes [
-                        tw.container
-                        tw.flex
-                        tw.``justify-center``
+                        "container"
+                        "flex"
+                        "justify-center"
                     ]
                     articleInfo
                 ]

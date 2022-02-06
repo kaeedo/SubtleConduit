@@ -4,7 +4,6 @@ open System
 open Sutil
 open SubtleConduit.Types
 open SubtleConduit.Elmish
-open Tailwind
 open Sutil.DOM
 open Sutil.Attr
 open SubtleConduit.Services.Api
@@ -75,32 +74,32 @@ let NewArticlePage (model: State) (slug: string) =
             ]
 
             Attr.classes [
-                tw.container
-                tw.``mx-auto``
-                tw.flex
-                tw.``flex-col``
-                tw.``items-center``
+                "container"
+                "mx-auto"
+                "flex"
+                "flex-col"
+                "items-center"
             ]
             Html.form [
                 on "submit" (onSubmit) []
                 Attr.classes [
-                    tw.``w-9/12``
+                    "w-9/12"
                 ]
                 Html.div [
                     Attr.classes [
-                        tw.``mb-4``
+                        "mb-4"
                     ]
                     Html.input [
                         Attr.classes [
-                            tw.``border-2``
-                            tw.``border-solid``
-                            tw.rounded
-                            tw.``border-gray-200``
-                            tw.``px-6``
-                            tw.``py-3``
-                            tw.``w-full``
-                            tw.``h-16``
-                            tw.``text-xl``
+                            "border-2"
+                            "border-solid"
+                            "rounded"
+                            "border-gray-200"
+                            "px-6"
+                            "py-3"
+                            "w-full"
+                            "h-16"
+                            "text-xl"
                         ]
                         type' "text"
                         Bind.attr ("value", title)
@@ -109,17 +108,17 @@ let NewArticlePage (model: State) (slug: string) =
                 ]
                 Html.div [
                     Attr.classes [
-                        tw.``mb-4``
+                        "mb-4"
                     ]
                     Html.input [
                         Attr.classes [
-                            tw.``border-2``
-                            tw.``border-solid``
-                            tw.rounded
-                            tw.``border-gray-200``
-                            tw.``px-6``
-                            tw.``py-3``
-                            tw.``w-full``
+                            "border-2"
+                            "border-solid"
+                            "rounded"
+                            "border-gray-200"
+                            "px-6"
+                            "py-3"
+                            "w-full"
                         ]
                         type' "text"
                         Bind.attr ("value", description)
@@ -128,17 +127,17 @@ let NewArticlePage (model: State) (slug: string) =
                 ]
                 Html.div [
                     Attr.classes [
-                        tw.``mb-4``
+                        "mb-4"
                     ]
                     Html.textarea [
                         Attr.classes [
-                            tw.``border-2``
-                            tw.``border-solid``
-                            tw.rounded
-                            tw.``border-gray-200``
-                            tw.``px-6``
-                            tw.``py-3``
-                            tw.``w-full``
+                            "border-2"
+                            "border-solid"
+                            "rounded"
+                            "border-gray-200"
+                            "px-6"
+                            "py-3"
+                            "w-full"
                         ]
                         Attr.rows 8
                         Bind.attr ("value", body)
@@ -147,18 +146,18 @@ let NewArticlePage (model: State) (slug: string) =
                 ]
                 Html.div [
                     Attr.classes [
-                        tw.``mb-4``
-                        tw.relative
+                        "mb-4"
+                        "relative"
                     ]
                     Html.input [
                         Attr.classes [
-                            tw.``border-2``
-                            tw.``border-solid``
-                            tw.rounded
-                            tw.``border-gray-200``
-                            tw.``px-6``
-                            tw.``py-3``
-                            tw.``w-full``
+                            "border-2"
+                            "border-solid"
+                            "rounded"
+                            "border-gray-200"
+                            "px-6"
+                            "py-3"
+                            "w-full"
                         ]
                         type' "text"
                         Bind.attr ("value", tag)
@@ -173,18 +172,18 @@ let NewArticlePage (model: State) (slug: string) =
                     ]
                     Html.div [
                         Attr.classes [
-                            tw.absolute
-                            tw.``cursor-pointer``
-                            tw.``top-2``
-                            tw.``right-2``
-                            tw.``bg-gray-500``
-                            tw.``hover:bg-gray-600``
-                            tw.``text-white``
-                            tw.rounded
-                            tw.``px-3``
-                            tw.``pt-px``
-                            tw.``pb-1.5``
-                            tw.``text-xl``
+                            "absolute"
+                            "cursor-pointer"
+                            "top-2"
+                            "right-2"
+                            "bg-gray-500"
+                            "hover:bg-gray-600"
+                            "text-white"
+                            "rounded"
+                            "px-3"
+                            "pt-px"
+                            "pb-1.5"
+                            "text-xl"
                         ]
                         text "+"
                         onClick (addTag) []
@@ -192,28 +191,28 @@ let NewArticlePage (model: State) (slug: string) =
                 ]
                 Html.ul [
                     Attr.classes [
-                        tw.flex
+                        "flex"
                     ]
                     Bind.each (
                         tags,
                         (fun t ->
                             Html.li [
                                 Attr.classes [
-                                    tw.``px-2``
-                                    tw.``py-1``
-                                    tw.``rounded-xl``
-                                    tw.``cursor-pointer``
-                                    tw.``bg-gray-500``
-                                    tw.``hover:bg-gray-600``
-                                    tw.``text-white``
-                                    tw.``mr-1``
-                                    tw.``mb-1``
-                                    tw.``text-xs``
+                                    "px-2"
+                                    "py-1"
+                                    "rounded-xl"
+                                    "cursor-pointer"
+                                    "bg-gray-500"
+                                    "hover:bg-gray-600"
+                                    "text-white"
+                                    "mr-1"
+                                    "mb-1"
+                                    "text-xs"
                                 ]
                                 Html.span [
                                     Attr.classes [
-                                        tw.``mr-1``
-                                        tw.``font-bold``
+                                        "mr-1"
+                                        "font-bold"
                                     ]
                                     text "X"
                                 ]
@@ -224,19 +223,19 @@ let NewArticlePage (model: State) (slug: string) =
                 ]
                 Html.div [
                     Attr.classes [
-                        tw.flex
-                        tw.``justify-end``
+                        "flex"
+                        "justify-end"
                     ]
                     Html.button [
                         Attr.classes [
-                            tw.flex
-                            tw.``bg-conduit-green``
-                            tw.``hover:bg-conduit-green-500``
-                            tw.``text-white``
-                            tw.rounded
-                            tw.``px-6``
-                            tw.``py-3``
-                            tw.``text-xl``
+                            "flex"
+                            "bg-conduit-green"
+                            "hover:bg-conduit-green-500"
+                            "text-white"
+                            "rounded"
+                            "px-6"
+                            "py-3"
+                            "text-xl"
                         ]
                         type' "submit"
                         text (

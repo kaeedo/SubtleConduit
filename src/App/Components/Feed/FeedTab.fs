@@ -4,7 +4,6 @@ open Sutil
 open Sutil.Attr
 open SubtleConduit.Utilities
 
-open Tailwind
 open SubtleConduit.Types
 open SubtleConduit.Services.Api
 open Sutil.DOM
@@ -15,14 +14,14 @@ open SubtleConduit.Elmish
 let FeedTab label clickHandler isSelected =
     let view =
         Html.div [
-            Bind.toggleClass (isSelected, $"{tw.``border-b-2``} {tw.``border-conduit-green``}")
+            Bind.toggleClass (isSelected, "border-b-2 border-conduit-green")
             Attr.classes [
-                tw.``text-conduit-green``
-                tw.``w-max``
-                tw.``py-2``
-                tw.``px-4``
-                tw.``box-content``
-                tw.``cursor-pointer``
+                "text-conduit-green"
+                "w-max"
+                "py-2"
+                "px-4"
+                "box-content"
+                "cursor-pointer"
             ]
             onClick (clickHandler) []
             text label

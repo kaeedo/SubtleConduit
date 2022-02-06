@@ -6,7 +6,6 @@ open SubtleConduit.Services.Api
 open SubtleConduit.Types
 open SubtleConduit.Elmish
 open SubtleConduit.Router
-open Tailwind
 open Sutil.DOM
 open Sutil.Attr
 open SubtleConduit.Components
@@ -79,34 +78,34 @@ let ProfilePage (model: State) (username: string) =
             ]
             Html.div [
                 Attr.classes [
-                    tw.``bg-gray-100``
-                    tw.``w-full``
-                    tw.``p-8``
+                    "bg-gray-100"
+                    "w-full"
+                    "p-8"
                 ]
                 Html.div [
                     Attr.classes [
-                        tw.container
-                        tw.``mx-auto``
-                        tw.``text-black``
+                        "container"
+                        "mx-auto"
+                        "text-black"
                     ]
                     Html.h1 [
                         Attr.classes [
-                            tw.``mx-auto``
-                            tw.``text-center``
-                            tw.``text-6xl``
-                            tw.``font-mono``
-                            tw.``font-bold``
-                            tw.``text-shadow-lg``
-                            tw.``mb-2``
-                            tw.``cursor-default``
-                            tw.flex
-                            tw.``justify-center``
+                            "mx-auto"
+                            "text-center"
+                            "text-6xl"
+                            "font-mono"
+                            "font-bold"
+                            "text-shadow-lg"
+                            "mb-2"
+                            "cursor-default"
+                            "flex"
+                            "justify-center"
                         ]
                         Html.img [
                             Attr.classes [
-                                tw.``h-28``
-                                tw.``w-28``
-                                tw.``rounded-full``
+                                "h-28"
+                                "w-28"
+                                "rounded-full"
                             ]
 
                             Bind.el (state, (fun s -> Attr.src s.Image))
@@ -114,21 +113,21 @@ let ProfilePage (model: State) (username: string) =
                     ]
                     Html.h2 [
                         Attr.classes [
-                            tw.``mx-auto``
-                            tw.``text-center``
-                            tw.``text-2xl``
-                            tw.``font-bold``
-                            tw.``cursor-default``
+                            "mx-auto"
+                            "text-center"
+                            "text-2xl"
+                            "font-bold"
+                            "cursor-default"
                         ]
                         Bind.el (state, (fun s -> text s.Username))
                     ]
                     Html.h4 [
                         Attr.classes [
-                            tw.``mx-auto``
-                            tw.``text-center``
-                            tw.``text-sm``
-                            tw.``text-gray-400``
-                            tw.``cursor-default``
+                            "mx-auto"
+                            "text-center"
+                            "text-sm"
+                            "text-gray-400"
+                            "cursor-default"
                         ]
                         Bind.el (state, (fun s -> text s.Bio))
                     ]
@@ -140,25 +139,25 @@ let ProfilePage (model: State) (username: string) =
                             | Some u ->
                                 Html.div [
                                     Attr.classes [
-                                        tw.flex
-                                        tw.``justify-end``
+                                        "flex"
+                                        "justify-end"
                                     ]
                                     Html.div [
                                         Attr.classes [
-                                            tw.``cursor-pointer``
-                                            tw.``pl-1``
-                                            tw.``pr-2``
-                                            tw.``ml-6``
-                                            tw.``rounded-sm``
-                                            tw.``text-base``
-                                            tw.``leading-6``
-                                            tw.``h-7``
-                                            tw.border
-                                            tw.rounded
-                                            tw.``text-gray-400``
-                                            tw.``border-gray-300``
-                                            tw.``hover:bg-gray-300``
-                                            tw.``hover:text-white``
+                                            "cursor-pointer"
+                                            "pl-1"
+                                            "pr-2"
+                                            "ml-6"
+                                            "rounded-sm"
+                                            "text-base"
+                                            "leading-6"
+                                            "h-7"
+                                            "border"
+                                            "rounded"
+                                            "text-gray-400"
+                                            "border-gray-300"
+                                            "hover:bg-gray-300"
+                                            "hover:text-white"
                                         ]
                                         if u.Username = s.Username then
                                             onClick (fun _ -> Router.navigate "settings" None) []
@@ -178,11 +177,11 @@ let ProfilePage (model: State) (username: string) =
             ]
             Html.div [
                 Attr.classes [
-                    tw.container
-                    tw.``mx-auto``
-                    tw.``mt-8``
-                    tw.flex
-                    tw.``justify-between``
+                    "container"
+                    "mx-auto"
+                    "mt-8"
+                    "flex"
+                    "justify-between"
                 ]
                 Feed.Feed model ignore (Some articleFilter) (ignore)
             ]
