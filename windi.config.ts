@@ -1,10 +1,14 @@
+import { defineConfig } from 'windicss/helpers'
 const { transform } = require('windicss/helpers');
 
-module.exports = {
+export default defineConfig ({
+    preflight: {
+        safelist:'div span ul li a h1 h2 h3 h4 h5 h6 aside section nav'
+    },
     extract: {
         // accepts globs and file paths relative to project root
         include: [
-            './index.html',
+            'index.html',
             './**/*.fs',
         ]
     },
@@ -21,4 +25,4 @@ module.exports = {
             }
         },
     }
-}
+})
