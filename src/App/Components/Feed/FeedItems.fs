@@ -1,13 +1,11 @@
 module SubtleConduit.Components.FeedItems
 
 open Sutil
-open Sutil.Attr
+open Sutil.CoreElements
 open SubtleConduit.Utilities
-
 open SubtleConduit.Types
 open SubtleConduit.Router
 open SubtleConduit.Services.Api
-open Sutil.DOM
 open Fable.Core.JsInterop
 
 let FeedItems articles favoriteArticle setArticleFilter =
@@ -18,9 +16,9 @@ let FeedItems articles favoriteArticle setArticleFilter =
             Bind.el (
                 articles,
                 function
-                | Waiting -> text "Loading"
-                | Error e -> text $"Error occured: {e.Message}"
-                | Result art ->
+                | PromiseState.Waiting -> text "Loading"
+                | PromiseState.Error e -> text $"Error occured: {e.Message}"
+                | PromiseState.Result art ->
                     fragment [
                         for a in art.Articles do
                             Html.li [
@@ -40,11 +38,7 @@ let FeedItems articles favoriteArticle setArticleFilter =
                                                 Attr.src a.Author.Image
                                             ]
                                             Html.div [
-                                                Attr.classes [
-                                                    "flex"
-                                                    "flex-col"
-                                                    "ml-2"
-                                                ]
+                                                Attr.classes [ "flex"; "flex-col"; "ml-2" ]
                                                 Html.a [
                                                     Attr.classes [
                                                         "text-conduit-green"
@@ -91,17 +85,9 @@ let FeedItems articles favoriteArticle setArticleFilter =
                                         ]
                                     ]
                                     Html.div [
-                                        Attr.classes [
-                                            "mb-4"
-                                            "flex"
-                                            "flex-col"
-                                        ]
+                                        Attr.classes [ "mb-4"; "flex"; "flex-col" ]
                                         Html.a [
-                                            Attr.classes [
-                                                "text-2xl"
-                                                "font-semibold"
-                                                "mb-1"
-                                            ]
+                                            Attr.classes [ "text-2xl"; "font-semibold"; "mb-1" ]
                                             Attr.href "#"
                                             text a.Title
                                         ]

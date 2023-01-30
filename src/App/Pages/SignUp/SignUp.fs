@@ -4,7 +4,7 @@ open System
 open Sutil
 open SubtleConduit.Types
 open SubtleConduit.Elmish
-open Sutil.Attr
+open Sutil.CoreElements
 
 let SignUpPage dispatch =
     let view =
@@ -27,10 +27,7 @@ let SignUpPage dispatch =
             Html.div [
                 Attr.classes [ "mb-4" ]
                 Html.a [
-                    Attr.classes [
-                        "text-conduit-green"
-                        "text-base"
-                    ]
+                    Attr.classes [ "text-conduit-green"; "text-base" ]
                     Attr.href "#signin"
                     text "Have an account?"
                 ]

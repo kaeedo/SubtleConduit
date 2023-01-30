@@ -2,7 +2,10 @@ module SubtleConduit.Pages.Home
 
 open Sutil
 open SubtleConduit.Components
-open Sutil.DOM
+
+open Sutil.Core
+open Sutil.CoreElements
+open Sutil.DomHelpers
 
 let private articleFilter = Store.make None
 

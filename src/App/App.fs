@@ -12,7 +12,8 @@ open SubtleConduit.Pages.SignUp
 open SubtleConduit.Pages.Settings
 open SubtleConduit.Pages.Article
 open SubtleConduit.Pages.Profile
-open Sutil.DOM
+
+open Sutil.CoreElements
 open SubtleConduit.Router
 open SubtleConduit.Pages.NewArticle
 

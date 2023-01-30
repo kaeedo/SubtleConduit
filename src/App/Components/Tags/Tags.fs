@@ -1,10 +1,11 @@
 module SubtleConduit.Components.Tags
 
 open Sutil
-open Sutil.DOM
+
+open Sutil.CoreElements
 open SubtleConduit.Types
 open SubtleConduit.Services.Api
-open Sutil.Attr
+
 
 let private tags = ObservablePromise<Tags>()
 
@@ -40,10 +41,10 @@ let Tags (articleFilter: ArticleApi.ArticleFilter option) (setArticleFilter: Art
                     Bind.el (
                         tags,
                         (function
-                        | Waiting -> text "Loading"
-                        | Error e -> text $"Error occured: {e.Message}"
-                        | Result t when t.Tags |> List.isEmpty -> fragment [ text "Nothing to show" ]
-                        | Result tagsResult ->
+                        | PromiseState.Waiting -> text "Loading"
+                        | PromiseState.Error e -> text $"Error occured: {e.Message}"
+                        | PromiseState.Result t when t.Tags |> List.isEmpty -> fragment [ text "Nothing to show" ]
+                        | PromiseState.Result tagsResult ->
                             fragment [
                                 for t in tagsResult.Tags do
                                     Html.li [

@@ -5,10 +5,11 @@ open Sutil
 open SubtleConduit.Services.Api
 open SubtleConduit.Types
 open SubtleConduit.Elmish
-open Sutil.DOM
+
+open Sutil.CoreElements
 open SubtleConduit.Router
 open SubtleConduit.Utilities
-open Sutil.Attr
+
 open Fable.Core.JsInterop
 
 type ArticleState = {

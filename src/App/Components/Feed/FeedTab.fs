@@ -1,9 +1,10 @@
 module SubtleConduit.Components.FeedTab
 
 open Sutil
-open Sutil.Attr
 
-open Sutil.DOM
+open Sutil.Core
+open Sutil.CoreElements
+open Sutil.DomHelpers
 
 
 let FeedTab label clickHandler isSelected =

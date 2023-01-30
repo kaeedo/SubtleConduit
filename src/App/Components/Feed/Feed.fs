@@ -1,12 +1,13 @@
 module SubtleConduit.Components.Feed
 
 open Sutil
-open Sutil.Attr
+
+open Sutil.CoreElements
 open SubtleConduit.Utilities
 
 open SubtleConduit.Types
 open SubtleConduit.Services.Api.ArticleApi
-open Sutil.DOM
+
 open System
 open SubtleConduit.Elmish
 open SubtleConduit.Components.FeedItems
@@ -91,7 +92,7 @@ let Feed (model: State) (dispatch: Dispatch<Message>) (articleFilter: ArticleFil
         let total =
             articles
             .> (function
-            | Result a ->
+            | PromiseState.Result a ->
                 Math.Ceiling(float a.ArticlesCount / float pageSize)
                 |> int
             | _ -> 0)

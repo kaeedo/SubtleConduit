@@ -6,8 +6,8 @@ open SubtleConduit.Services.Api
 open SubtleConduit.Types
 open SubtleConduit.Elmish
 open SubtleConduit.Router
-open Sutil.DOM
-open Sutil.Attr
+
+open Sutil.CoreElements
 open SubtleConduit.Components
 
 type ProfileState = {
@@ -79,17 +79,9 @@ let ProfilePage (model: State) (username: string) =
         Html.div [
             disposeOnUnmount [ state ]
             Html.div [
-                Attr.classes [
-                    "bg-gray-100"
-                    "w-full"
-                    "p-8"
-                ]
+                Attr.classes [ "bg-gray-100"; "w-full"; "p-8" ]
                 Html.div [
-                    Attr.classes [
-                        "container"
-                        "mx-auto"
-                        "text-black"
-                    ]
+                    Attr.classes [ "container"; "mx-auto"; "text-black" ]
                     Html.h1 [
                         Attr.classes [
                             "mx-auto"
@@ -104,11 +96,7 @@ let ProfilePage (model: State) (username: string) =
                             "justify-center"
                         ]
                         Html.img [
-                            Attr.classes [
-                                "h-28"
-                                "w-28"
-                                "rounded-full"
-                            ]
+                            Attr.classes [ "h-28"; "w-28"; "rounded-full" ]
 
                             Bind.el (state, (fun s -> Attr.src s.Image))
                         ]

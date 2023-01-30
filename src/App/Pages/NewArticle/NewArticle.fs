@@ -4,8 +4,10 @@ open System
 open Sutil
 open SubtleConduit.Types
 open SubtleConduit.Elmish
-open Sutil.DOM
-open Sutil.Attr
+
+open Sutil.Core
+open Sutil.CoreElements
+open Sutil.DomHelpers
 open SubtleConduit.Services.Api
 open SubtleConduit.Router
 

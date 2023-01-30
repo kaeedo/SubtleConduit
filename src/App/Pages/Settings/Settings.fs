@@ -4,8 +4,8 @@ open System
 open Sutil
 open SubtleConduit.Elmish
 open SubtleConduit.Types
-open Sutil.Attr
-open Sutil.DOM
+
+open Sutil.CoreElements
 
 let SettingsPage (model: State) dispatch =
     //let updateProfile
