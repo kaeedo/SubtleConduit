@@ -114,7 +114,7 @@ let Feed (model: State) (dispatch: Dispatch<Message>) (articleFilter: ArticleFil
 
     let tabs () =
         Html.div [
-            Attr.classes [ tw.flex ]
+            Attr.classes [ "flex" ]
             Bind.el (
                 tabsToShow,
                 fun t ->
@@ -175,11 +175,11 @@ let Feed (model: State) (dispatch: Dispatch<Message>) (articleFilter: ArticleFil
                 tabSubscription
             ]
 
-            Attr.classes [ tw.``flex-auto``; tw.``mr-6`` ]
+            Attr.classes [ "flex-auto"; "mr-6" ]
             tabs ()
             FeedItems articles favoriteArticle setArticleFilter
             Html.ul [
-                Attr.classes [ tw.flex; tw.``justify-center`` ]
+                Attr.classes [ "flex"; "justify-center" ]
                 Bind.el (
                     pageNumbers,
                     fun pns ->
@@ -188,13 +188,13 @@ let Feed (model: State) (dispatch: Dispatch<Message>) (articleFilter: ArticleFil
                         fragment [
                             Html.li [
                                 Attr.classes [
-                                    tw.``cursor-pointer``
-                                    tw.``px-3``
-                                    tw.``py-2``
-                                    tw.border
-                                    tw.``border-gray-300``
-                                    tw.``border-r-0``
-                                    tw.``rounded-l-sm``
+                                    "cursor-pointer"
+                                    "px-3"
+                                    "py-2"
+                                    "border"
+                                    "border-gray-300"
+                                    "border-r-0"
+                                    "rounded-l-sm"
                                 ]
                                 onClick
                                     (fun _ ->
@@ -215,16 +215,16 @@ let Feed (model: State) (dispatch: Dispatch<Message>) (articleFilter: ArticleFil
                                 Html.li [
                                     Bind.toggleClass (
                                         (currentPage .> fun cp -> (cp.ToString()) = pn),
-                                        tw.``bg-conduit-green`` + " " + tw.``text-white``,
-                                        tw.``hover:bg-gray-100``
+                                        "bg-conduit-green" + " " + "text-white",
+                                        "hover:bg-gray-100"
                                     )
                                     Attr.classes [
-                                        tw.``cursor-pointer``
-                                        tw.``px-3``
-                                        tw.``py-2``
-                                        tw.border
-                                        tw.``border-gray-300``
-                                        tw.``border-r-0``
+                                        "cursor-pointer"
+                                        "px-3"
+                                        "py-2"
+                                        "border"
+                                        "border-gray-300"
+                                        "border-r-0"
                                     ]
                                     onClick
                                         (fun _ ->
@@ -235,12 +235,12 @@ let Feed (model: State) (dispatch: Dispatch<Message>) (articleFilter: ArticleFil
 
                             Html.li [
                                 Attr.classes [
-                                    tw.``cursor-pointer``
-                                    tw.``px-3``
-                                    tw.``py-2``
-                                    tw.border
-                                    tw.``border-gray-300``
-                                    tw.``rounded-r-sm``
+                                    "cursor-pointer"
+                                    "px-3"
+                                    "py-2"
+                                    "border"
+                                    "border-gray-300"
+                                    "rounded-r-sm"
                                 ]
                                 onClick
                                     (fun _ ->

@@ -11,36 +11,36 @@ let HomePage model dispatch =
         Html.div [
             Html.div [
                 Attr.classes [
-                    tw.``bg-conduit-green``
-                    tw.``w-full``
-                    tw.``p-8``
+                    "bg-conduit-green"
+                    "w-full"
+                    "p-8"
                 ]
                 Html.div [
                     Attr.classes [
-                        tw.container
-                        tw.``mx-auto``
-                        tw.``text-white``
+                        "container"
+                        "mx-auto"
+                        "text-white"
                     ]
                     Html.h1 [
                         Attr.classes [
-                            tw.``mx-auto``
-                            tw.``text-center``
-                            tw.``text-6xl``
-                            tw.``font-mono``
-                            tw.``font-bold``
-                            tw.``text-shadow-lg``
-                            tw.``mb-2``
-                            tw.``cursor-default``
+                            "mx-auto"
+                            "text-center"
+                            "text-6xl"
+                            "font-mono"
+                            "font-bold"
+                            "text-shadow-lg"
+                            "mb-2"
+                            "cursor-default"
                         ]
                         text "conduit"
                     ]
                     Html.h2 [
                         Attr.classes [
-                            tw.``mx-auto``
-                            tw.``text-center``
-                            tw.``text-2xl``
-                            tw.``font-light``
-                            tw.``cursor-default``
+                            "mx-auto"
+                            "text-center"
+                            "text-2xl"
+                            "font-light"
+                            "cursor-default"
                         ]
                         text "A place to share your knowledge"
                     ]
@@ -48,11 +48,11 @@ let HomePage model dispatch =
             ]
             Html.div [
                 Attr.classes [
-                    tw.container
-                    tw.``mx-auto``
-                    tw.``mt-8``
-                    tw.flex
-                    tw.``justify-between``
+                    "container"
+                    "mx-auto"
+                    "mt-8"
+                    "flex"
+                    "justify-between"
                 ]
                 Bind.el (
                     articleFilter,

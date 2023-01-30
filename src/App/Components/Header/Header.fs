@@ -21,33 +21,33 @@ let Header (model, dispatch) =
 
     let loggedOutMenuItems =
         Html.ul [
-            Attr.classes [ tw.flex; tw.``flex-row`` ]
+            Attr.classes [ "flex"; "flex-row" ]
             Html.li [
-                Bind.toggleClass (isHome, tw.``text-gray-700``, tw.``text-gray-400``)
+                Bind.toggleClass (isHome, "text-gray-700", "text-gray-400")
 
                 Attr.classes [
-                    tw.``h-auto``
-                    tw.``hover:text-gray-700``
+                    "h-auto"
+                    "hover:text-gray-700"
                 ]
                 Html.a [ Attr.href "#/home"; text "Home" ]
             ]
             Html.li [
-                Bind.toggleClass (isSignIn, tw.``text-gray-700``, tw.``text-gray-400``)
+                Bind.toggleClass (isSignIn, "text-gray-700", "text-gray-400")
 
                 Attr.classes [
-                    tw.``h-auto``
-                    tw.``ml-4``
-                    tw.``hover:text-gray-700``
+                    "h-auto"
+                    "ml-4"
+                    "hover:text-gray-700"
                 ]
                 Html.a [ Attr.href "#/signin"; text "Sign In" ]
             ]
             Html.li [
-                Bind.toggleClass (isSignUp, tw.``text-gray-700``, tw.``text-gray-400``)
+                Bind.toggleClass (isSignUp, "text-gray-700", "text-gray-400")
 
                 Attr.classes [
-                    tw.``h-auto``
-                    tw.``ml-4``
-                    tw.``hover:text-gray-700``
+                    "h-auto"
+                    "ml-4"
+                    "hover:text-gray-700"
                 ]
                 Html.a [ Attr.href "#/signup"; text "Sign Up" ]
             ]
@@ -55,23 +55,23 @@ let Header (model, dispatch) =
 
     let loggedInMenuItems (u: User) =
         Html.ul [
-            Attr.classes [ tw.flex; tw.``flex-row`` ]
+            Attr.classes [ "flex"; "flex-row" ]
             Html.li [
-                Bind.toggleClass (isHome, tw.``text-gray-700``, tw.``text-gray-400``)
+                Bind.toggleClass (isHome, "text-gray-700", "text-gray-400")
 
                 Attr.classes [
-                    tw.``h-auto``
-                    tw.``hover:text-gray-700``
+                    "h-auto"
+                    "hover:text-gray-700"
                 ]
                 Html.a [ Attr.href "#/home"; text "Home" ]
             ]
             Html.li [
-                Bind.toggleClass (isNewArticle, tw.``text-gray-700``, tw.``text-gray-400``)
+                Bind.toggleClass (isNewArticle, "text-gray-700", "text-gray-400")
 
                 Attr.classes [
-                    tw.``h-auto``
-                    tw.``ml-4``
-                    tw.``hover:text-gray-700``
+                    "h-auto"
+                    "ml-4"
+                    "hover:text-gray-700"
                 ]
                 Html.a [
                     Attr.href "#/editor"
@@ -79,12 +79,12 @@ let Header (model, dispatch) =
                 ]
             ]
             Html.li [
-                Bind.toggleClass (isSettings, tw.``text-gray-700``, tw.``text-gray-400``)
+                Bind.toggleClass (isSettings, "text-gray-700", "text-gray-400")
 
                 Attr.classes [
-                    tw.``h-auto``
-                    tw.``ml-4``
-                    tw.``hover:text-gray-700``
+                    "h-auto"
+                    "ml-4"
+                    "hover:text-gray-700"
                 ]
                 Html.a [
                     Attr.href "#/settings"
@@ -92,12 +92,12 @@ let Header (model, dispatch) =
                 ]
             ]
             Html.li [
-                Bind.toggleClass (isMyProfile u, tw.``text-gray-700``, tw.``text-gray-400``)
+                Bind.toggleClass (isMyProfile u, "text-gray-700", "text-gray-400")
 
                 Attr.classes [
-                    tw.``h-auto``
-                    tw.``ml-4``
-                    tw.``hover:text-gray-700``
+                    "h-auto"
+                    "ml-4"
+                    "hover:text-gray-700"
                 ]
                 Html.a [
                     Attr.href $"#/profile/{u.Username}"
@@ -110,28 +110,28 @@ let Header (model, dispatch) =
     let view =
         Html.nav [
             Attr.classes [
-                tw.container
-                tw.``mx-auto``
-                tw.flex
-                tw.``flex-row``
-                tw.``justify-between``
-                tw.``py-2``
+                "container"
+                "mx-auto"
+                "flex"
+                "flex-row"
+                "justify-between"
+                "py-2"
             ]
             Html.span [
                 Attr.classes [
-                    tw.``text-2xl``
-                    tw.``font-mono``
-                    tw.``text-conduit-green``
-                    tw.``cursor-default``
+                    "text-2xl"
+                    "font-mono"
+                    "text-conduit-green"
+                    "cursor-default"
                 ]
                 text "conduit"
             ]
             Html.div [
                 Attr.classes [
-                    tw.flex
-                    tw.``justify-end``
-                    tw.``content-center``
-                    tw.``h-auto``
+                    "flex"
+                    "justify-end"
+                    "content-center"
+                    "h-auto"
                 ]
                 Bind.el (
                     model,
