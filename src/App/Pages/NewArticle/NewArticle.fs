@@ -4,7 +4,6 @@ open System
 open Sutil
 open SubtleConduit.Types
 open SubtleConduit.Elmish
-open Tailwind
 open Sutil.DOM
 open Sutil.Attr
 open SubtleConduit.Services.Api
@@ -32,12 +31,13 @@ let NewArticlePage (model: State) (slug: string) =
         let onSubmit (e: Browser.Types.Event) =
             e.preventDefault ()
 
-            let article =
-                { UpsertArticle.Title = title.Value
-                  Description = description.Value
-                  Body = body.Value
-                  TagList = tags.Value
-                  Token = token }
+            let article = {
+                UpsertArticle.Title = title.Value
+                Description = description.Value
+                Body = body.Value
+                TagList = tags.Value
+                Token = token
+            }
 
             promise {
                 let! newSlug =
@@ -67,12 +67,7 @@ let NewArticlePage (model: State) (slug: string) =
                     if not (String.IsNullOrWhiteSpace(slug)) then
                         getArticleToEdit slug)
                 [ Once ]
-            disposeOnUnmount [
-                title
-                description
-                body
-                tags
-            ]
+            disposeOnUnmount [ title; description; body; tags ]
 
             Attr.classes [
                 tw.container
@@ -83,13 +78,9 @@ let NewArticlePage (model: State) (slug: string) =
             ]
             Html.form [
                 on "submit" (onSubmit) []
-                Attr.classes [
-                    tw.``w-9/12``
-                ]
+                Attr.classes [ tw.``w-9/12`` ]
                 Html.div [
-                    Attr.classes [
-                        tw.``mb-4``
-                    ]
+                    Attr.classes [ tw.``mb-4`` ]
                     Html.input [
                         Attr.classes [
                             tw.``border-2``
@@ -108,9 +99,7 @@ let NewArticlePage (model: State) (slug: string) =
                     ]
                 ]
                 Html.div [
-                    Attr.classes [
-                        tw.``mb-4``
-                    ]
+                    Attr.classes [ tw.``mb-4`` ]
                     Html.input [
                         Attr.classes [
                             tw.``border-2``
@@ -127,9 +116,7 @@ let NewArticlePage (model: State) (slug: string) =
                     ]
                 ]
                 Html.div [
-                    Attr.classes [
-                        tw.``mb-4``
-                    ]
+                    Attr.classes [ tw.``mb-4`` ]
                     Html.textarea [
                         Attr.classes [
                             tw.``border-2``
@@ -146,10 +133,7 @@ let NewArticlePage (model: State) (slug: string) =
                     ]
                 ]
                 Html.div [
-                    Attr.classes [
-                        tw.``mb-4``
-                        tw.relative
-                    ]
+                    Attr.classes [ tw.``mb-4``; tw.relative ]
                     Html.input [
                         Attr.classes [
                             tw.``border-2``
@@ -191,9 +175,7 @@ let NewArticlePage (model: State) (slug: string) =
                     ]
                 ]
                 Html.ul [
-                    Attr.classes [
-                        tw.flex
-                    ]
+                    Attr.classes [ tw.flex ]
                     Bind.each (
                         tags,
                         (fun t ->
@@ -211,10 +193,7 @@ let NewArticlePage (model: State) (slug: string) =
                                     tw.``text-xs``
                                 ]
                                 Html.span [
-                                    Attr.classes [
-                                        tw.``mr-1``
-                                        tw.``font-bold``
-                                    ]
+                                    Attr.classes [ tw.``mr-1``; tw.``font-bold`` ]
                                     text "X"
                                 ]
                                 Html.span [ text t ]
@@ -223,10 +202,7 @@ let NewArticlePage (model: State) (slug: string) =
                     )
                 ]
                 Html.div [
-                    Attr.classes [
-                        tw.flex
-                        tw.``justify-end``
-                    ]
+                    Attr.classes [ tw.flex; tw.``justify-end`` ]
                     Html.button [
                         Attr.classes [
                             tw.flex

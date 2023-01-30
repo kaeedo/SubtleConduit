@@ -47,7 +47,7 @@ let private update (msg: Message) (state: State) =
         let errorFn error = UnsuccessfulLogin error
 
         state, Cmd.OfPromise.either ProfileApi.signUp upsertUser successFn (fun e -> UnsuccessfulLogin e)
-    | SignIn (email, password) ->
+    | SignIn(email, password) ->
         let credentials = (email, password)
 
         let successFn (response: User) =
@@ -72,4 +72,5 @@ let private update (msg: Message) (state: State) =
         { state with User = None }, Cmd.ofMsg (NavigateTo Page.Home)
 
 let navigateTo dispatch page = NavigateTo page |> dispatch
+
 let elmishStore = Store.makeElmish init update ignore ()

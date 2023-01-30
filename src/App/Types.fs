@@ -1,11 +1,6 @@
 module SubtleConduit.Types
 
 open System
-open Sutil
-open Fable.Core
-open Fable.Core.JsInterop
-open Fable.Import
-open Fable.Core.JS
 open Thoth.Json
 open SubtleConduit.Utilities
 
@@ -16,33 +11,40 @@ let inline private decoder<'T> extras =
     Decode.Auto.generateDecoderCached<'T> (caseStrategy = CamelCase, extra = extras)
 
 type Tags =
-    { Tags: string list }
+    {
+        Tags: string list
+    }
+
     static member fromJson(json: string) : Result<Tags, string> =
         Decode.Auto.fromString<Tags> (json, caseStrategy = CamelCase)
 
 type User =
-    { Email: string
-      Token: string
-      Username: string
-      Bio: string
-      Image: string
-      Following: bool }
+    {
+        Email: string
+        Token: string
+        Username: string
+        Bio: string
+        Image: string
+        Following: bool
+    }
+
     static member Encoder = encoder<{| User: User |}>
 
     static member Decoder: Decoder<User> =
-        Decode.object (fun get ->
-            { User.Username = get.Required.Field "username" Decode.string
-              User.Email = get.Required.Field "email" Decode.string
-              User.Token = get.Required.Field "token" Decode.string
-              Bio =
+        Decode.object (fun get -> {
+            User.Username = get.Required.Field "username" Decode.string
+            User.Email = get.Required.Field "email" Decode.string
+            User.Token = get.Required.Field "token" Decode.string
+            Bio =
                 get.Optional.Field "bio" Decode.string
                 |> Option.defaultValue ""
-              Image =
+            Image =
                 get.Optional.Field "image" Decode.string
                 |> Option.defaultValue ""
-              Following =
+            Following =
                 get.Optional.Field "following" Decode.bool
-                |> Option.defaultValue false })
+                |> Option.defaultValue false
+        })
 
     static member fromJson(json: string) =
         Decode.unsafeFromString (Decode.field "user" User.Decoder) json
@@ -51,39 +53,46 @@ type User =
         Encode.Auto.toString (0, {| User = x |}, caseStrategy = CamelCase)
 
 type Profile =
-    { Username: string
-      Bio: string
-      Image: string
-      Following: bool }
+    {
+        Username: string
+        Bio: string
+        Image: string
+        Following: bool
+    }
+
     static member Encoder = encoder<Profile>
 
     static member Decoder: Decoder<Profile> =
-        Decode.object (fun get ->
-            { Profile.Username = get.Required.Field "username" Decode.string
-              Bio =
+        Decode.object (fun get -> {
+            Profile.Username = get.Required.Field "username" Decode.string
+            Bio =
                 get.Optional.Field "bio" Decode.string
                 |> Option.defaultValue ""
-              Image =
+            Image =
                 get.Optional.Field "image" Decode.string
                 |> Option.defaultValue ""
-              Following =
+            Following =
                 get.Optional.Field "following" Decode.bool
-                |> Option.defaultValue false })
+                |> Option.defaultValue false
+        })
 
     static member fromJson(json: string) =
         Decode.unsafeFromString (Decode.field "profile" Profile.Decoder) json
 
 type Article =
-    { Slug: string
-      Title: string
-      Description: string
-      Body: string
-      CreatedAt: DateTime
-      UpdatedAt: DateTime
-      TagList: string list
-      Favorited: bool
-      FavoritesCount: int
-      Author: Profile }
+    {
+        Slug: string
+        Title: string
+        Description: string
+        Body: string
+        CreatedAt: DateTime
+        UpdatedAt: DateTime
+        TagList: string list
+        Favorited: bool
+        FavoritesCount: int
+        Author: Profile
+    }
+
     static member Encoder = encoder<Article>
 
     static member Decoder: Decoder<Article> =
@@ -96,11 +105,14 @@ type Article =
     static member fromJson(json: string) =
         let decoder = Decode.field "article" Article.Decoder
 
+
         Decode.unsafeFromString decoder json
 
 type Articles =
-    { Articles: Article list // TODO Refactor to array
-      ArticlesCount: int }
+    {
+        Articles: Article list // TODO Refactor to array
+        ArticlesCount: int
+    }
 
     static member Encoder = encoder<Articles>
 
@@ -115,12 +127,14 @@ type Articles =
         Decode.unsafeFromString Articles.Decoder json
 
 type UpsertUser =
-    { Username: string
-      Image: string
-      Bio: string
-      Token: string option
-      Email: string
-      Password: string }
+    {
+        Username: string
+        Image: string
+        Bio: string
+        Token: string option
+        Email: string
+        Password: string
+    }
 
     static member Encoder(user: UpsertUser) =
         let userEncoder =
@@ -135,9 +149,7 @@ type UpsertUser =
                     "token", Encode.option Encode.string user.Token
             ]
 
-        Encode.object [
-            "user", userEncoder
-        ]
+        Encode.object [ "user", userEncoder ]
 
     static member Decoder = decoder<UpsertUser> Extra.empty
 
@@ -145,11 +157,13 @@ type UpsertUser =
         Encode.toString 0 (UpsertUser.Encoder this)
 
 type UpsertArticle =
-    { Title: string
-      Description: string
-      Body: string
-      TagList: string list
-      Token: string }
+    {
+        Title: string
+        Description: string
+        Body: string
+        TagList: string list
+        Token: string
+    }
 
     static member Encoder(article: UpsertArticle) =
         let articleEncoder =
@@ -167,9 +181,7 @@ type UpsertArticle =
                     "tagList", Encode.list (article.TagList |> List.map (Encode.string))
             ]
 
-        Encode.object [
-            "article", articleEncoder
-        ]
+        Encode.object [ "article", articleEncoder ]
 
     static member Decoder = decoder<UpsertArticle> Extra.empty
 
@@ -177,8 +189,13 @@ type UpsertArticle =
         Encode.toString 0 (UpsertArticle.Encoder this)
 
 type ApiErrors =
-    { Body: string list } // TODO refactor this to array
+    {
+        Body: string list
+    } // TODO refactor this to array
+
     static member Decoder =
         Decode.field
             "errors"
-            (Decode.object (fun get -> { Body = get.Required.Field "body" (Decode.list Decode.string) }))
+            (Decode.object (fun get -> {
+                Body = get.Required.Field "body" (Decode.list Decode.string)
+            }))

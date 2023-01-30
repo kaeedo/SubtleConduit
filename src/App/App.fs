@@ -85,9 +85,7 @@ let view () =
     | Page p -> navigateTo p
 
     fragment [
-        disposeOnUnmount [
-            model
-        ]
+        disposeOnUnmount [ model ]
         Header(model, dispatch)
 
         Bind.el (

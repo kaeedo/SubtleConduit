@@ -4,7 +4,6 @@ open Sutil
 open Sutil.Attr
 open SubtleConduit.Utilities
 
-open Tailwind
 open SubtleConduit.Types
 open SubtleConduit.Router
 open SubtleConduit.Services.Api
@@ -25,21 +24,12 @@ let FeedItems articles favoriteArticle setArticleFilter =
                     fragment [
                         for a in art.Articles do
                             Html.li [
-                                Attr.classes [
-                                    tw.``border-t``
-                                    tw.``py-6``
-                                ]
+                                Attr.classes [ tw.``border-t``; tw.``py-6`` ]
                                 Html.div [
                                     Html.div [
-                                        Attr.classes [
-                                            tw.flex
-                                            tw.``justify-between``
-                                        ]
+                                        Attr.classes [ tw.flex; tw.``justify-between`` ]
                                         Html.div [
-                                            Attr.classes [
-                                                tw.flex
-                                                tw.``mb-4``
-                                            ]
+                                            Attr.classes [ tw.flex; tw.``mb-4`` ]
                                             Html.img [
                                                 Attr.classes [
                                                     tw.``w-8``
@@ -70,10 +60,7 @@ let FeedItems articles favoriteArticle setArticleFilter =
                                                     text a.Author.Username
                                                 ]
                                                 Html.span [
-                                                    Attr.classes [
-                                                        tw.``text-xs``
-                                                        tw.``text-gray-400``
-                                                    ]
+                                                    Attr.classes [ tw.``text-xs``; tw.``text-gray-400`` ]
                                                     text (a.CreatedAt |> formatDateUS "MMMM dd, yyyy")
                                                 ]
                                             ]
@@ -96,10 +83,7 @@ let FeedItems articles favoriteArticle setArticleFilter =
                                                     tw.``text-white``
                                             ]
                                             Html.img [
-                                                Attr.classes [
-                                                    tw.``w-4``
-                                                    tw.``mr-1``
-                                                ]
+                                                Attr.classes [ tw.``w-4``; tw.``mr-1`` ]
                                                 Attr.src heartIcon
                                             ]
                                             onClick (favoriteArticle a.Slug a.Favorited) []
@@ -122,10 +106,7 @@ let FeedItems articles favoriteArticle setArticleFilter =
                                             text a.Title
                                         ]
                                         Html.a [
-                                            Attr.classes [
-                                                tw.``text-sm``
-                                                tw.``text-gray-400``
-                                            ]
+                                            Attr.classes [ tw.``text-sm``; tw.``text-gray-400`` ]
                                             Attr.href "#"
                                             text a.Description
                                         ]
@@ -137,10 +118,7 @@ let FeedItems articles favoriteArticle setArticleFilter =
                                             tw.``items-baseline``
                                         ]
                                         Html.a [
-                                            Attr.classes [
-                                                tw.``text-xs``
-                                                tw.``text-gray-300``
-                                            ]
+                                            Attr.classes [ tw.``text-xs``; tw.``text-gray-300`` ]
                                             Attr.href $"javascript:void(0)"
                                             onClick
                                                 (fun _ ->
@@ -153,9 +131,7 @@ let FeedItems articles favoriteArticle setArticleFilter =
                                         Html.ul [
                                             for tag in a.TagList do
                                                 Html.li [
-                                                    Attr.classes [
-                                                        tw.``inline-flex``
-                                                    ]
+                                                    Attr.classes [ tw.``inline-flex`` ]
                                                     Html.span [
                                                         Attr.classes [
                                                             tw.``px-2``

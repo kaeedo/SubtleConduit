@@ -2,14 +2,8 @@ module SubtleConduit.Components.FeedTab
 
 open Sutil
 open Sutil.Attr
-open SubtleConduit.Utilities
 
-open Tailwind
-open SubtleConduit.Types
-open SubtleConduit.Services.Api
 open Sutil.DOM
-open System
-open SubtleConduit.Elmish
 
 
 let FeedTab label clickHandler isSelected =

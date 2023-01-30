@@ -1,8 +1,6 @@
 module SubtleConduit.Components.Tags
 
-open System
 open Sutil
-open Tailwind
 open Sutil.DOM
 open SubtleConduit.Types
 open SubtleConduit.Services.Api
@@ -18,7 +16,7 @@ let private getTags () =
         match tags with
         | Ok t -> return t
         | Result.Error e -> return Unchecked.defaultof<Tags>
-       }
+    }
 
 let Tags (articleFilter: ArticleApi.ArticleFilter option) (setArticleFilter: ArticleApi.ArticleFilter option -> unit) =
     let view =
@@ -34,9 +32,7 @@ let Tags (articleFilter: ArticleApi.ArticleFilter option) (setArticleFilter: Art
                 tw.``h-full``
             ]
             Html.h6 [
-                Attr.classes [
-                    tw.``mb-2``
-                ]
+                Attr.classes [ tw.``mb-2`` ]
                 text "Popular Tags"
             ]
             Html.div [
@@ -46,17 +42,12 @@ let Tags (articleFilter: ArticleApi.ArticleFilter option) (setArticleFilter: Art
                         (function
                         | Waiting -> text "Loading"
                         | Error e -> text $"Error occured: {e.Message}"
-                        | Result t when t.Tags |> List.isEmpty ->
-                            fragment [
-                                text "Nothing to show"
-                            ]
+                        | Result t when t.Tags |> List.isEmpty -> fragment [ text "Nothing to show" ]
                         | Result tagsResult ->
                             fragment [
                                 for t in tagsResult.Tags do
                                     Html.li [
-                                        Attr.classes [
-                                            tw.``inline-flex``
-                                        ]
+                                        Attr.classes [ tw.``inline-flex`` ]
                                         Html.span [
                                             Attr.classes [
                                                 tw.``px-2``

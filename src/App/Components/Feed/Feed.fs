@@ -4,7 +4,6 @@ open Sutil
 open Sutil.Attr
 open SubtleConduit.Utilities
 
-open Tailwind
 open SubtleConduit.Types
 open SubtleConduit.Services.Api.ArticleApi
 open Sutil.DOM
@@ -36,7 +35,7 @@ let Feed (model: State) (dispatch: Dispatch<Message>) (articleFilter: ArticleFil
             | Page.Home, _ ->
                 let tag =
                     match articleFilter with
-                    | Some (ArticleFilter.Tag t) -> Some t
+                    | Some(ArticleFilter.Tag t) -> Some t
                     | _ -> None
 
                 TabsToShow.Home(model.User.IsSome, tag)
@@ -52,7 +51,7 @@ let Feed (model: State) (dispatch: Dispatch<Message>) (articleFilter: ArticleFil
             match model.Page with
             | Page.Home ->
                 match articleFilter with
-                | Some (ArticleFilter.Tag t) -> SelectedTab.Tag
+                | Some(ArticleFilter.Tag t) -> SelectedTab.Tag
                 | _ -> SelectedTab.Articles
             | _ -> SelectedTab.MyPosts
         )
@@ -64,12 +63,11 @@ let Feed (model: State) (dispatch: Dispatch<Message>) (articleFilter: ArticleFil
                 let! articlesFromApi = getArticles user pageSize newOffset filter showFeed
                 offset <~ newOffset
                 return articlesFromApi
-            with
-            | :? exn ->
+            with :? exn ->
                 //failwith exn
                 return Unchecked.defaultof<Articles>
-           // TODO handle error case
-           }
+        // TODO handle error case
+        }
 
     let tabSubscription =
         selectedTab
@@ -116,14 +114,12 @@ let Feed (model: State) (dispatch: Dispatch<Message>) (articleFilter: ArticleFil
 
     let tabs () =
         Html.div [
-            Attr.classes [
-                tw.flex
-            ]
+            Attr.classes [ tw.flex ]
             Bind.el (
                 tabsToShow,
                 fun t ->
                     match t with
-                    | TabsToShow.Home (isLoggedIn, tag) ->
+                    | TabsToShow.Home(isLoggedIn, tag) ->
                         fragment [
                             if isLoggedIn then
                                 FeedTab
@@ -179,17 +175,11 @@ let Feed (model: State) (dispatch: Dispatch<Message>) (articleFilter: ArticleFil
                 tabSubscription
             ]
 
-            Attr.classes [
-                tw.``flex-auto``
-                tw.``mr-6``
-            ]
+            Attr.classes [ tw.``flex-auto``; tw.``mr-6`` ]
             tabs ()
             FeedItems articles favoriteArticle setArticleFilter
             Html.ul [
-                Attr.classes [
-                    tw.flex
-                    tw.``justify-center``
-                ]
+                Attr.classes [ tw.flex; tw.``justify-center`` ]
                 Bind.el (
                     pageNumbers,
                     fun pns ->

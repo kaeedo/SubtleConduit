@@ -5,22 +5,22 @@ open Sutil
 open SubtleConduit.Services.Api
 open SubtleConduit.Types
 open SubtleConduit.Elmish
-open Tailwind
 open Sutil.DOM
 open SubtleConduit.Router
 open SubtleConduit.Utilities
 open Sutil.Attr
 open Fable.Core.JsInterop
 
-type ArticleState =
-    { Title: string
-      Description: string
-      Body: string
-      CreatedAt: DateTime
-      Tags: string list
-      Favorited: bool
-      FavoritesCount: int
-      Author: Profile }
+type ArticleState = {
+    Title: string
+    Description: string
+    Body: string
+    CreatedAt: DateTime
+    Tags: string list
+    Favorited: bool
+    FavoritesCount: int
+    Author: Profile
+}
 
 type ArticleMsg =
     | GetArticle of string
@@ -30,29 +30,34 @@ type ArticleMsg =
     | Error of string
 
 let private init slug () =
-    { ArticleState.Title = ""
-      Description = ""
-      Body = ""
-      CreatedAt = new DateTime()
-      Tags = []
-      Favorited = false
-      FavoritesCount = 0
-      Author =
-        { Profile.Username = ""
-          Bio = ""
-          Image = ""
-          Following = false } },
+    {
+        ArticleState.Title = ""
+        Description = ""
+        Body = ""
+        CreatedAt = new DateTime()
+        Tags = []
+        Favorited = false
+        FavoritesCount = 0
+        Author =
+            {
+                Profile.Username = ""
+                Bio = ""
+                Image = ""
+                Following = false
+            }
+    },
     Cmd.ofMsg <| GetArticle slug
 
-let private mapResultToArticleState (result: Article) =
-    { ArticleState.Title = result.Title
-      Description = result.Description
-      Body = result.Body
-      CreatedAt = result.CreatedAt
-      Tags = result.TagList
-      Favorited = result.Favorited
-      FavoritesCount = result.FavoritesCount
-      Author = result.Author }
+let private mapResultToArticleState (result: Article) = {
+    ArticleState.Title = result.Title
+    Description = result.Description
+    Body = result.Body
+    CreatedAt = result.CreatedAt
+    Tags = result.TagList
+    Favorited = result.Favorited
+    FavoritesCount = result.FavoritesCount
+    Author = result.Author
+}
 
 let private update (user: User option) msg state =
     let token = user |> Option.map (fun u -> u.Token)
@@ -68,24 +73,29 @@ let private update (user: User option) msg state =
     | Set result ->
         let newState = mapResultToArticleState result
         newState, Cmd.none
-    | UpdateFavorite (isFavorited, favoriteCount) ->
+    | UpdateFavorite(isFavorited, favoriteCount) ->
         let newState =
             { state with
                 Favorited = isFavorited
-                FavoritesCount = favoriteCount }
+                FavoritesCount = favoriteCount
+            }
 
         newState, Cmd.none
     | UpdateFollowing isFollowing ->
         let newState =
-            { state with Author = { state.Author with Following = isFollowing } }
+            { state with
+                Author =
+                    { state.Author with
+                        Following = isFollowing
+                    }
+            }
 
         newState, Cmd.none
     | Error e -> state, Cmd.none // TODO actually handle this
 
 
 let ArticlePage (model: State) (slug: string) =
-    let state, dispatch =
-        Store.makeElmish (init slug) (update model.User) ignore ()
+    let state, dispatch = Store.makeElmish (init slug) (update model.User) ignore ()
 
     let tags = state .> (fun s -> s.Tags)
     let heartIcon = importDefault "../../Images/heart.svg"
@@ -119,9 +129,7 @@ let ArticlePage (model: State) (slug: string) =
 
     let otherArticleActions =
         Html.div [
-            Attr.classes [
-                tw.flex
-            ]
+            Attr.classes [ tw.flex ]
             Html.div [
                 Bind.toggleClass (
                     (state .> fun s -> s.Author.Following),
@@ -181,10 +189,7 @@ let ArticlePage (model: State) (slug: string) =
                     tw.``border-conduit-green``
                 ]
                 Html.img [
-                    Attr.classes [
-                        tw.``w-4``
-                        tw.``mr-1``
-                    ]
+                    Attr.classes [ tw.``w-4``; tw.``mr-1`` ]
                     Attr.src heartIcon
                 ]
                 Bind.el (
@@ -203,9 +208,7 @@ let ArticlePage (model: State) (slug: string) =
 
     let myArticleActions token =
         Html.div [
-            Attr.classes [
-                tw.flex
-            ]
+            Attr.classes [ tw.flex ]
             Html.div [
                 Attr.classes [
                     tw.``cursor-pointer``
@@ -248,10 +251,7 @@ let ArticlePage (model: State) (slug: string) =
                     tw.``hover:text-white``
                 ]
                 Html.img [
-                    Attr.classes [
-                        tw.``w-4``
-                        tw.``mr-1``
-                    ]
+                    Attr.classes [ tw.``w-4``; tw.``mr-1`` ]
                     Attr.src heartIcon
                 ]
                 text "Delete article"
@@ -268,10 +268,7 @@ let ArticlePage (model: State) (slug: string) =
 
     let articleInfo =
         Html.div [
-            Attr.classes [
-                tw.flex
-                tw.``w-max``
-            ]
+            Attr.classes [ tw.flex; tw.``w-max`` ]
             Html.img [
                 Attr.classes [
                     tw.``w-8``
@@ -283,10 +280,7 @@ let ArticlePage (model: State) (slug: string) =
                 Bind.el (state, (fun s -> Attr.src s.Author.Image))
             ]
             Html.div [
-                Attr.classes [
-                    tw.flex
-                    tw.``flex-col``
-                ]
+                Attr.classes [ tw.flex; tw.``flex-col`` ]
                 Html.a [
                     Attr.classes [
                         tw.``text-sm``
@@ -309,10 +303,7 @@ let ArticlePage (model: State) (slug: string) =
                     )
                 ]
                 Html.span [
-                    Attr.classes [
-                        tw.``text-xs``
-                        tw.``text-gray-400``
-                    ]
+                    Attr.classes [ tw.``text-xs``; tw.``text-gray-400`` ]
                     Bind.el (state, (fun s -> text (s.CreatedAt |> formatDateUS "MMMM dd, yyyy")))
                 ]
             ]
@@ -324,13 +315,11 @@ let ArticlePage (model: State) (slug: string) =
                     | _ -> otherArticleActions
             )
 
-            ]
+        ]
 
     let view =
         Html.div [
-            disposeOnUnmount [
-                state
-            ]
+            disposeOnUnmount [ state ]
             Html.div [
                 Attr.classes [
                     tw.``bg-gray-800``
@@ -345,29 +334,19 @@ let ArticlePage (model: State) (slug: string) =
                         tw.``mb-8``
                     ]
                     Html.h1 [
-                        Attr.classes [
-                            tw.``text-4xl``
-                        ]
+                        Attr.classes [ tw.``text-4xl`` ]
                         Bind.el (state, (fun s -> text s.Title))
                     ]
                 ]
                 Html.div [
-                    Attr.classes [
-                        tw.``mx-auto``
-                        tw.container
-                    ]
+                    Attr.classes [ tw.``mx-auto``; tw.container ]
                     articleInfo
                 ]
             ]
             Html.div [
-                Attr.classes [
-                    tw.``mx-auto``
-                    tw.container
-                ]
+                Attr.classes [ tw.``mx-auto``; tw.container ]
                 Html.div [
-                    Attr.classes [
-                        tw.``my-8``
-                    ]
+                    Attr.classes [ tw.``my-8`` ]
                     Bind.el (state, (fun s -> text s.Body))
                 ]
                 Html.ul [
@@ -375,9 +354,7 @@ let ArticlePage (model: State) (slug: string) =
                         tags,
                         fun t ->
                             Html.li [
-                                Attr.classes [
-                                    tw.``inline-flex``
-                                ]
+                                Attr.classes [ tw.``inline-flex`` ]
                                 Html.span [
                                     Attr.classes [
                                         tw.``px-2``
@@ -398,10 +375,7 @@ let ArticlePage (model: State) (slug: string) =
                     )
                 ]
                 Html.div [
-                    Attr.classes [
-                        tw.``my-8``
-                        tw.``border-b-2``
-                    ]
+                    Attr.classes [ tw.``my-8``; tw.``border-b-2`` ]
                 ]
                 Html.div [
                     Attr.classes [

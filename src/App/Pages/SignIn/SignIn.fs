@@ -2,7 +2,6 @@ module SubtleConduit.Pages.SignIn
 
 open System
 open Sutil
-open Tailwind
 open Sutil.Attr
 open Sutil.DOM
 open SubtleConduit.Elmish
@@ -13,10 +12,7 @@ let SignInPage dispatch =
         let password = Store.make String.Empty
 
         Html.div [
-            disposeOnUnmount [
-                email
-                password
-            ]
+            disposeOnUnmount [ email; password ]
 
             Attr.classes [
                 tw.container
@@ -26,16 +22,11 @@ let SignInPage dispatch =
                 tw.``items-center``
             ]
             Html.h1 [
-                Attr.classes [
-                    tw.``text-4xl``
-                    tw.``mb-2.5``
-                ]
+                Attr.classes [ tw.``text-4xl``; tw.``mb-2.5`` ]
                 text "Sign In"
             ]
             Html.div [
-                Attr.classes [
-                    tw.``mb-4``
-                ]
+                Attr.classes [ tw.``mb-4`` ]
                 Html.a [
                     Attr.classes [
                         tw.``text-conduit-green``
@@ -46,13 +37,9 @@ let SignInPage dispatch =
                 ]
             ]
             Html.form [
-                Attr.classes [
-                    tw.``w-96``
-                ]
+                Attr.classes [ tw.``w-96`` ]
                 Html.div [
-                    Attr.classes [
-                        tw.``mb-4``
-                    ]
+                    Attr.classes [ tw.``mb-4`` ]
                     Html.input [
                         Attr.classes [
                             tw.``border-2``
@@ -69,9 +56,7 @@ let SignInPage dispatch =
                     ]
                 ]
                 Html.div [
-                    Attr.classes [
-                        tw.``mb-4``
-                    ]
+                    Attr.classes [ tw.``mb-4`` ]
                     Html.input [
                         Attr.classes [
                             tw.``border-2``
@@ -88,10 +73,7 @@ let SignInPage dispatch =
                     ]
                 ]
                 Html.div [
-                    Attr.classes [
-                        tw.flex
-                        tw.``justify-end``
-                    ]
+                    Attr.classes [ tw.flex; tw.``justify-end`` ]
                     Html.button [
                         Attr.classes [
                             tw.flex
@@ -104,11 +86,7 @@ let SignInPage dispatch =
                             tw.``text-xl``
                         ]
                         Attr.typeSubmit
-                        onClick
-                            (fun _ ->
-                                dispatch (
-                                    Message.SignIn (email.Value, password.Value )))
-                            []
+                        onClick (fun _ -> dispatch (Message.SignIn(email.Value, password.Value))) []
                         text "Sign in"
                     ]
                 ]

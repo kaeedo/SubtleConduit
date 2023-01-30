@@ -4,7 +4,6 @@ open System
 open Sutil
 open SubtleConduit.Types
 open SubtleConduit.Elmish
-open Tailwind
 open Sutil.Attr
 
 let SignUpPage dispatch =
@@ -22,16 +21,11 @@ let SignUpPage dispatch =
                 tw.``items-center``
             ]
             Html.h1 [
-                Attr.classes [
-                    tw.``text-4xl``
-                    tw.``mb-2.5``
-                ]
+                Attr.classes [ tw.``text-4xl``; tw.``mb-2.5`` ]
                 text "Sign up"
             ]
             Html.div [
-                Attr.classes [
-                    tw.``mb-4``
-                ]
+                Attr.classes [ tw.``mb-4`` ]
                 Html.a [
                     Attr.classes [
                         tw.``text-conduit-green``
@@ -42,13 +36,9 @@ let SignUpPage dispatch =
                 ]
             ]
             Html.form [
-                Attr.classes [
-                    tw.``w-96``
-                ]
+                Attr.classes [ tw.``w-96`` ]
                 Html.div [
-                    Attr.classes [
-                        tw.``mb-4``
-                    ]
+                    Attr.classes [ tw.``mb-4`` ]
                     Html.input [
                         Attr.classes [
                             tw.``border-2``
@@ -65,9 +55,7 @@ let SignUpPage dispatch =
                     ]
                 ]
                 Html.div [
-                    Attr.classes [
-                        tw.``mb-4``
-                    ]
+                    Attr.classes [ tw.``mb-4`` ]
                     Html.input [
                         Attr.classes [
                             tw.``border-2``
@@ -84,9 +72,7 @@ let SignUpPage dispatch =
                     ]
                 ]
                 Html.div [
-                    Attr.classes [
-                        tw.``mb-4``
-                    ]
+                    Attr.classes [ tw.``mb-4`` ]
                     Html.input [
                         Attr.classes [
                             tw.``border-2``
@@ -103,10 +89,7 @@ let SignUpPage dispatch =
                     ]
                 ]
                 Html.div [
-                    Attr.classes [
-                        tw.flex
-                        tw.``justify-end``
-                    ]
+                    Attr.classes [ tw.flex; tw.``justify-end`` ]
                     Html.button [
                         Attr.classes [
                             tw.flex
@@ -122,12 +105,16 @@ let SignUpPage dispatch =
                         onClick
                             (fun _ ->
                                 dispatch (
-                                    SignUp { UpsertUser.Username = username.Value
-                                             Image = String.Empty
-                                             Bio = String.Empty
-                                             Token = None
-                                             Email = email.Value
-                                             Password = password.Value }))
+                                    SignUp
+                                        {
+                                            UpsertUser.Username = username.Value
+                                            Image = String.Empty
+                                            Bio = String.Empty
+                                            Token = None
+                                            Email = email.Value
+                                            Password = password.Value
+                                        }
+                                ))
                             []
                         text "Sign up"
                     ]

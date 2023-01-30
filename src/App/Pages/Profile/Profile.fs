@@ -6,17 +6,17 @@ open SubtleConduit.Services.Api
 open SubtleConduit.Types
 open SubtleConduit.Elmish
 open SubtleConduit.Router
-open Tailwind
 open Sutil.DOM
 open Sutil.Attr
 open SubtleConduit.Components
 
-type ProfileState =
-    { Username: string
-      Image: string
-      Bio: string
-      Following: bool
-      Token: string }
+type ProfileState = {
+    Username: string
+    Image: string
+    Bio: string
+    Following: bool
+    Token: string
+}
 
 type ProfileMsg =
     | GetProfile of string
@@ -26,11 +26,13 @@ type ProfileMsg =
     | Unfollow of string
 
 let private init username token () =
-    { ProfileState.Username = String.Empty
-      Image = String.Empty
-      Bio = String.Empty
-      Following = false
-      Token = token },
+    {
+        ProfileState.Username = String.Empty
+        Image = String.Empty
+        Bio = String.Empty
+        Following = false
+        Token = token
+    },
     Cmd.ofMsg <| GetProfile username
 
 let private update msg (state: ProfileState) =
@@ -44,7 +46,8 @@ let private update msg (state: ProfileState) =
                 Username = result.Username
                 Image = result.Image
                 Bio = result.Bio
-                Following = result.Following }
+                Following = result.Following
+            }
 
         newState, Cmd.none
     | Error e -> state, Cmd.none // TODO actually handle this
@@ -74,9 +77,7 @@ let ProfilePage (model: State) (username: string) =
 
     let view =
         Html.div [
-            disposeOnUnmount [
-                state
-            ]
+            disposeOnUnmount [ state ]
             Html.div [
                 Attr.classes [
                     tw.``bg-gray-100``
@@ -139,10 +140,7 @@ let ProfilePage (model: State) (username: string) =
                             | None -> fragment []
                             | Some u ->
                                 Html.div [
-                                    Attr.classes [
-                                        tw.flex
-                                        tw.``justify-end``
-                                    ]
+                                    Attr.classes [ tw.flex; tw.``justify-end`` ]
                                     Html.div [
                                         Attr.classes [
                                             tw.``cursor-pointer``
@@ -170,11 +168,11 @@ let ProfilePage (model: State) (username: string) =
                                             onClick (fun _ -> dispatch <| Follow s.Username) []
                                             text $"+ Follow {s.Username}"
 
-                                        ]
+                                    ]
                                 ])
                     )
 
-                    ]
+                ]
             ]
             Html.div [
                 Attr.classes [

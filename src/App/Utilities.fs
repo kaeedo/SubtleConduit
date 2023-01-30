@@ -25,12 +25,15 @@ let getPagesToDisplay currentPage totalPages = // TODO make this an array
     let pages =
         if currentPage > delta then
             let rangeLower = Math.Min(lower, totalPages - delta)
+
             let rangeUpper = Math.Min(upper, totalPages)
 
-            [ rangeLower .. rangeUpper ]
+            [ rangeLower..rangeUpper ]
             |> List.map (fun p -> p.ToString())
         else
-            [ 1 .. (Math.Min(totalPages, delta + 1)) ]
+            [
+                1 .. (Math.Min(totalPages, delta + 1))
+            ]
             |> List.map (fun p -> p.ToString())
 
     let withDots value pair =
@@ -47,8 +50,7 @@ let getPagesToDisplay currentPage totalPages = // TODO make this an array
 
     let pages =
         if (int pages.[pages.Length - 1]) < totalPages then
-            let dots =
-                withDots (totalPages.ToString()) [ "..."; totalPages.ToString() ]
+            let dots = withDots (totalPages.ToString()) [ "..."; totalPages.ToString() ]
 
             pages @ dots
         else
@@ -61,10 +63,12 @@ let formatDateUS format =
 
 module Option =
     let ofString s =
-        if String.IsNullOrWhiteSpace s
-        then None
-        else Some s
+        if String.IsNullOrWhiteSpace s then
+            None
+        else
+            Some s
 
 // Add a member to Variant as an extension
 type Option<'a> with
+
     member x.ofString s = Option.ofString s

@@ -12,14 +12,11 @@ type ArticleFilter =
     | Favorited of string
 
 let getTags () =
-    let url =
-        "https://cirosantilli-realworld-next.herokuapp.com/api/tags"
+    let url = "https://cirosantilli-realworld-next.herokuapp.com/api/tags"
 
     promise {
         let! response = Fetch.fetch url []
-
         let! tags = response.text ()
-
         return Tags.fromJson tags
     }
 
@@ -34,21 +31,21 @@ let getArticles (user: User option) limit offset (filter: ArticleFilter option) 
         $"{url}?limit={limit}&offset={offset}"
         + match filter with
           | None -> ""
-          | Some (Tag t) -> $"&tag={t}"
-          | Some (Author u) -> $"&author={u}"
-          | Some (Favorited u) -> $"&favorited={u}"
+          | Some(Tag t) -> $"&tag={t}"
+          | Some(Author u) -> $"&author={u}"
+          | Some(Favorited u) -> $"&favorited={u}"
 
     promise {
         let! response =
-            Fetch.fetch
-                url
-                [ Fetch.requestHeaders [
-                      match user with
-                      | None -> ()
-                      | Some u -> Authorization $"Token {u.Token}"
-                      Accept "application/json; charset=utf-8"
-                      ContentType "application/json; charset=utf-8"
-                  ] ]
+            Fetch.fetch url [
+                Fetch.requestHeaders [
+                    match user with
+                    | None -> ()
+                    | Some u -> Authorization $"Token {u.Token}"
+                    Accept "application/json; charset=utf-8"
+                    ContentType "application/json; charset=utf-8"
+                ]
+            ]
 
         let! articles = response.text ()
 
@@ -56,57 +53,52 @@ let getArticles (user: User option) limit offset (filter: ArticleFilter option) 
     }
 
 let getArticle (slug, token) =
-    let url =
-        $"https://cirosantilli-realworld-next.herokuapp.com/api/articles/{slug}"
+    let url = $"https://cirosantilli-realworld-next.herokuapp.com/api/articles/{slug}"
 
     promise {
         let! response =
-            Fetch.fetch
-                url
-                [ Method HttpMethod.GET
-                  Fetch.requestHeaders [
-                      Authorization $"Token {token}"
-                      Accept "application/json; charset=utf-8"
-                      ContentType "application/json; charset=utf-8"
-                  ] ]
+            Fetch.fetch url [
+                Method HttpMethod.GET
+                Fetch.requestHeaders [
+                    Authorization $"Token {token}"
+                    Accept "application/json; charset=utf-8"
+                    ContentType "application/json; charset=utf-8"
+                ]
+            ]
 
         let! article = response.text ()
         return Article.fromJson article
     }
 
 let deleteArticle slug token =
-    let url =
-        $"https://cirosantilli-realworld-next.herokuapp.com/api/articles/{slug}"
+    let url = $"https://cirosantilli-realworld-next.herokuapp.com/api/articles/{slug}"
 
     promise {
         let! response =
-            Fetch.fetch
-                url
-                [ Method HttpMethod.DELETE
-                  Fetch.requestHeaders [
-                      Authorization $"Token {token}"
-                  ] ]
+            Fetch.fetch url [
+                Method HttpMethod.DELETE
+                Fetch.requestHeaders [ Authorization $"Token {token}" ]
+            ]
 
         return ()
     }
 
 let createArticle (article: UpsertArticle) =
-    let url =
-        "https://cirosantilli-realworld-next.herokuapp.com/api/articles"
+    let url = "https://cirosantilli-realworld-next.herokuapp.com/api/articles"
 
     promise {
         let json = article.toJson ()
 
         let! response =
-            Fetch.fetch
-                url
-                [ Method HttpMethod.POST
-                  Fetch.requestHeaders [
-                      Authorization $"Token {article.Token}"
-                      Accept "application/json; charset=utf-8"
-                      ContentType "application/json; charset=utf-8"
-                  ]
-                  Body !^json ]
+            Fetch.fetch url [
+                Method HttpMethod.POST
+                Fetch.requestHeaders [
+                    Authorization $"Token {article.Token}"
+                    Accept "application/json; charset=utf-8"
+                    ContentType "application/json; charset=utf-8"
+                ]
+                Body !^json
+            ]
 
         let! response = response.text ()
 
@@ -116,22 +108,21 @@ let createArticle (article: UpsertArticle) =
     }
 
 let editArticle slug (article: UpsertArticle) =
-    let url =
-        $"https://cirosantilli-realworld-next.herokuapp.com/api/articles/{slug}"
+    let url = $"https://cirosantilli-realworld-next.herokuapp.com/api/articles/{slug}"
 
     promise {
         let json = article.toJson ()
 
         let! response =
-            Fetch.fetch
-                url
-                [ Method HttpMethod.PUT
-                  Fetch.requestHeaders [
-                      Authorization $"Token {article.Token}"
-                      Accept "application/json; charset=utf-8"
-                      ContentType "application/json; charset=utf-8"
-                  ]
-                  Body !^json ]
+            Fetch.fetch url [
+                Method HttpMethod.PUT
+                Fetch.requestHeaders [
+                    Authorization $"Token {article.Token}"
+                    Accept "application/json; charset=utf-8"
+                    ContentType "application/json; charset=utf-8"
+                ]
+                Body !^json
+            ]
 
         let! response = response.text ()
 
@@ -146,19 +137,19 @@ let favoriteArticle slug isFavorited token =
 
     promise {
         let! response =
-            Fetch.fetch
-                url
-                [ Method(
+            Fetch.fetch url [
+                Method(
                     if isFavorited then
                         HttpMethod.DELETE
                     else
                         HttpMethod.POST
-                  )
-                  Fetch.requestHeaders [
-                      Authorization $"Token {token}"
-                      Accept "application/json; charset=utf-8"
-                      ContentType "application/json; charset=utf-8"
-                  ] ]
+                )
+                Fetch.requestHeaders [
+                    Authorization $"Token {token}"
+                    Accept "application/json; charset=utf-8"
+                    ContentType "application/json; charset=utf-8"
+                ]
+            ]
 
         let! response = response.text ()
 

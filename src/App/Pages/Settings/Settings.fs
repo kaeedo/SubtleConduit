@@ -4,7 +4,6 @@ open System
 open Sutil
 open SubtleConduit.Elmish
 open SubtleConduit.Types
-open Tailwind
 open Sutil.Attr
 open Sutil.DOM
 
@@ -12,7 +11,7 @@ let SettingsPage (model: State) dispatch =
     //let updateProfile
     let view =
         let user = model.User.Value
-        let token =  user.Token
+        let token = user.Token
 
         //let state, dispatch = Store.makeElmish (init model) update ignore ()
         let url = Store.make user.Image
@@ -22,13 +21,7 @@ let SettingsPage (model: State) dispatch =
         let password = Store.make String.Empty
 
         Html.div [
-            disposeOnUnmount [
-                url
-                username
-                email
-                bio
-                password
-            ]
+            disposeOnUnmount [ url; username; email; bio; password ]
 
             Attr.classes [
                 tw.container
@@ -38,20 +31,13 @@ let SettingsPage (model: State) dispatch =
                 tw.``items-center``
             ]
             Html.h1 [
-                Attr.classes [
-                    tw.``text-4xl``
-                    tw.``mb-2.5``
-                ]
+                Attr.classes [ tw.``text-4xl``; tw.``mb-2.5`` ]
                 text "Your Settings"
             ]
             Html.form [
-                Attr.classes [
-                    tw.``w-96``
-                ]
+                Attr.classes [ tw.``w-96`` ]
                 Html.div [
-                    Attr.classes [
-                        tw.``mb-4``
-                    ]
+                    Attr.classes [ tw.``mb-4`` ]
                     Html.input [
                         Attr.classes [
                             tw.``border-2``
@@ -68,9 +54,7 @@ let SettingsPage (model: State) dispatch =
                     ]
                 ]
                 Html.div [
-                    Attr.classes [
-                        tw.``mb-4``
-                    ]
+                    Attr.classes [ tw.``mb-4`` ]
                     Html.input [
                         Attr.classes [
                             tw.``border-2``
@@ -87,9 +71,7 @@ let SettingsPage (model: State) dispatch =
                     ]
                 ]
                 Html.div [
-                    Attr.classes [
-                        tw.``mb-4``
-                    ]
+                    Attr.classes [ tw.``mb-4`` ]
                     Html.textarea [
                         Attr.classes [
                             tw.``border-2``
@@ -106,9 +88,7 @@ let SettingsPage (model: State) dispatch =
                     ]
                 ]
                 Html.div [
-                    Attr.classes [
-                        tw.``mb-4``
-                    ]
+                    Attr.classes [ tw.``mb-4`` ]
                     Html.input [
                         Attr.classes [
                             tw.``border-2``
@@ -125,9 +105,7 @@ let SettingsPage (model: State) dispatch =
                     ]
                 ]
                 Html.div [
-                    Attr.classes [
-                        tw.``mb-4``
-                    ]
+                    Attr.classes [ tw.``mb-4`` ]
                     Html.input [
                         Attr.classes [
                             tw.``border-2``
@@ -144,10 +122,7 @@ let SettingsPage (model: State) dispatch =
                     ]
                 ]
                 Html.div [
-                    Attr.classes [
-                        tw.flex
-                        tw.``justify-end``
-                    ]
+                    Attr.classes [ tw.flex; tw.``justify-end`` ]
                     Html.button [
                         Attr.classes [
                             tw.flex
@@ -164,24 +139,22 @@ let SettingsPage (model: State) dispatch =
                         onClick
                             (fun _ ->
                                 dispatch (
-                                    UpdateUser { UpsertUser.Username = username.Value
-                                                 Image = url.Value
-                                                 Bio = bio.Value
-                                                 Token = Some token
-                                                 Email = email.Value
-                                                 Password = password.Value }))
+                                    UpdateUser
+                                        {
+                                            UpsertUser.Username = username.Value
+                                            Image = url.Value
+                                            Bio = bio.Value
+                                            Token = Some token
+                                            Email = email.Value
+                                            Password = password.Value
+                                        }
+                                ))
                             []
                     ]
                 ]
-                Html.hr [
-                    Attr.classes [
-                        tw.``my-4``
-                    ]
-                ]
+                Html.hr [ Attr.classes [ tw.``my-4`` ] ]
                 Html.div [
-                    Attr.classes [
-                        tw.flex
-                    ]
+                    Attr.classes [ tw.flex ]
                     Html.button [
                         Attr.classes [
                             tw.flex
