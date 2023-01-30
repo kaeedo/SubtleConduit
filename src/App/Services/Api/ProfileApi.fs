@@ -6,7 +6,7 @@ open Fable.Core.JsInterop
 open Thoth.Json
 
 let signUp (upsertUser: UpsertUser) =
-    let url = "https://cirosantilli-realworld-next.herokuapp.com/api/users"
+    let url = "https://api.realworld.io/api/users"
 
     promise {
         let json = upsertUser.toJson ()
@@ -26,7 +26,7 @@ let signUp (upsertUser: UpsertUser) =
     }
 
 let signIn (email, password) =
-    let url = "https://cirosantilli-realworld-next.herokuapp.com/api/users/login"
+    let url = "https://api.realworld.io/api/users/login"
 
     promise {
         let json =
@@ -53,7 +53,7 @@ let signIn (email, password) =
     }
 
 let updateUser (upsertUser: UpsertUser) =
-    let url = "https://cirosantilli-realworld-next.herokuapp.com/api/user"
+    let url = "https://api.realworld.io/api/user"
 
     promise {
         let json = upsertUser.toJson ()
@@ -75,7 +75,7 @@ let updateUser (upsertUser: UpsertUser) =
 
 let getProfile (token, username) =
     let url =
-        $"https://cirosantilli-realworld-next.herokuapp.com/api/profiles/{username}"
+        $"https://api.realworld.io/api/profiles/{username}"
 
     promise {
         let! response =
@@ -95,7 +95,7 @@ let setFollow (followUsername: string * string * bool) =
     let token, username, shouldFollow = followUsername
 
     let url =
-        $"https://cirosantilli-realworld-next.herokuapp.com/api/profiles/{username}/follow"
+        $"https://api.realworld.io/api/profiles/{username}/follow"
 
     promise {
         let! response =

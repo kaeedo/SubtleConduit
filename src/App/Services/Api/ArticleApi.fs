@@ -12,7 +12,7 @@ type ArticleFilter =
     | Favorited of string
 
 let getTags () =
-    let url = "https://cirosantilli-realworld-next.herokuapp.com/api/tags"
+    let url = "https://api.realworld.io/api/tags"
 
     promise {
         let! response = Fetch.fetch url []
@@ -23,9 +23,9 @@ let getTags () =
 let getArticles (user: User option) limit offset (filter: ArticleFilter option) showFeed =
     let url =
         if showFeed then
-            "https://cirosantilli-realworld-next.herokuapp.com/api/articles/feed"
+            "https://api.realworld.io/api/articles/feed"
         else
-            "https://cirosantilli-realworld-next.herokuapp.com/api/articles"
+            "https://api.realworld.io/api/articles"
 
     let url =
         $"{url}?limit={limit}&offset={offset}"
@@ -53,7 +53,7 @@ let getArticles (user: User option) limit offset (filter: ArticleFilter option) 
     }
 
 let getArticle (slug, token) =
-    let url = $"https://cirosantilli-realworld-next.herokuapp.com/api/articles/{slug}"
+    let url = $"https://api.realworld.io/api/articles/{slug}"
 
     promise {
         let! response =
@@ -71,7 +71,7 @@ let getArticle (slug, token) =
     }
 
 let deleteArticle slug token =
-    let url = $"https://cirosantilli-realworld-next.herokuapp.com/api/articles/{slug}"
+    let url = $"https://api.realworld.io/api/articles/{slug}"
 
     promise {
         let! response =
@@ -84,7 +84,7 @@ let deleteArticle slug token =
     }
 
 let createArticle (article: UpsertArticle) =
-    let url = "https://cirosantilli-realworld-next.herokuapp.com/api/articles"
+    let url = "https://api.realworld.io/api/articles"
 
     promise {
         let json = article.toJson ()
@@ -108,7 +108,7 @@ let createArticle (article: UpsertArticle) =
     }
 
 let editArticle slug (article: UpsertArticle) =
-    let url = $"https://cirosantilli-realworld-next.herokuapp.com/api/articles/{slug}"
+    let url = $"https://api.realworld.io/api/articles/{slug}"
 
     promise {
         let json = article.toJson ()
@@ -133,7 +133,7 @@ let editArticle slug (article: UpsertArticle) =
 
 let favoriteArticle slug isFavorited token =
     let url =
-        $"https://cirosantilli-realworld-next.herokuapp.com/api/articles/{slug}/favorite"
+        $"https://api.realworld.io/api/articles/{slug}/favorite"
 
     promise {
         let! response =
