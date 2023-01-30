@@ -1,14 +1,14 @@
-import {defineConfig} from 'windicss/helpers'
+const { transform } = require('windicss/helpers');
 
-export default defineConfig({
+module.exports = {
     extract: {
         // accepts globs and file paths relative to project root
         include: [
-            'index.html',
+            './index.html',
             './**/*.fs',
         ]
     },
-    plugins: [require('tailwindcss-textshadow')],
+    plugins: [transform('tailwindcss-textshadow')],
     theme: {
         extend: {
             colors:{
@@ -21,4 +21,4 @@ export default defineConfig({
             }
         },
     }
-})
+}

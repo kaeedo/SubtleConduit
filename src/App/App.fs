@@ -1,5 +1,6 @@
 module App
 
+open Fable.Core.JsInterop
 open System
 open Sutil
 open Sutil.Program
@@ -15,6 +16,7 @@ open Sutil.DOM
 open SubtleConduit.Router
 open SubtleConduit.Pages.NewArticle
 
+importSideEffects "virtual:windi.css"
 
 let view () =
     let model, dispatch = elmishStore
