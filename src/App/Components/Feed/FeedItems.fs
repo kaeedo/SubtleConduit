@@ -2,13 +2,13 @@ module SubtleConduit.Components.FeedItems
 
 open Sutil
 open Sutil.CoreElements
+open SubtleConduit.Elmish
 open SubtleConduit.Utilities
 open SubtleConduit.Types
-open SubtleConduit.Router
 open SubtleConduit.Services.Api
 open Fable.Core.JsInterop
 
-let FeedItems articles favoriteArticle setArticleFilter =
+let FeedItems dispatch articles favoriteArticle setArticleFilter =
     let heartIcon = importDefault "../../Images/heart.svg"
 
     let view =
@@ -44,12 +44,9 @@ let FeedItems articles favoriteArticle setArticleFilter =
                                                         "text-conduit-green"
                                                         "font-semibold"
                                                     ]
-                                                    Attr.href $"javascript:void(0)"
+                                                    Attr.href "javascript:void(0)"
                                                     onClick
-                                                        (fun _ ->
-                                                            Router.navigate
-                                                                $"profile/{a.Author.Username}"
-                                                                (Some(a.Author.Username :> obj)))
+                                                        (fun _ -> navigateTo dispatch (Page.Profile a.Author.Username))
                                                         []
                                                     text a.Author.Username
                                                 ]
@@ -106,11 +103,7 @@ let FeedItems articles favoriteArticle setArticleFilter =
                                         Html.a [
                                             Attr.classes [ "text-xs"; "text-gray-300" ]
                                             Attr.href $"javascript:void(0)"
-                                            onClick
-                                                (fun _ ->
-                                                    Router.navigate $"article/{a.Slug}"
-                                                    <| Some(a.Slug :> obj))
-                                                []
+                                            onClick (fun _ -> navigateTo dispatch (Page.Article a.Slug)) []
                                             text "Read more..."
                                         ]
 

@@ -16,7 +16,6 @@
     "start": "dotnet fable watch ./src/App -s -o ./build/client --runFast vite --open"
   },
   "dependencies": {
-    "navigo": "8.11.1"
   },
   "devDependencies": {
     "husky": "8.0.3",

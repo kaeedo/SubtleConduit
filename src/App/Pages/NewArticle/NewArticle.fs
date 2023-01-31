@@ -5,13 +5,11 @@ open Sutil
 open SubtleConduit.Types
 open SubtleConduit.Elmish
 
-open Sutil.Core
 open Sutil.CoreElements
-open Sutil.DomHelpers
 open SubtleConduit.Services.Api
-open SubtleConduit.Router
 
-let NewArticlePage (model: State) (slug: string) =
+
+let NewArticlePage (model: State) dispatch (slug: string) =
     let view =
         let user = model.User.Value
         let token = user.Token
@@ -48,8 +46,7 @@ let NewArticlePage (model: State) (slug: string) =
                     else
                         ArticleApi.editArticle slug article
 
-                Router.navigate $"article/{newSlug}"
-                <| Some(newSlug :> obj)
+                navigateTo dispatch (Page.Article newSlug)
             }
             |> ignore
 

@@ -5,7 +5,6 @@
   <ItemGroup>
     <Compile Include="Utilities.fs" />
     <Compile Include="Types.fs" />
-    <Compile Include="Router.fs" />
     <Compile Include="Services/Api/ProfileApi.fs" />
     <Compile Include="Services/Api/ArticleApi.fs" />
     <Compile Include="Services/LocalStorage.fs" />

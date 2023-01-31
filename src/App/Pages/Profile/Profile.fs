@@ -5,7 +5,6 @@ open Sutil
 open SubtleConduit.Services.Api
 open SubtleConduit.Types
 open SubtleConduit.Elmish
-open SubtleConduit.Router
 
 open Sutil.CoreElements
 open SubtleConduit.Components
@@ -67,7 +66,7 @@ let private update msg (state: ProfileState) =
             (fun e -> Error e.Message)
 
 
-let ProfilePage (model: State) (username: string) =
+let ProfilePage (model: State) globalDispatch (username: string) =
     let articleFilter = ArticleApi.Author username
 
     let state, dispatch =
@@ -147,7 +146,7 @@ let ProfilePage (model: State) (username: string) =
                                             "hover:text-white"
                                         ]
                                         if u.Username = s.Username then
-                                            onClick (fun _ -> Router.navigate "settings" None) []
+                                            onClick (fun _ -> navigateTo globalDispatch (Page.Settings)) []
                                             text "Edit profile settings"
                                         else if s.Following then
                                             onClick (fun _ -> dispatch <| Unfollow s.Username) []

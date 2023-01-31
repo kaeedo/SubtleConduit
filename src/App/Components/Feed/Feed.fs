@@ -178,7 +178,7 @@ let Feed (model: State) (dispatch: Dispatch<Message>) (articleFilter: ArticleFil
 
             Attr.classes [ "flex-auto"; "mr-6" ]
             tabs ()
-            FeedItems articles favoriteArticle setArticleFilter
+            FeedItems dispatch articles favoriteArticle setArticleFilter
             Html.ul [
                 Attr.classes [ "flex"; "justify-center" ]
                 Bind.el (

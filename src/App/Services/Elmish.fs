@@ -1,5 +1,6 @@
 module SubtleConduit.Elmish
 
+open Browser.Dom
 open Types
 open Sutil
 open SubtleConduit.Services.Api
@@ -13,6 +14,17 @@ type Page =
     | NewArticle of string
     | Article of string
     | Profile of string
+
+module Page =
+    let toUrl page =
+        match page with
+        | Home -> "/home"
+        | SignIn -> "/signin"
+        | SignUp -> "/signup"
+        | Settings -> "/settings"
+        | NewArticle na -> "/editor" + (na.ToString())
+        | Article a -> "/article" + (a.ToString())
+        | Profile p -> "/profile" + p.ToString()
 
 type NavigablePage = Page of Page
 
@@ -36,7 +48,17 @@ let private init () =
 
 let private update (msg: Message) (state: State) =
     match msg with
-    | NavigateTo page -> { state with Page = page }, Cmd.none
+    | NavigateTo page ->
+        match page with
+        | Page.Home -> history.pushState ((), "", "/home")
+        | Page.SignIn -> history.pushState ((), "", "/signin")
+        | Page.SignUp -> history.pushState ((), "", "/signup")
+        | Page.Settings -> history.pushState ((), "", "/settings")
+        | Page.NewArticle na -> history.pushState ((), "", $"/editor/{na}")
+        | Page.Article a -> history.pushState ((), "", $"/article/{a}")
+        | Page.Profile p -> history.pushState ((), "", $"/profile/{p}")
+
+        { state with Page = page }, Cmd.none
     | SuccessfulLogin user -> { state with User = Some user }, Cmd.ofMsg (NavigateTo Page.Home)
     | UnsuccessfulLogin errors -> state, Cmd.none
     | SignUp upsertUser ->

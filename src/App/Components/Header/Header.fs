@@ -25,10 +25,7 @@ let Header (model, dispatch) =
             Html.li [
                 Bind.toggleClass (isHome, "text-gray-700", "text-gray-400")
 
-                Attr.classes [
-                    "h-auto"
-                    "hover:text-gray-700"
-                ]
+                Attr.classes [ "h-auto"; "hover:text-gray-700" ]
                 Html.a [ Attr.href "#/home"; text "Home" ]
             ]
             Html.li [
@@ -59,10 +56,7 @@ let Header (model, dispatch) =
             Html.li [
                 Bind.toggleClass (isHome, "text-gray-700", "text-gray-400")
 
-                Attr.classes [
-                    "h-auto"
-                    "hover:text-gray-700"
-                ]
+                Attr.classes [ "h-auto"; "hover:text-gray-700" ]
                 Html.a [ Attr.href "#/home"; text "Home" ]
             ]
             Html.li [

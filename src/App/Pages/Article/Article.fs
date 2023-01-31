@@ -7,7 +7,6 @@ open SubtleConduit.Types
 open SubtleConduit.Elmish
 
 open Sutil.CoreElements
-open SubtleConduit.Router
 open SubtleConduit.Utilities
 
 open Fable.Core.JsInterop
@@ -95,7 +94,7 @@ let private update (user: User option) msg state =
     | Error e -> state, Cmd.none // TODO actually handle this
 
 
-let ArticlePage (model: State) (slug: string) =
+let ArticlePage (model: State) globalDispatch (slug: string) =
     let state, dispatch = Store.makeElmish (init slug) (update model.User) ignore ()
 
     let tags = state .> (fun s -> s.Tags)
@@ -225,7 +224,7 @@ let ArticlePage (model: State) (slug: string) =
                     "hover:text-white"
                 ]
                 text "Edit article"
-                onClick (fun _ -> Router.navigate $"editor/{slug}" (Some(slug :> obj))) []
+                onClick (fun _ -> navigateTo globalDispatch (Page.Article slug)) []
             ]
             Html.div [
                 Attr.classes [
@@ -256,7 +255,7 @@ let ArticlePage (model: State) (slug: string) =
                     (fun _ ->
                         promise {
                             let! _ = ArticleApi.deleteArticle slug token
-                            Router.navigate "home" None
+                            navigateTo globalDispatch (Page.Home)
                         }
                         |> ignore)
                     []
@@ -291,10 +290,7 @@ let ArticlePage (model: State) (slug: string) =
                         state,
                         (fun s ->
                             fragment [
-                                onClick
-                                    (fun _ ->
-                                        Router.navigate $"profile/{s.Author.Username}" (Some(s.Author.Username :> obj)))
-                                    []
+                                onClick (fun _ -> navigateTo globalDispatch (Page.Profile s.Author.Username)) []
                                 text s.Author.Username
                             ])
                     )
