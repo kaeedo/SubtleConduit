@@ -1,5 +1,6 @@
 module SubtleConduit.Pages.Profile
 
+open Browser.Dom
 open System
 open Sutil
 open SubtleConduit.Services.Api
@@ -146,7 +147,7 @@ let ProfilePage (model: State) globalDispatch (username: string) =
                                             "hover:text-white"
                                         ]
                                         if u.Username = s.Username then
-                                            onClick (fun _ -> navigateTo globalDispatch (Page.Settings)) []
+                                            onClick (fun _ -> history.pushState ((), "", $"/settings")) []
                                             text "Edit profile settings"
                                         else if s.Following then
                                             onClick (fun _ -> dispatch <| Unfollow s.Username) []

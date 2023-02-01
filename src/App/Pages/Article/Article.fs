@@ -1,5 +1,6 @@
 module SubtleConduit.Pages.Article
 
+open Browser.Dom
 open System
 open Sutil
 open SubtleConduit.Services.Api
@@ -224,7 +225,7 @@ let ArticlePage (model: State) globalDispatch (slug: string) =
                     "hover:text-white"
                 ]
                 text "Edit article"
-                onClick (fun _ -> navigateTo globalDispatch (Page.Article slug)) []
+                onClick (fun _ -> history.pushState ((), "", $"/editor/{slug}")) []
             ]
             Html.div [
                 Attr.classes [
@@ -255,7 +256,7 @@ let ArticlePage (model: State) globalDispatch (slug: string) =
                     (fun _ ->
                         promise {
                             let! _ = ArticleApi.deleteArticle slug token
-                            navigateTo globalDispatch (Page.Home)
+                            history.pushState ((), "", $"/home")
                         }
                         |> ignore)
                     []
@@ -290,7 +291,7 @@ let ArticlePage (model: State) globalDispatch (slug: string) =
                         state,
                         (fun s ->
                             fragment [
-                                onClick (fun _ -> navigateTo globalDispatch (Page.Profile s.Author.Username)) []
+                                onClick (fun _ -> history.pushState ((), "", $"/profile/{s.Author.Username}")) []
                                 text s.Author.Username
                             ])
                     )

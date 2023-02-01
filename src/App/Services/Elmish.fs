@@ -1,6 +1,5 @@
 module SubtleConduit.Elmish
 
-open Browser.Dom
 open Types
 open Sutil
 open SubtleConduit.Services.Api
@@ -48,18 +47,8 @@ let private init () =
 
 let private update (msg: Message) (state: State) =
     match msg with
-    | NavigateTo page ->
-        match page with
-        | Page.Home -> history.pushState ((), "", "/home")
-        | Page.SignIn -> history.pushState ((), "", "/signin")
-        | Page.SignUp -> history.pushState ((), "", "/signup")
-        | Page.Settings -> history.pushState ((), "", "/settings")
-        | Page.NewArticle na -> history.pushState ((), "", $"/editor/{na}")
-        | Page.Article a -> history.pushState ((), "", $"/article/{a}")
-        | Page.Profile p -> history.pushState ((), "", $"/profile/{p}")
-
-        { state with Page = page }, Cmd.none
-    | SuccessfulLogin user -> { state with User = Some user }, Cmd.ofMsg (NavigateTo Page.Home)
+    | NavigateTo page -> { state with Page = page }, Cmd.none
+    | SuccessfulLogin user -> { state with User = Some user }, Cmd.ofMsg (NavigateTo Page.Home) // TODO
     | UnsuccessfulLogin errors -> state, Cmd.none
     | SignUp upsertUser ->
         let successFn (response: User) =
@@ -91,8 +80,6 @@ let private update (msg: Message) (state: State) =
     | Logout ->
         LocalStorage.removeItem SessionStorageKeys.User
 
-        { state with User = None }, Cmd.ofMsg (NavigateTo Page.Home)
-
-let navigateTo dispatch page = NavigateTo page |> dispatch
+        { state with User = None }, Cmd.ofMsg (NavigateTo Page.Home) // TODO
 
 let elmishStore = Store.makeElmish init update ignore ()

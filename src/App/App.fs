@@ -33,17 +33,18 @@ module UrlParser =
             hash, ""
 
     let parseUrl (location: Location) =
-        Fable.Core.JS.console.log "parsed:"
-        Fable.Core.JS.console.log (parseHash location)
+        let url = (fst <| parseHash location).Split("/").[1..2]
+        let page = url[0]
+        let parameter = url[1]
 
-        match parseHash location with
-        | "/signin", _ -> Page.SignIn
-        | "/signup", _ -> Page.SignUp
-        | "/settings", _ -> Page.Settings
-        | "/editor", "" -> Page.NewArticle String.Empty
-        | "/editor", slug -> Page.NewArticle slug
-        | "/article", slug -> Page.Article slug
-        | "/profile", username -> Page.Profile username
+        match page, parameter with
+        | "signin", _ -> Page.SignIn
+        | "signup", _ -> Page.SignUp
+        | "settings", _ -> Page.Settings
+        | "editor", "" -> Page.NewArticle String.Empty
+        | "editor", slug -> Page.NewArticle slug
+        | "article", slug -> Page.Article slug
+        | "profile", username -> Page.Profile username
         | _ -> Page.Home
 
 let view () =
@@ -60,8 +61,6 @@ let view () =
         Bind.el (
             model,
             fun m ->
-                Fable.Core.JS.console.log (m.Page.ToString())
-
                 match m.Page with
                 | Page.Home -> HomePage m dispatch
                 | Page.SignIn -> SignInPage dispatch

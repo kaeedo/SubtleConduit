@@ -2,7 +2,6 @@ module SubtleConduit.Components.FeedItems
 
 open Sutil
 open Sutil.CoreElements
-open SubtleConduit.Elmish
 open SubtleConduit.Utilities
 open SubtleConduit.Types
 open SubtleConduit.Services.Api
@@ -44,10 +43,7 @@ let FeedItems dispatch articles favoriteArticle setArticleFilter =
                                                         "text-conduit-green"
                                                         "font-semibold"
                                                     ]
-                                                    Attr.href "javascript:void(0)"
-                                                    onClick
-                                                        (fun _ -> navigateTo dispatch (Page.Profile a.Author.Username))
-                                                        []
+                                                    Attr.href $"#/profile/{a.Author.Username}"
                                                     text a.Author.Username
                                                 ]
                                                 Html.span [
@@ -102,8 +98,7 @@ let FeedItems dispatch articles favoriteArticle setArticleFilter =
                                         ]
                                         Html.a [
                                             Attr.classes [ "text-xs"; "text-gray-300" ]
-                                            Attr.href $"javascript:void(0)"
-                                            onClick (fun _ -> navigateTo dispatch (Page.Article a.Slug)) []
+                                            Attr.href $"#/article/{a.Slug}"
                                             text "Read more..."
                                         ]
 

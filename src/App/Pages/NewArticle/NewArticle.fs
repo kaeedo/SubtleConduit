@@ -1,10 +1,10 @@
 module SubtleConduit.Pages.NewArticle
 
+open Browser.Dom
 open System
 open Sutil
 open SubtleConduit.Types
 open SubtleConduit.Elmish
-
 open Sutil.CoreElements
 open SubtleConduit.Services.Api
 
@@ -46,7 +46,7 @@ let NewArticlePage (model: State) dispatch (slug: string) =
                     else
                         ArticleApi.editArticle slug article
 
-                navigateTo dispatch (Page.Article newSlug)
+                history.pushState ((), "", $"/editor/{newSlug}")
             }
             |> ignore
 
