@@ -4,6 +4,7 @@ open Types
 open Sutil
 open SubtleConduit.Services.Api
 open LocalStorage
+open Browser
 
 type Page =
     | Home
@@ -21,9 +22,9 @@ module Page =
         | SignIn -> "/signin"
         | SignUp -> "/signup"
         | Settings -> "/settings"
-        | NewArticle na -> "/editor" + (na.ToString())
-        | Article a -> "/article" + (a.ToString())
-        | Profile p -> "/profile" + p.ToString()
+        | NewArticle na -> "/editor/" + (na.ToString())
+        | Article a -> "/article/" + (a.ToString())
+        | Profile p -> "/profile/" + p.ToString()
 
 type NavigablePage = Page of Page
 
@@ -31,6 +32,7 @@ type State = { Page: Page; User: User option }
 
 type Message =
     | NavigateTo of Page
+    | SetHistoryState of Page
     | SuccessfulLogin of User
     | UnsuccessfulLogin of exn
     | SignUp of UpsertUser
@@ -48,7 +50,10 @@ let private init () =
 let private update (msg: Message) (state: State) =
     match msg with
     | NavigateTo page -> { state with Page = page }, Cmd.none
-    | SuccessfulLogin user -> { state with User = Some user }, Cmd.ofMsg (NavigateTo Page.Home) // TODO
+    | SetHistoryState page ->
+        history.pushState ((), "", Page.toUrl page)
+        state, Cmd.none
+    | SuccessfulLogin user -> { state with User = Some user }, Cmd.ofMsg (SetHistoryState Page.Home)
     | UnsuccessfulLogin errors -> state, Cmd.none
     | SignUp upsertUser ->
         let successFn (response: User) =
@@ -80,6 +85,6 @@ let private update (msg: Message) (state: State) =
     | Logout ->
         LocalStorage.removeItem SessionStorageKeys.User
 
-        { state with User = None }, Cmd.ofMsg (NavigateTo Page.Home) // TODO
+        { state with User = None }, Cmd.ofMsg (SetHistoryState Page.Home)
 
 let elmishStore = Store.makeElmish init update ignore ()
