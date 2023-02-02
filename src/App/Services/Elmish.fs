@@ -18,13 +18,13 @@ type Page =
 module Page =
     let toUrl page =
         match page with
-        | Home -> "/home"
-        | SignIn -> "/signin"
-        | SignUp -> "/signup"
-        | Settings -> "/settings"
-        | NewArticle na -> "/editor/" + (na.ToString())
-        | Article a -> "/article/" + (a.ToString())
-        | Profile p -> "/profile/" + p.ToString()
+        | Home -> "#/home"
+        | SignIn -> "#/signin"
+        | SignUp -> "#/signup"
+        | Settings -> "#/settings"
+        | NewArticle na -> "#/editor/" + (na.ToString())
+        | Article a -> "#/article/" + (a.ToString())
+        | Profile p -> "#/profile/" + p.ToString()
 
 type NavigablePage = Page of Page
 

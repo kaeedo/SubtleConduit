@@ -46,7 +46,7 @@ let NewArticlePage (model: State) dispatch (slug: string) =
                     else
                         ArticleApi.editArticle slug article
 
-                history.pushState ((), "", $"/editor/{newSlug}")
+                history.pushState ((), "", $"#/article/{newSlug}") // TODO
             }
             |> ignore
 

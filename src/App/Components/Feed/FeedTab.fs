@@ -2,12 +2,11 @@ module SubtleConduit.Components.FeedTab
 
 open Sutil
 
-open Sutil.Core
 open Sutil.CoreElements
-open Sutil.DomHelpers
 
 
 let FeedTab label clickHandler isSelected =
+
     let view =
         Html.div [
             Bind.toggleClass (isSelected, "border-b-2 border-conduit-green")
@@ -24,3 +23,4 @@ let FeedTab label clickHandler isSelected =
         ]
 
     view
+// 8D211B52-2900-48B1-8906-60994AFB09D7

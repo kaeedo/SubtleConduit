@@ -147,7 +147,7 @@ let ProfilePage (model: State) globalDispatch (username: string) =
                                             "hover:text-white"
                                         ]
                                         if u.Username = s.Username then
-                                            onClick (fun _ -> history.pushState ((), "", $"/settings")) []
+                                            onClick (fun _ -> history.pushState ((), "", "#/settings")) []
                                             text "Edit profile settings"
                                         else if s.Following then
                                             onClick (fun _ -> dispatch <| Unfollow s.Username) []

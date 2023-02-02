@@ -224,8 +224,10 @@ let ArticlePage (model: State) globalDispatch (slug: string) =
                     "hover:bg-gray-300"
                     "hover:text-white"
                 ]
-                text "Edit article"
-                onClick (fun _ -> history.pushState ((), "", $"/editor/{slug}")) []
+                Html.a [
+                    text "Edit article"
+                    Attr.href $"#/editor/{slug}"
+                ]
             ]
             Html.div [
                 Attr.classes [
@@ -251,15 +253,18 @@ let ArticlePage (model: State) globalDispatch (slug: string) =
                     Attr.classes [ "w-4"; "mr-1" ]
                     Attr.src heartIcon
                 ]
-                text "Delete article"
-                onClick
-                    (fun _ ->
-                        promise {
-                            let! _ = ArticleApi.deleteArticle slug token
-                            history.pushState ((), "", $"/home")
-                        }
-                        |> ignore)
-                    []
+                Html.a [
+                    text "Delete article"
+                    Attr.href "#/home"
+                    onClick
+                        (fun _ ->
+                            promise {
+                                let! _ = ArticleApi.deleteArticle slug token
+                                return ()
+                            }
+                            |> ignore)
+                        []
+                ]
             ]
         ]
 
@@ -291,7 +296,7 @@ let ArticlePage (model: State) globalDispatch (slug: string) =
                         state,
                         (fun s ->
                             fragment [
-                                onClick (fun _ -> history.pushState ((), "", $"/profile/{s.Author.Username}")) []
+                                onClick (fun _ -> history.pushState ((), "", $"#/profile/{s.Author.Username}")) []
                                 text s.Author.Username
                             ])
                     )

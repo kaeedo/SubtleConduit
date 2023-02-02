@@ -28,7 +28,7 @@ let SignInPage dispatch =
                 Attr.classes [ "mb-4" ]
                 Html.a [
                     Attr.classes [ "text-conduit-green"; "text-base" ]
-                    Attr.href "#signup"
+                    Attr.href "#/signup"
                     text "Need an account?"
                 ]
             ]
