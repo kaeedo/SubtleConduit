@@ -137,7 +137,9 @@ let SettingsPage (model: State) dispatch =
                         type' "submit"
                         text "Update Settings"
                         onClick
-                            (fun _ ->
+                            (fun e ->
+                                e.preventDefault ()
+
                                 dispatch (
                                     UpdateUser
                                         {

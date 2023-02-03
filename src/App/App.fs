@@ -19,33 +19,42 @@ open SubtleConduit.Pages.NewArticle
 importSideEffects "virtual:windi.css"
 
 module UrlParser =
-    let parseHash (location: Location) =
-        let hash =
-            if location.hash.Length > 1 then
-                location.hash.Substring 1
-            else
-                ""
-
-        if hash.Contains("?") then
-            let h = hash.Substring(0, hash.IndexOf("?"))
-            h, hash.Substring(h.Length + 1)
-        else
-            hash, ""
-
     let parseUrl (location: Location) =
-        let url = (fst <| parseHash location).Split("/").[1..2]
+        let url = (location.hash).Split("/").[1..2]
         let page = url[0]
         let parameter = url[1]
+        // 8D211B52-2900-48B1-8906-60994AFB09D7@test.com
 
         match page, parameter with
-        | "signin", _ -> Page.SignIn
-        | "signup", _ -> Page.SignUp
-        | "settings", _ -> Page.Settings
-        | "editor", "" -> Page.NewArticle String.Empty
-        | "editor", slug -> Page.NewArticle slug
-        | "article", slug -> Page.Article slug
-        | "profile", username -> Page.Profile username
-        | _ -> Page.Home
+        | "signin", _ ->
+            Fable.Core.JS.console.log "Parsed signing"
+            Page.SignIn
+        | "signup", _ ->
+            Fable.Core.JS.console.log "Parsed sign up"
+            Page.SignUp
+        | "settings", x ->
+            Fable.Core.JS.console.log "Parsed seettinggs"
+            Fable.Core.JS.console.log x
+            Page.Settings
+        | "editor", "" ->
+            Fable.Core.JS.console.log "Parsed editor empty"
+            Page.NewArticle String.Empty
+        | "editor", slug ->
+            Fable.Core.JS.console.log "Parsed editor"
+            Fable.Core.JS.console.log slug
+            Page.NewArticle slug
+        | "article", slug ->
+            Fable.Core.JS.console.log "Parsed article"
+            Fable.Core.JS.console.log slug
+            Page.Article slug
+        | "profile", username ->
+            Fable.Core.JS.console.log "Parsed profile"
+            Fable.Core.JS.console.log username
+            Page.Profile username
+        | x ->
+            Fable.Core.JS.console.log "Parsed other"
+            Fable.Core.JS.console.log x
+            Page.Home
 
 let view () =
     let model, dispatch = elmishStore

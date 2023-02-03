@@ -1,6 +1,5 @@
 module SubtleConduit.Pages.NewArticle
 
-open Browser.Dom
 open System
 open Sutil
 open SubtleConduit.Types
@@ -46,7 +45,7 @@ let NewArticlePage (model: State) dispatch (slug: string) =
                     else
                         ArticleApi.editArticle slug article
 
-                history.pushState ((), "", $"#/article/{newSlug}") // TODO
+                dispatch (SetHistoryState(Page.Article newSlug))
             }
             |> ignore
 

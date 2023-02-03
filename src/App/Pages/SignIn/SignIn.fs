@@ -28,7 +28,7 @@ let SignInPage dispatch =
                 Attr.classes [ "mb-4" ]
                 Html.a [
                     Attr.classes [ "text-conduit-green"; "text-base" ]
-                    Attr.href "#/signup"
+                    Attr.href "signup"
                     text "Need an account?"
                 ]
             ]
@@ -82,7 +82,11 @@ let SignInPage dispatch =
                             "text-xl"
                         ]
                         Attr.typeSubmit
-                        onClick (fun _ -> dispatch (Message.SignIn(email.Value, password.Value))) []
+                        onClick
+                            (fun e ->
+                                e.preventDefault ()
+                                dispatch (Message.SignIn(email.Value, password.Value)))
+                            []
                         text "Sign in"
                     ]
                 ]

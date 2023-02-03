@@ -4,11 +4,18 @@ open System
 open Thoth.Json
 open SubtleConduit.Utilities
 
+open Fable.Core
+
+[<Emit("window.location.assign($0)")>]
+let assignLocation url = jsNative
+
+
 let inline private encoder<'T> =
     Encode.Auto.generateEncoderCached<'T> (caseStrategy = CamelCase)
 
 let inline private decoder<'T> extras =
     Decode.Auto.generateDecoderCached<'T> (caseStrategy = CamelCase, extra = extras)
+
 
 type Tags =
     {

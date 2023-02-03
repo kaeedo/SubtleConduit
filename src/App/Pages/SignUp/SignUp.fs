@@ -100,7 +100,9 @@ let SignUpPage dispatch =
                         ]
                         Attr.typeSubmit
                         onClick
-                            (fun _ ->
+                            (fun e ->
+                                e.preventDefault ()
+
                                 dispatch (
                                     SignUp
                                         {

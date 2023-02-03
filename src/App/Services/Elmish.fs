@@ -1,10 +1,10 @@
 module SubtleConduit.Elmish
 
+open Browser
 open Types
 open Sutil
 open SubtleConduit.Services.Api
 open LocalStorage
-open Browser
 
 type Page =
     | Home
@@ -51,8 +51,10 @@ let private update (msg: Message) (state: State) =
     match msg with
     | NavigateTo page -> { state with Page = page }, Cmd.none
     | SetHistoryState page ->
-        history.pushState ((), "", Page.toUrl page)
-        state, Cmd.none
+        let pageUrl = Page.toUrl page
+        assignLocation pageUrl
+
+        { state with Page = page }, Cmd.none
     | SuccessfulLogin user -> { state with User = Some user }, Cmd.ofMsg (SetHistoryState Page.Home)
     | UnsuccessfulLogin errors -> state, Cmd.none
     | SignUp upsertUser ->

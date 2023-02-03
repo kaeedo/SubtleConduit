@@ -23,4 +23,3 @@ let FeedTab label clickHandler isSelected =
         ]
 
     view
-// 8D211B52-2900-48B1-8906-60994AFB09D7

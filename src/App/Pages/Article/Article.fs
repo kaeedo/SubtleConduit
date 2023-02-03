@@ -1,6 +1,5 @@
 module SubtleConduit.Pages.Article
 
-open Browser.Dom
 open System
 open Sutil
 open SubtleConduit.Services.Api
@@ -290,13 +289,11 @@ let ArticlePage (model: State) globalDispatch (slug: string) =
                         "font-bold"
                         "hover:underline"
                     ]
-                    Attr.href $"javascript:void(0)"
-
                     Bind.el (
                         state,
                         (fun s ->
                             fragment [
-                                onClick (fun _ -> history.pushState ((), "", $"#/profile/{s.Author.Username}")) []
+                                Attr.href $"#/profile/{s.Author.Username}"
                                 text s.Author.Username
                             ])
                     )
