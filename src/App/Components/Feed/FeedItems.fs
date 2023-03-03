@@ -12,6 +12,7 @@ let FeedItems dispatch articles favoriteArticle setArticleFilter =
 
     let view =
         Html.ul [
+            Attr.testId "feedItems"
             Bind.el (
                 articles,
                 function
