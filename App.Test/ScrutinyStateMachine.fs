@@ -103,7 +103,7 @@ module rec ScrutinyStateMachine =
             }
 
             transition {
-                destination profilePage
+                destination profile
 
                 via (fun _ -> task {
                     let author = gs.Page.GetByTestId("authorName").Nth(0)
@@ -117,7 +117,7 @@ module rec ScrutinyStateMachine =
             }
 
             transition {
-                destination articlePage
+                destination article
 
                 via (fun _ -> task {
                     let readMoreLink =
@@ -138,9 +138,33 @@ module rec ScrutinyStateMachine =
                     do! readMoreLink.ClickAsync()
                 })
             }
+
+            transition {
+                destination signUp
+
+                via (fun _ -> task {
+                    let signUpLink = gs.Page.GetByText("Sign up")
+
+                    do! signUpLink.First.WaitForAsync()
+
+                    do! signUpLink.ClickAsync()
+                })
+            }
+
+            transition {
+                destination signIn
+
+                via (fun _ -> task {
+                    let signInLink = gs.Page.GetByText("Sign In")
+
+                    do! signInLink.First.WaitForAsync()
+
+                    do! signInLink.ClickAsync()
+                })
+            }
         }
 
-    let profilePage =
+    let profile =
         fun (gs: GlobalState) -> page {
             name "Profile"
 
@@ -170,7 +194,7 @@ module rec ScrutinyStateMachine =
             }
 
             transition {
-                destination articlePage
+                destination article
 
                 via (fun _ -> task {
                     let readMoreLink =
@@ -203,9 +227,33 @@ module rec ScrutinyStateMachine =
                     do! homeLink.ClickAsync()
                 })
             }
+
+            transition {
+                destination signUp
+
+                via (fun _ -> task {
+                    let signUpLink = gs.Page.GetByText("Sign up")
+
+                    do! signUpLink.First.WaitForAsync()
+
+                    do! signUpLink.ClickAsync()
+                })
+            }
+
+            transition {
+                destination signIn
+
+                via (fun _ -> task {
+                    let signInLink = gs.Page.GetByText("Sign In")
+
+                    do! signInLink.First.WaitForAsync()
+
+                    do! signInLink.ClickAsync()
+                })
+            }
         }
 
-    let articlePage =
+    let article =
         fun (gs: GlobalState) -> page {
             name "Article"
 
@@ -229,6 +277,104 @@ module rec ScrutinyStateMachine =
                     do! homeLink.First.WaitForAsync()
 
                     do! homeLink.ClickAsync()
+                })
+            }
+
+            transition {
+                destination signUp
+
+                via (fun _ -> task {
+                    let signUpLink = gs.Page.GetByText("Sign up")
+
+                    do! signUpLink.First.WaitForAsync()
+
+                    do! signUpLink.ClickAsync()
+                })
+            }
+
+            transition {
+                destination signIn
+
+                via (fun _ -> task {
+                    let signInLink = gs.Page.GetByText("Sign In")
+
+                    do! signInLink.First.WaitForAsync()
+
+                    do! signInLink.ClickAsync()
+                })
+            }
+        }
+
+    let signIn =
+        fun (gs: GlobalState) -> page {
+            name "Sign In"
+
+            onEnter (fun _ -> task {
+                let header = gs.Page.GetByRole(AriaRole.Heading).First
+
+                let! isVisible = header.IsVisibleAsync()
+
+                test <@ isVisible @>
+            })
+
+            transition {
+                destination home
+
+                via (fun _ -> task {
+                    let homeLink = gs.Page.GetByText("Home")
+
+                    do! homeLink.First.WaitForAsync()
+
+                    do! homeLink.ClickAsync()
+                })
+            }
+
+            transition {
+                destination signUp
+
+                via (fun _ -> task {
+                    let signUpLink = gs.Page.GetByText("Sign up")
+
+                    do! signUpLink.First.WaitForAsync()
+
+                    do! signUpLink.ClickAsync()
+                })
+            }
+        }
+
+    let signUp =
+        fun (gs: GlobalState) -> page {
+            name "Sign Up"
+
+            onEnter (fun _ -> task {
+                let header = gs.Page.GetByRole(AriaRole.Heading).First
+
+                let! isVisible = header.IsVisibleAsync()
+
+                test <@ isVisible @>
+            })
+
+            transition {
+                destination home
+
+                via (fun _ -> task {
+                    let homeLink = gs.Page.GetByText("Home")
+
+                    do! homeLink.First.WaitForAsync()
+
+                    do! homeLink.ClickAsync()
+                })
+            }
+
+            transition {
+                destination signIn
+
+                via (fun _ -> task {
+                    let signInLink = gs.Page.GetByText("Sign In")
+
+                    do! signInLink.First.WaitForAsync()
+
+                    do! signInLink.ClickAsync()
                 })
             }
         }
