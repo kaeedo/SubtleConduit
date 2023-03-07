@@ -15,18 +15,19 @@ type PlaywrightTests(outputHelper: ITestOutputHelper) =
 
     let logger msg = outputHelper.WriteLine(msg)
     let playwright = Playwright.CreateAsync().GetAwaiter().GetResult()
+    let isHeadless = false
 
     [<Fact>]
     member this.``Loads home page``() = task {
         let launchOptions = BrowserTypeLaunchOptions()
-        launchOptions.Headless <- false
+        launchOptions.Headless <- isHeadless
 
         let! browser = playwright.Firefox.LaunchAsync(launchOptions)
         let! context = browser.NewContextAsync(BrowserNewContextOptions(IgnoreHTTPSErrors = true))
 
         let! page = context.NewPageAsync()
 
-        let! _ = page.GotoAsync("http://localhost:5173/SubtleConduit/")
+        let! _ = page.GotoAsync("http://localhost:5173")
 
         let header = page.GetByRole(AriaRole.Heading)
         let! text = header.First.InnerTextAsync()
@@ -65,8 +66,62 @@ type PlaywrightTests(outputHelper: ITestOutputHelper) =
     }
 
     [<Fact>]
+    member this.``Filters by tag``() = task {
+        let launchOptions = BrowserTypeLaunchOptions()
+        launchOptions.Headless <- isHeadless
+
+        let! browser = playwright.Firefox.LaunchAsync(launchOptions)
+        let! context = browser.NewContextAsync(BrowserNewContextOptions(IgnoreHTTPSErrors = true))
+
+        let! page = context.NewPageAsync()
+
+        let! _ = page.GotoAsync("http://localhost:5173")
+
+        let tags = page.GetByTestId("tags").Locator("li")
+        do! tags.Nth(1).WaitForAsync()
+        let! tagCount = tags.CountAsync()
+        let rdn = Random()
+        let tag = tags.Nth(rdn.Next(tagCount - 1))
+
+        do! tag.ClickAsync()
+        let! tagText = tag.TextContentAsync()
+
+        let filteredFeedLabel =
+            page
+                .GetByText("Global Feed")
+                .Locator("xpath=following-sibling::*")
+
+        do! filteredFeedLabel.WaitForAsync()
+
+        let! filteredFeedLabelText = filteredFeedLabel.TextContentAsync()
+
+        test <@ filteredFeedLabelText = tagText @>
+    }
+
+    [<Fact>]
+    member this.``Profile page shows author name in banner``() = task {
+        let launchOptions = BrowserTypeLaunchOptions()
+        launchOptions.Headless <- isHeadless
+
+        let! browser = playwright.Firefox.LaunchAsync(launchOptions)
+        let! context = browser.NewContextAsync(BrowserNewContextOptions(IgnoreHTTPSErrors = true))
+
+        let! page = context.NewPageAsync()
+
+        let! _ = page.GotoAsync("http://localhost:5173/#/profile/Anah%20Bene%C5%A1ov%C3%A1")
+
+        let bannerName = page.GetByRole(AriaRole.Heading).Nth(1)
+
+        do! bannerName.WaitForAsync()
+
+        let! name = bannerName.TextContentAsync()
+
+        test <@ name = "Anah Benešová" @>
+    }
+
+    [<Fact>]
     member this.``Run Scrutiny Test``() = task {
-        let isHeadless = Environment.GetEnvironmentVariable("CI") = "true"
+        //let isHeadless = Environment.GetEnvironmentVariable("CI") = "true"
 
         let launchOptions = BrowserTypeLaunchOptions()
         launchOptions.Headless <- isHeadless
@@ -77,7 +132,7 @@ type PlaywrightTests(outputHelper: ITestOutputHelper) =
 
         let! page = context.NewPageAsync()
 
-        let! _ = page.GotoAsync("http://localhost:5173/SubtleConduit/")
+        let! _ = page.GotoAsync("http://localhost:5173")
 
         let config =
             { ScrutinyConfig.Default with

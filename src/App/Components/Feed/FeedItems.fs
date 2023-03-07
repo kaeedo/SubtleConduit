@@ -40,6 +40,7 @@ let FeedItems dispatch articles favoriteArticle setArticleFilter =
                                             Html.div [
                                                 Attr.classes [ "flex"; "flex-col"; "ml-2" ]
                                                 Html.a [
+                                                    Attr.testId "authorName"
                                                     Attr.classes [
                                                         "text-conduit-green"
                                                         "font-semibold"
