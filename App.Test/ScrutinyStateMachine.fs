@@ -10,6 +10,8 @@ type GlobalState(page: IPage, logger: string -> unit) =
 
     member val SelectedAuthor = String.Empty with get, set
 
+    member val ActiveArticle = String.Empty with get, set
+
     member x.GetInputValueAsync(selector: string) = task {
         let! element = x.Page.QuerySelectorAsync(selector)
         let! value = element.EvaluateAsync("e => e.value")
@@ -113,6 +115,29 @@ module rec ScrutinyStateMachine =
                     gs.SelectedAuthor <- authorName
                 })
             }
+
+            transition {
+                destination articlePage
+
+                via (fun _ -> task {
+                    let readMoreLink =
+                        gs
+                            .Page
+                            .GetByRole(AriaRole.Link)
+                            .Filter(LocatorFilterOptions(HasText = "Read more..."))
+
+                    do! readMoreLink.First.WaitForAsync()
+
+                    let! articleName =
+                        readMoreLink
+                            .Locator("xpath=../../div[2]/a[1]")
+                            .First.TextContentAsync()
+
+                    gs.ActiveArticle <- articleName
+
+                    do! readMoreLink.ClickAsync()
+                })
+            }
         }
 
     let profilePage =
@@ -127,4 +152,83 @@ module rec ScrutinyStateMachine =
 
                 test <@ name = gs.SelectedAuthor @>
             })
+
+            onExit (fun _ -> gs.SelectedAuthor <- String.Empty)
+
+            action {
+                fn (fun _ -> task {
+                    let favoritedPostsTab = gs.Page.GetByText("Favorited Posts")
+                    do! favoritedPostsTab.ClickAsync()
+                })
+            }
+
+            action {
+                fn (fun _ -> task {
+                    let favoritedPostsTab = gs.Page.GetByText("Posts")
+                    do! favoritedPostsTab.ClickAsync()
+                })
+            }
+
+            transition {
+                destination articlePage
+
+                via (fun _ -> task {
+                    let readMoreLink =
+                        gs
+                            .Page
+                            .GetByRole(AriaRole.Link)
+                            .Filter(LocatorFilterOptions(HasText = "Read more..."))
+
+                    do! readMoreLink.First.WaitForAsync()
+
+                    let! articleName =
+                        readMoreLink
+                            .Locator("xpath=../../div[2]/a[1]")
+                            .First.TextContentAsync()
+
+                    gs.ActiveArticle <- articleName
+
+                    do! readMoreLink.ClickAsync()
+                })
+            }
+
+            transition {
+                destination home
+
+                via (fun _ -> task {
+                    let homeLink = gs.Page.GetByText("Home")
+
+                    do! homeLink.First.WaitForAsync()
+
+                    do! homeLink.ClickAsync()
+                })
+            }
+        }
+
+    let articlePage =
+        fun (gs: GlobalState) -> page {
+            name "Article"
+
+            onEnter (fun _ -> task {
+                let articleTitle = gs.Page.GetByRole(AriaRole.Heading).Nth(0)
+
+                do! articleTitle.WaitForAsync()
+                let! articleTitleText = articleTitle.TextContentAsync()
+
+                test <@ articleTitleText = gs.ActiveArticle @>
+            })
+
+            onExit (fun _ -> task { gs.ActiveArticle <- String.Empty })
+
+            transition {
+                destination home
+
+                via (fun _ -> task {
+                    let homeLink = gs.Page.GetByText("Home")
+
+                    do! homeLink.First.WaitForAsync()
+
+                    do! homeLink.ClickAsync()
+                })
+            }
         }

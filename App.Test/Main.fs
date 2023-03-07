@@ -120,6 +120,60 @@ type PlaywrightTests(outputHelper: ITestOutputHelper) =
     }
 
     [<Fact>]
+    member this.``Profile page shows article title``() = task {
+        let launchOptions = BrowserTypeLaunchOptions()
+        launchOptions.Headless <- isHeadless
+
+        let! browser = playwright.Firefox.LaunchAsync(launchOptions)
+        let! context = browser.NewContextAsync(BrowserNewContextOptions(IgnoreHTTPSErrors = true))
+
+        let! page = context.NewPageAsync()
+
+        let! _ = page.GotoAsync("http://localhost:5173/#/profile/Anah%20Bene%C5%A1ov%C3%A1")
+
+        let readMoreLink =
+            page
+                .GetByRole(AriaRole.Link)
+                .Filter(LocatorFilterOptions(HasText = "Read more..."))
+
+        do! readMoreLink.First.WaitForAsync()
+
+        let! articleName =
+            readMoreLink
+                .Locator("xpath=../../div[2]/a[1]")
+                .First.TextContentAsync()
+
+        test <@ articleName.Length > 0 @>
+    }
+
+    [<Fact>]
+    member this.``Home link in nav is clickable``() = task {
+        let launchOptions = BrowserTypeLaunchOptions()
+        launchOptions.Headless <- isHeadless
+
+        let! browser = playwright.Firefox.LaunchAsync(launchOptions)
+        let! context = browser.NewContextAsync(BrowserNewContextOptions(IgnoreHTTPSErrors = true))
+
+        let! page = context.NewPageAsync()
+
+        let! _ = page.GotoAsync("http://localhost:5173/#/profile/Anah%20Bene%C5%A1ov%C3%A1")
+
+        let homeLink = page.GetByText("Home")
+
+        do! homeLink.First.WaitForAsync()
+
+        do! homeLink.ClickAsync()
+
+        let globalFeedTab = page.GetByText("Global Feed")
+
+        do! globalFeedTab.First.WaitForAsync()
+
+        let! isVisible = globalFeedTab.First.IsVisibleAsync()
+
+        test <@ isVisible @>
+    }
+
+    [<Fact>]
     member this.``Run Scrutiny Test``() = task {
         //let isHeadless = Environment.GetEnvironmentVariable("CI") = "true"
 
