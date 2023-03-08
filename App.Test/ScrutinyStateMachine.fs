@@ -12,12 +12,9 @@ type GlobalState(page: IPage, logger: string -> unit) =
 
     member val ActiveArticle = String.Empty with get, set
 
-    member x.GetInputValueAsync(selector: string) = task {
-        let! element = x.Page.QuerySelectorAsync(selector)
-        let! value = element.EvaluateAsync("e => e.value")
-        return value.ToString()
-    }
-
+    member val Username = String.Empty with get, set
+    member val Email = String.Empty with get, set
+    member val Password = String.Empty with get, set
 
 module rec ScrutinyStateMachine =
     let home =
@@ -103,7 +100,7 @@ module rec ScrutinyStateMachine =
             }
 
             transition {
-                destination profile
+                destination authorProfile
 
                 via (fun _ -> task {
                     let author = gs.Page.GetByTestId("authorName").Nth(0)
@@ -164,9 +161,141 @@ module rec ScrutinyStateMachine =
             }
         }
 
-    let profile =
+    let loggedInHome =
         fun (gs: GlobalState) -> page {
-            name "Profile"
+            name "Logged in Home"
+
+            onEnter (fun _ -> task {
+                let header = gs.Page.GetByRole(AriaRole.Heading)
+                let! text = header.First.InnerTextAsync()
+
+                test <@ text = "conduit" @>
+
+                let globalFeed = gs.Page.GetByText("Global Feed")
+
+                do! globalFeed.WaitForAsync()
+                let! isGlobalFeedVisible = globalFeed.IsVisibleAsync()
+
+                test <@ isGlobalFeedVisible @>
+
+                let yourFeed = gs.Page.GetByText("Your Feed")
+
+                do! yourFeed.WaitForAsync()
+                let! isYourFeedVisible = yourFeed.IsVisibleAsync()
+
+                test <@ isYourFeedVisible @>
+            })
+
+            action {
+                name "Filter by tag"
+
+                fn (fun _ -> task {
+                    let tags = gs.Page.GetByTestId("tags").Locator("li")
+                    do! tags.Nth(1).WaitForAsync()
+                    let! tagCount = tags.CountAsync()
+                    let rdn = Random()
+                    let tag = tags.Nth(rdn.Next(tagCount - 1))
+
+                    do! tag.ClickAsync()
+                    let! tagText = tag.TextContentAsync()
+
+                    let filteredFeedLabel =
+                        gs
+                            .Page
+                            .GetByText("Global Feed")
+                            .Locator("xpath=following-sibling::*")
+
+                    do! filteredFeedLabel.WaitForAsync()
+
+                    let! filteredFeedLabelText = filteredFeedLabel.TextContentAsync()
+
+                    test <@ filteredFeedLabelText = tagText @>
+                })
+            }
+
+            action {
+                dependantActions [ "Filter by tag" ]
+
+                fn (fun _ -> task {
+                    let globalFeedLabel = gs.Page.GetByText("Global Feed")
+
+                    do! globalFeedLabel.ClickAsync()
+                })
+            }
+
+            action {
+                fn (fun _ -> task {
+                    let youFeedLabel = gs.Page.GetByText("Your Feed")
+
+                    do! youFeedLabel.ClickAsync()
+                })
+            }
+
+            transition {
+                destination loggedInAuthorProfile
+
+                via (fun _ -> task {
+                    let author = gs.Page.GetByTestId("authorName").Nth(0)
+
+                    do! author.WaitForAsync()
+
+                    let! authorName = author.TextContentAsync()
+
+                    gs.SelectedAuthor <- authorName
+                })
+            }
+
+            transition {
+                destination article
+
+                via (fun _ -> task {
+                    let readMoreLink =
+                        gs
+                            .Page
+                            .GetByRole(AriaRole.Link)
+                            .Filter(LocatorFilterOptions(HasText = "Read more..."))
+
+                    do! readMoreLink.First.WaitForAsync()
+
+                    let! articleName =
+                        readMoreLink
+                            .Locator("xpath=../../div[2]/a[1]")
+                            .First.TextContentAsync()
+
+                    gs.ActiveArticle <- articleName
+
+                    do! readMoreLink.ClickAsync()
+                })
+            }
+
+        (*transition {
+                destination signUp
+
+                via (fun _ -> task {
+                    let signUpLink = gs.Page.GetByText("Sign up")
+
+                    do! signUpLink.First.WaitForAsync()
+
+                    do! signUpLink.ClickAsync()
+                })
+            }
+
+            transition {
+                destination signIn
+
+                via (fun _ -> task {
+                    let signInLink = gs.Page.GetByText("Sign In")
+
+                    do! signInLink.First.WaitForAsync()
+
+                    do! signInLink.ClickAsync()
+                })
+            }*)
+        }
+
+    let authorProfile =
+        fun (gs: GlobalState) -> page {
+            name "Author Profile"
 
             onEnter (fun _ -> task {
                 let bannerName = gs.Page.GetByRole(AriaRole.Heading).Nth(1)
@@ -253,6 +382,107 @@ module rec ScrutinyStateMachine =
             }
         }
 
+    let loggedInAuthorProfile =
+        fun (gs: GlobalState) -> page {
+            name "Logged in author Profile"
+
+            onEnter (fun _ -> task {
+                let bannerName = gs.Page.GetByRole(AriaRole.Heading).Nth(1)
+
+                do! bannerName.WaitForAsync()
+                let! name = bannerName.TextContentAsync()
+
+                test <@ name = gs.SelectedAuthor @>
+            })
+
+            onExit (fun _ -> gs.SelectedAuthor <- String.Empty)
+
+            action {
+                fn (fun _ -> task {
+                    let favoritedPostsTab = gs.Page.GetByText("Favorited Posts")
+                    do! favoritedPostsTab.ClickAsync()
+                })
+            }
+
+            action {
+                fn (fun _ -> task {
+                    let favoritedPostsTab = gs.Page.GetByText("Posts")
+                    do! favoritedPostsTab.ClickAsync()
+                })
+            }
+
+            action {
+                fn (fun _ -> task {
+                    let followButton = gs.Page.GetByText($"+ Follow {gs.SelectedAuthor}")
+                    do! followButton.ClickAsync()
+
+                    let unfollowButton = gs.Page.GetByText($"- Unfollow {gs.SelectedAuthor}")
+                    let! isUnfollowButtonVisible = unfollowButton.IsVisibleAsync()
+
+                    test <@ isUnfollowButtonVisible @>
+                })
+            }
+
+            transition {
+                destination loggedInArticle
+
+                via (fun _ -> task {
+                    let readMoreLink =
+                        gs
+                            .Page
+                            .GetByRole(AriaRole.Link)
+                            .Filter(LocatorFilterOptions(HasText = "Read more..."))
+
+                    do! readMoreLink.First.WaitForAsync()
+
+                    let! articleName =
+                        readMoreLink
+                            .Locator("xpath=../../div[2]/a[1]")
+                            .First.TextContentAsync()
+
+                    gs.ActiveArticle <- articleName
+
+                    do! readMoreLink.ClickAsync()
+                })
+            }
+
+            transition {
+                destination loggedInHome
+
+                via (fun _ -> task {
+                    let homeLink = gs.Page.GetByText("Home")
+
+                    do! homeLink.First.WaitForAsync()
+
+                    do! homeLink.ClickAsync()
+                })
+            }
+
+        (*transition {
+                destination signUp
+
+                via (fun _ -> task {
+                    let signUpLink = gs.Page.GetByText("Sign up")
+
+                    do! signUpLink.First.WaitForAsync()
+
+                    do! signUpLink.ClickAsync()
+                })
+            }
+
+            transition {
+                destination signIn
+
+                via (fun _ -> task {
+                    let signInLink = gs.Page.GetByText("Sign In")
+
+                    do! signInLink.First.WaitForAsync()
+
+                    do! signInLink.ClickAsync()
+                })
+            }*)
+        }
+
     let article =
         fun (gs: GlobalState) -> page {
             name "Article"
@@ -305,6 +535,58 @@ module rec ScrutinyStateMachine =
             }
         }
 
+    let loggedInArticle =
+        fun (gs: GlobalState) -> page {
+            name "Logged in Article"
+
+            onEnter (fun _ -> task {
+                let articleTitle = gs.Page.GetByRole(AriaRole.Heading).Nth(0)
+
+                do! articleTitle.WaitForAsync()
+                let! articleTitleText = articleTitle.TextContentAsync()
+
+                test <@ articleTitleText = gs.ActiveArticle @>
+            })
+
+            onExit (fun _ -> task { gs.ActiveArticle <- String.Empty })
+
+            transition {
+                destination home
+
+                via (fun _ -> task {
+                    let homeLink = gs.Page.GetByText("Home")
+
+                    do! homeLink.First.WaitForAsync()
+
+                    do! homeLink.ClickAsync()
+                })
+            }
+
+        (*transition {
+                destination signUp
+
+                via (fun _ -> task {
+                    let signUpLink = gs.Page.GetByText("Sign up")
+
+                    do! signUpLink.First.WaitForAsync()
+
+                    do! signUpLink.ClickAsync()
+                })
+            }
+
+            transition {
+                destination signIn
+
+                via (fun _ -> task {
+                    let signInLink = gs.Page.GetByText("Sign In")
+
+                    do! signInLink.First.WaitForAsync()
+
+                    do! signInLink.ClickAsync()
+                })
+            }*)
+        }
+
     let signIn =
         fun (gs: GlobalState) -> page {
             name "Sign In"
@@ -353,6 +635,62 @@ module rec ScrutinyStateMachine =
 
                 test <@ isVisible @>
             })
+
+            action {
+                name "Write username"
+
+                fn (fun _ -> task {
+                    let username = Guid.NewGuid().ToString()
+                    let usernameInput = gs.Page.GetByPlaceholder("Username")
+                    do! usernameInput.TypeAsync(username)
+
+                    gs.Username <- username
+                })
+            }
+
+            action {
+                name "Write email"
+
+                fn (fun _ -> task {
+                    let email = $"{Guid.NewGuid()}@example.com"
+                    let emailInput = gs.Page.GetByPlaceholder("Email")
+                    do! emailInput.TypeAsync(email)
+
+                    gs.Email <- email
+                })
+            }
+
+            action {
+                name "Write password"
+
+                fn (fun _ -> task {
+                    let password = Guid.NewGuid().ToString()
+                    let passwordInput = gs.Page.GetByPlaceholder("Password")
+                    do! passwordInput.TypeAsync(password)
+
+                    gs.Password <- password
+                })
+            }
+
+            transition {
+                dependantActions [
+                    "Write username"
+                    "Write email"
+                    "Write password"
+                ]
+
+                destination loggedInHome
+
+                via (fun _ -> task {
+                    let signUpButton =
+                        gs
+                            .Page
+                            .GetByRole(AriaRole.Button)
+                            .Filter(LocatorFilterOptions(HasText = "Sign up"))
+
+                    do! signUpButton.ClickAsync()
+                })
+            }
 
             transition {
                 destination home
