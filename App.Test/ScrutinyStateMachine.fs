@@ -616,7 +616,7 @@ module rec ScrutinyStateMachine =
             name "New Article"
 
             onEnter (fun _ -> task {
-                let publishButton = gs.Page.GetByRole(AriaRole.Button).Nth(1)
+                let publishButton = gs.Page.GetByRole(AriaRole.Button).First
 
                 do! publishButton.WaitForAsync()
 
@@ -636,9 +636,11 @@ module rec ScrutinyStateMachine =
 
                     do! titleInput.WaitForAsync()
 
+                    do! titleInput.ClearAsync()
+
                     do! titleInput.TypeAsync(title)
 
-                    let! inputText = titleInput.TextContentAsync()
+                    let! inputText = titleInput.InputValueAsync()
 
                     test <@ title = inputText @>
                 })
@@ -654,9 +656,11 @@ module rec ScrutinyStateMachine =
 
                     do! descriptionInput.WaitForAsync()
 
+                    do! descriptionInput.ClearAsync()
+
                     do! descriptionInput.TypeAsync(description)
 
-                    let! inputText = descriptionInput.TextContentAsync()
+                    let! inputText = descriptionInput.InputValueAsync()
 
                     test <@ description = inputText @>
                 })
@@ -673,9 +677,11 @@ module rec ScrutinyStateMachine =
 
                     do! bodyInput.WaitForAsync()
 
+                    do! bodyInput.ClearAsync()
+
                     do! bodyInput.TypeAsync(body)
 
-                    let! inputText = bodyInput.TextContentAsync()
+                    let! inputText = bodyInput.InputValueAsync()
 
                     test <@ body = inputText @>
                 })
@@ -691,7 +697,7 @@ module rec ScrutinyStateMachine =
                 ]
 
                 via (fun _ -> task {
-                    let publishButton = gs.Page.GetByRole(AriaRole.Button).Nth(1)
+                    let publishButton = gs.Page.GetByRole(AriaRole.Button).First
 
                     do! publishButton.ClickAsync()
                 })
@@ -742,14 +748,14 @@ module rec ScrutinyStateMachine =
                 let usernameInput = gs.Page.GetByPlaceholder("Username")
                 do! usernameInput.WaitForAsync()
 
-                let! username = usernameInput.TextContentAsync()
+                let! username = usernameInput.InputValueAsync()
 
                 test <@ username = gs.Username @>
 
                 let emailInput = gs.Page.GetByPlaceholder("E-mail")
                 do! emailInput.WaitForAsync()
 
-                let! email = emailInput.TextContentAsync()
+                let! email = emailInput.InputValueAsync()
 
                 test <@ email = gs.Email @>
             })
@@ -876,6 +882,7 @@ module rec ScrutinyStateMachine =
                 fn (fun _ -> task {
                     let username = Guid.NewGuid().ToString()
                     let usernameInput = gs.Page.GetByPlaceholder("Username")
+                    do! usernameInput.ClearAsync()
                     do! usernameInput.TypeAsync(username)
 
                     gs.Username <- username
@@ -888,6 +895,7 @@ module rec ScrutinyStateMachine =
                 fn (fun _ -> task {
                     let email = $"{Guid.NewGuid()}@example.com"
                     let emailInput = gs.Page.GetByPlaceholder("Email")
+                    do! emailInput.ClearAsync()
                     do! emailInput.TypeAsync(email)
 
                     gs.Email <- email
@@ -900,6 +908,7 @@ module rec ScrutinyStateMachine =
                 fn (fun _ -> task {
                     let password = Guid.NewGuid().ToString()
                     let passwordInput = gs.Page.GetByPlaceholder("Password")
+                    do! passwordInput.ClearAsync()
                     do! passwordInput.TypeAsync(password)
 
                     gs.Password <- password
@@ -923,6 +932,9 @@ module rec ScrutinyStateMachine =
                             .Filter(LocatorFilterOptions(HasText = "Sign up"))
 
                     do! signUpButton.ClickAsync()
+
+                    let subHeader = gs.Page.GetByText("A place to share your knowledge")
+                    do! subHeader.WaitForAsync()
                 })
             }
 

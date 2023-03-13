@@ -197,6 +197,7 @@ type PlaywrightTests(outputHelper: ITestOutputHelper) =
             }
 
         let! result = scrutinize config (GlobalState(page, logger)) ScrutinyStateMachine.home
+
         // Assert.True(result.Steps |> Seq.length >= 5)
         // Assert.Equal(5, result.Graph.Length)
         test <@ 1 = 2 @>
