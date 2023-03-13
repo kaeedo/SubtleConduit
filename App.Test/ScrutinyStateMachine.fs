@@ -10,7 +10,7 @@ type GlobalState(page: IPage, logger: string -> unit) =
 
     member val SelectedAuthor = String.Empty with get, set
 
-    member val ActiveArticle = String.Empty with get, set
+    member val ActiveArticleName = String.Empty with get, set
 
     member val Username = String.Empty with get, set
     member val Email = String.Empty with get, set
@@ -130,7 +130,7 @@ module rec ScrutinyStateMachine =
                             .Locator("xpath=../../div[2]/a[1]")
                             .First.TextContentAsync()
 
-                    gs.ActiveArticle <- articleName
+                    gs.ActiveArticleName <- articleName
 
                     do! readMoreLink.ClickAsync()
                 })
@@ -262,35 +262,35 @@ module rec ScrutinyStateMachine =
                             .Locator("xpath=../../div[2]/a[1]")
                             .First.TextContentAsync()
 
-                    gs.ActiveArticle <- articleName
+                    gs.ActiveArticleName <- articleName
 
                     do! readMoreLink.ClickAsync()
                 })
             }
 
-        (*transition {
-                destination signUp
+            transition {
+                destination newArticle
 
                 via (fun _ -> task {
-                    let signUpLink = gs.Page.GetByText("Sign up")
+                    let newArticleLink = gs.Page.GetByText("New Article")
 
-                    do! signUpLink.First.WaitForAsync()
+                    do! newArticleLink.First.WaitForAsync()
 
-                    do! signUpLink.ClickAsync()
+                    do! newArticleLink.ClickAsync()
                 })
             }
 
             transition {
-                destination signIn
+                destination settings
 
                 via (fun _ -> task {
-                    let signInLink = gs.Page.GetByText("Sign In")
+                    let settingsLink = gs.Page.GetByText("Settings")
 
-                    do! signInLink.First.WaitForAsync()
+                    do! settingsLink.First.WaitForAsync()
 
-                    do! signInLink.ClickAsync()
+                    do! settingsLink.ClickAsync()
                 })
-            }*)
+            }
         }
 
     let authorProfile =
@@ -339,7 +339,7 @@ module rec ScrutinyStateMachine =
                             .Locator("xpath=../../div[2]/a[1]")
                             .First.TextContentAsync()
 
-                    gs.ActiveArticle <- articleName
+                    gs.ActiveArticleName <- articleName
 
                     do! readMoreLink.ClickAsync()
                 })
@@ -440,7 +440,7 @@ module rec ScrutinyStateMachine =
                             .Locator("xpath=../../div[2]/a[1]")
                             .First.TextContentAsync()
 
-                    gs.ActiveArticle <- articleName
+                    gs.ActiveArticleName <- articleName
 
                     do! readMoreLink.ClickAsync()
                 })
@@ -458,29 +458,41 @@ module rec ScrutinyStateMachine =
                 })
             }
 
-        (*transition {
-                destination signUp
+            transition {
+                destination newArticle
 
                 via (fun _ -> task {
-                    let signUpLink = gs.Page.GetByText("Sign up")
+                    let newArticleLink = gs.Page.GetByText("New Article")
 
-                    do! signUpLink.First.WaitForAsync()
+                    do! newArticleLink.First.WaitForAsync()
 
-                    do! signUpLink.ClickAsync()
+                    do! newArticleLink.ClickAsync()
                 })
             }
 
             transition {
-                destination signIn
+                destination settings
 
                 via (fun _ -> task {
-                    let signInLink = gs.Page.GetByText("Sign In")
+                    let settingsLink = gs.Page.GetByText("Settings")
 
-                    do! signInLink.First.WaitForAsync()
+                    do! settingsLink.First.WaitForAsync()
 
-                    do! signInLink.ClickAsync()
+                    do! settingsLink.ClickAsync()
                 })
-            }*)
+            }
+
+            transition {
+                destination loggedInAuthorProfile
+
+                via (fun _ -> task {
+                    let profileLink = gs.Page.GetByText(gs.Username)
+
+                    do! profileLink.First.WaitForAsync()
+
+                    do! profileLink.ClickAsync()
+                })
+            }
         }
 
     let article =
@@ -493,10 +505,10 @@ module rec ScrutinyStateMachine =
                 do! articleTitle.WaitForAsync()
                 let! articleTitleText = articleTitle.TextContentAsync()
 
-                test <@ articleTitleText = gs.ActiveArticle @>
+                test <@ articleTitleText = gs.ActiveArticleName @>
             })
 
-            onExit (fun _ -> task { gs.ActiveArticle <- String.Empty })
+            onExit (fun _ -> task { gs.ActiveArticleName <- String.Empty })
 
             transition {
                 destination home
@@ -545,13 +557,247 @@ module rec ScrutinyStateMachine =
                 do! articleTitle.WaitForAsync()
                 let! articleTitleText = articleTitle.TextContentAsync()
 
-                test <@ articleTitleText = gs.ActiveArticle @>
+                test <@ articleTitleText = gs.ActiveArticleName @>
             })
 
-            onExit (fun _ -> task { gs.ActiveArticle <- String.Empty })
+            onExit (fun _ -> task { gs.ActiveArticleName <- String.Empty })
+
+            transition {
+                destination newArticle
+
+                via (fun _ -> task {
+                    let newArticleLink = gs.Page.GetByText("New Article")
+
+                    do! newArticleLink.First.WaitForAsync()
+
+                    do! newArticleLink.ClickAsync()
+                })
+            }
+
+            transition {
+                destination settings
+
+                via (fun _ -> task {
+                    let settingsLink = gs.Page.GetByText("Settings")
+
+                    do! settingsLink.First.WaitForAsync()
+
+                    do! settingsLink.ClickAsync()
+                })
+            }
+
+            transition {
+                destination loggedInAuthorProfile
+
+                via (fun _ -> task {
+                    let profileLink = gs.Page.GetByText(gs.Username)
+
+                    do! profileLink.First.WaitForAsync()
+
+                    do! profileLink.ClickAsync()
+                })
+            }
+
+            transition {
+                destination loggedInHome
+
+                via (fun _ -> task {
+                    let homeLink = gs.Page.GetByText("Home")
+
+                    do! homeLink.First.WaitForAsync()
+
+                    do! homeLink.ClickAsync()
+                })
+            }
+        }
+
+    let newArticle =
+        fun (gs: GlobalState) -> page {
+            name "New Article"
+
+            onEnter (fun _ -> task {
+                let publishButton = gs.Page.GetByRole(AriaRole.Button).Nth(1)
+
+                do! publishButton.WaitForAsync()
+
+                let! isActive = publishButton.IsEnabledAsync()
+
+                test <@ isActive @>
+            })
+
+            action {
+                name "Article title"
+
+                fn (fun _ -> task {
+                    let title = "Herp Derp Nerp Sherp"
+                    gs.ActiveArticleName <- title
+
+                    let titleInput = gs.Page.GetByPlaceholder("Article Title")
+
+                    do! titleInput.WaitForAsync()
+
+                    do! titleInput.TypeAsync(title)
+
+                    let! inputText = titleInput.TextContentAsync()
+
+                    test <@ title = inputText @>
+                })
+            }
+
+            action {
+                name "Article description"
+
+                fn (fun _ -> task {
+                    let description = "Description description description"
+
+                    let descriptionInput = gs.Page.GetByPlaceholder("What's this article about?")
+
+                    do! descriptionInput.WaitForAsync()
+
+                    do! descriptionInput.TypeAsync(description)
+
+                    let! inputText = descriptionInput.TextContentAsync()
+
+                    test <@ description = inputText @>
+                })
+            }
+
+            action {
+                name "Article body"
+
+                fn (fun _ -> task {
+                    let body =
+                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vitae purus faucibus ornare suspendisse sed. Eget magna fermentum iaculis eu. Etiam non quam lacus suspendisse faucibus interdum posuere lorem. Pellentesque massa placerat duis ultricies lacus sed turpis tincidunt. Sed enim ut sem viverra aliquet eget sit. Integer vitae justo eget magna fermentum iaculis. Porta nibh venenatis cras sed felis eget velit aliquet. Molestie a iaculis at erat pellentesque adipiscing commodo elit at. Nunc aliquet bibendum enim facilisis gravida neque. Sed felis eget velit aliquet sagittis id. Lectus quam id leo in vitae turpis massa. Quisque egestas diam in arcu cursus. Nec feugiat in fermentum posuere urna. In nisl nisi scelerisque eu ultrices vitae. Mattis molestie a iaculis at erat pellentesque adipiscing commodo elit. Elit eget gravida cum sociis natoque penatibus et magnis dis. Massa enim nec dui nunc mattis enim ut tellus elementum. Habitasse platea dictumst vestibulum rhoncus est pellentesque elit ullamcorper."
+
+                    let bodyInput = gs.Page.GetByPlaceholder("Write your article (in markdown)")
+
+                    do! bodyInput.WaitForAsync()
+
+                    do! bodyInput.TypeAsync(body)
+
+                    let! inputText = bodyInput.TextContentAsync()
+
+                    test <@ body = inputText @>
+                })
+            }
+
+            transition {
+                destination loggedInArticle
+
+                dependantActions [
+                    "Article title"
+                    "Article description"
+                    "Article body"
+                ]
+
+                via (fun _ -> task {
+                    let publishButton = gs.Page.GetByRole(AriaRole.Button).Nth(1)
+
+                    do! publishButton.ClickAsync()
+                })
+            }
+
+            transition {
+                destination settings
+
+                via (fun _ -> task {
+                    let settingsLink = gs.Page.GetByText("Settings")
+
+                    do! settingsLink.First.WaitForAsync()
+
+                    do! settingsLink.ClickAsync()
+                })
+            }
+
+            transition {
+                destination loggedInAuthorProfile
+
+                via (fun _ -> task {
+                    let profileLink = gs.Page.GetByText(gs.Username)
+
+                    do! profileLink.First.WaitForAsync()
+
+                    do! profileLink.ClickAsync()
+                })
+            }
+
+            transition {
+                destination loggedInHome
+
+                via (fun _ -> task {
+                    let homeLink = gs.Page.GetByText("Home")
+
+                    do! homeLink.First.WaitForAsync()
+
+                    do! homeLink.ClickAsync()
+                })
+            }
+        }
+
+    let settings =
+        fun (gs: GlobalState) -> page {
+            name "Settings"
+
+            onEnter (fun _ -> task {
+                let usernameInput = gs.Page.GetByPlaceholder("Username")
+                do! usernameInput.WaitForAsync()
+
+                let! username = usernameInput.TextContentAsync()
+
+                test <@ username = gs.Username @>
+
+                let emailInput = gs.Page.GetByPlaceholder("E-mail")
+                do! emailInput.WaitForAsync()
+
+                let! email = emailInput.TextContentAsync()
+
+                test <@ email = gs.Email @>
+            })
+
+            action {
+                name "Change email"
+
+                fn (fun _ -> task {
+                    let emailInput = gs.Page.GetByPlaceholder("E-mail")
+
+                    let newEmail = $"{Guid.NewGuid()}@example.com"
+
+                    do! emailInput.TypeAsync(newEmail)
+
+                    gs.Email <- newEmail
+
+                    let updateSettings = gs.Page.GetByText("Update Settings")
+
+                    do! updateSettings.ClickAsync()
+                })
+            }
 
             transition {
                 destination home
+
+                via (fun _ -> task {
+                    let logoutButton = gs.Page.GetByText("Or click here to logout")
+
+                    do! logoutButton.First.WaitForAsync()
+
+                    do! logoutButton.ClickAsync()
+                })
+            }
+
+            transition {
+                destination loggedInAuthorProfile
+
+                via (fun _ -> task {
+                    let profileLink = gs.Page.GetByText(gs.Username)
+
+                    do! profileLink.First.WaitForAsync()
+
+                    do! profileLink.ClickAsync()
+                })
+            }
+
+            transition {
+                destination loggedInHome
 
                 via (fun _ -> task {
                     let homeLink = gs.Page.GetByText("Home")
@@ -562,29 +808,17 @@ module rec ScrutinyStateMachine =
                 })
             }
 
-        (*transition {
-                destination signUp
+            transition {
+                destination loggedInHome
+
+                dependantActions [ "Change email" ]
 
                 via (fun _ -> task {
-                    let signUpLink = gs.Page.GetByText("Sign up")
+                    let updateSettings = gs.Page.GetByText("Update Settings")
 
-                    do! signUpLink.First.WaitForAsync()
-
-                    do! signUpLink.ClickAsync()
+                    do! updateSettings.ClickAsync()
                 })
             }
-
-            transition {
-                destination signIn
-
-                via (fun _ -> task {
-                    let signInLink = gs.Page.GetByText("Sign In")
-
-                    do! signInLink.First.WaitForAsync()
-
-                    do! signInLink.ClickAsync()
-                })
-            }*)
         }
 
     let signIn =
