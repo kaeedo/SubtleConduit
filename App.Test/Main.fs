@@ -175,8 +175,6 @@ type PlaywrightTests(outputHelper: ITestOutputHelper) =
 
     [<Fact>]
     member this.``Run Scrutiny Test``() = task {
-        //let isHeadless = Environment.GetEnvironmentVariable("CI") = "true"
-
         let launchOptions = BrowserTypeLaunchOptions()
         launchOptions.Headless <- isHeadless
         //launchOptions.SlowMo <- 500f
@@ -188,19 +186,20 @@ type PlaywrightTests(outputHelper: ITestOutputHelper) =
 
         let! _ = page.GotoAsync("http://localhost:5173")
 
+        let seed = 553931187
+
         let config =
             { ScrutinyConfig.Default with
-                Seed = 553931187
+                Seed = seed
                 MapOnly = false
                 ComprehensiveActions = true
                 ComprehensiveStates = true
             }
 
-        let! result = scrutinize config (GlobalState(page, logger)) ScrutinyStateMachine.home
+        let! result = scrutinize config (GlobalState(page, seed, logger)) ScrutinyStateMachine.home
 
-        // Assert.True(result.Steps |> Seq.length >= 5)
-        // Assert.Equal(5, result.Graph.Length)
-        test <@ 1 = 2 @>
+        test <@ result.Graph.Length = 10 @>
+        test <@ result.Steps.Length = 40 @>
     }
 
     interface IDisposable with

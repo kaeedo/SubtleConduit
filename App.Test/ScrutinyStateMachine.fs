@@ -4,8 +4,9 @@ open System
 open Microsoft.Playwright
 open Scrutiny
 
-type GlobalState(page: IPage, logger: string -> unit) =
-    do printfn "constructed"
+type GlobalState(page: IPage, seed, logger: string -> unit) =
+    let rnd = Random(seed)
+    member val Random = rnd
     member val Logger = logger
     member val Page = page
 
@@ -70,8 +71,7 @@ module rec ScrutinyStateMachine =
                     let tags = gs.Page.GetByTestId("tags").Locator("li")
                     do! tags.Nth(1).WaitForAsync()
                     let! tagCount = tags.CountAsync()
-                    let rdn = Random()
-                    let tag = tags.Nth(rdn.Next(tagCount - 1))
+                    let tag = tags.Nth(gs.Random.Next(tagCount - 1))
 
                     do! tag.ClickAsync()
                     let! tagText = tag.TextContentAsync()
@@ -196,8 +196,7 @@ module rec ScrutinyStateMachine =
                     let tags = gs.Page.GetByTestId("tags").Locator("li")
                     do! tags.Nth(1).WaitForAsync()
                     let! tagCount = tags.CountAsync()
-                    let rdn = Random()
-                    let tag = tags.Nth(rdn.Next(tagCount - 1))
+                    let tag = tags.Nth(gs.Random.Next(tagCount - 1))
 
                     do! tag.ClickAsync()
                     let! tagText = tag.TextContentAsync()
