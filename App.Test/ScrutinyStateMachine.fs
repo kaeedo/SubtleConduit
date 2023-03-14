@@ -5,6 +5,7 @@ open Microsoft.Playwright
 open Scrutiny
 
 type GlobalState(page: IPage, logger: string -> unit) =
+    do printfn "constructed"
     member val Logger = logger
     member val Page = page
 
@@ -110,6 +111,8 @@ module rec ScrutinyStateMachine =
                     let! authorName = author.TextContentAsync()
 
                     gs.SelectedAuthor <- authorName
+
+                    do! author.ClickAsync()
                 })
             }
 
@@ -118,12 +121,12 @@ module rec ScrutinyStateMachine =
 
                 via (fun _ -> task {
                     let readMoreLink =
-                        gs
-                            .Page
-                            .GetByRole(AriaRole.Link)
-                            .Filter(LocatorFilterOptions(HasText = "Read more..."))
+                        gs.Page.GetByRole(AriaRole.Link).Filter(
+                            LocatorFilterOptions(HasText = "Read more...")
+                        )
+                            .First
 
-                    do! readMoreLink.First.WaitForAsync()
+                    do! readMoreLink.WaitForAsync()
 
                     let! articleName =
                         readMoreLink
@@ -246,16 +249,16 @@ module rec ScrutinyStateMachine =
             }
 
             transition {
-                destination article
+                destination loggedInArticle
 
                 via (fun _ -> task {
                     let readMoreLink =
-                        gs
-                            .Page
-                            .GetByRole(AriaRole.Link)
-                            .Filter(LocatorFilterOptions(HasText = "Read more..."))
+                        gs.Page.GetByRole(AriaRole.Link).Filter(
+                            LocatorFilterOptions(HasText = "Read more...")
+                        )
+                            .First
 
-                    do! readMoreLink.First.WaitForAsync()
+                    do! readMoreLink.WaitForAsync()
 
                     let! articleName =
                         readMoreLink
@@ -306,8 +309,6 @@ module rec ScrutinyStateMachine =
                 test <@ name = gs.SelectedAuthor @>
             })
 
-            onExit (fun _ -> gs.SelectedAuthor <- String.Empty)
-
             action {
                 fn (fun _ -> task {
                     let favoritedPostsTab = gs.Page.GetByText("Favorited Posts")
@@ -317,7 +318,8 @@ module rec ScrutinyStateMachine =
 
             action {
                 fn (fun _ -> task {
-                    let favoritedPostsTab = gs.Page.GetByText("Posts")
+                    let favoritedPostsTab = gs.Page.GetByText("Posts").First
+
                     do! favoritedPostsTab.ClickAsync()
                 })
             }
@@ -392,10 +394,10 @@ module rec ScrutinyStateMachine =
                 do! bannerName.WaitForAsync()
                 let! name = bannerName.TextContentAsync()
 
-                test <@ name = gs.SelectedAuthor @>
-            })
+                gs.SelectedAuthor <- name
 
-            onExit (fun _ -> gs.SelectedAuthor <- String.Empty)
+                test <@ name = gs.Username @>
+            })
 
             action {
                 fn (fun _ -> task {
@@ -406,45 +408,53 @@ module rec ScrutinyStateMachine =
 
             action {
                 fn (fun _ -> task {
-                    let favoritedPostsTab = gs.Page.GetByText("Posts")
+                    let favoritedPostsTab = gs.Page.GetByText("My Posts")
                     do! favoritedPostsTab.ClickAsync()
                 })
             }
 
+            // TODO revisit with conditional steps
             action {
                 fn (fun _ -> task {
-                    let followButton = gs.Page.GetByText($"+ Follow {gs.SelectedAuthor}")
-                    do! followButton.ClickAsync()
+                    if gs.SelectedAuthor = gs.Username then
+                        let editProfileSettings = gs.Page.GetByText($"Edit profile settings")
+                        let! isEditProfileSettingsButtonVisible = editProfileSettings.IsVisibleAsync()
 
-                    let unfollowButton = gs.Page.GetByText($"- Unfollow {gs.SelectedAuthor}")
-                    let! isUnfollowButtonVisible = unfollowButton.IsVisibleAsync()
+                        test <@ isEditProfileSettingsButtonVisible @>
+                    else
+                        let followButton = gs.Page.GetByText($"+ Follow {gs.SelectedAuthor}")
+                        do! followButton.ClickAsync()
 
-                    test <@ isUnfollowButtonVisible @>
+                        let unfollowButton = gs.Page.GetByText($"- Unfollow {gs.SelectedAuthor}")
+                        let! isUnfollowButtonVisible = unfollowButton.IsVisibleAsync()
+
+                        test <@ isUnfollowButtonVisible @>
                 })
             }
 
-            transition {
-                destination loggedInArticle
-
-                via (fun _ -> task {
-                    let readMoreLink =
-                        gs
-                            .Page
-                            .GetByRole(AriaRole.Link)
-                            .Filter(LocatorFilterOptions(HasText = "Read more..."))
-
-                    do! readMoreLink.First.WaitForAsync()
-
-                    let! articleName =
-                        readMoreLink
-                            .Locator("xpath=../../div[2]/a[1]")
-                            .First.TextContentAsync()
-
-                    gs.ActiveArticleName <- articleName
-
-                    do! readMoreLink.ClickAsync()
-                })
-            }
+            // TODO revisit with conditional steps
+            // transition {
+            //     destination loggedInArticle
+            //
+            //     via (fun _ -> task {
+            //         let readMoreLink =
+            //             gs.Page.GetByRole(AriaRole.Link).Filter(
+            //                 LocatorFilterOptions(HasText = "Read more...")
+            //             )
+            //                 .First
+            //
+            //         do! readMoreLink.WaitForAsync()
+            //
+            //         let! articleName =
+            //             readMoreLink
+            //                 .Locator("xpath=../../div[2]/a[1]")
+            //                 .First.TextContentAsync()
+            //
+            //         gs.ActiveArticleName <- articleName
+            //
+            //         do! readMoreLink.ClickAsync()
+            //     })
+            // }
 
             transition {
                 destination loggedInHome
@@ -508,8 +518,6 @@ module rec ScrutinyStateMachine =
                 test <@ articleTitleText = gs.ActiveArticleName @>
             })
 
-            onExit (fun _ -> task { gs.ActiveArticleName <- String.Empty })
-
             transition {
                 destination home
 
@@ -560,8 +568,6 @@ module rec ScrutinyStateMachine =
                 test <@ articleTitleText = gs.ActiveArticleName @>
             })
 
-            onExit (fun _ -> task { gs.ActiveArticleName <- String.Empty })
-
             transition {
                 destination newArticle
 
@@ -578,9 +584,9 @@ module rec ScrutinyStateMachine =
                 destination settings
 
                 via (fun _ -> task {
-                    let settingsLink = gs.Page.GetByText("Settings")
+                    let settingsLink = gs.Page.GetByText("Settings").First
 
-                    do! settingsLink.First.WaitForAsync()
+                    do! settingsLink.WaitForAsync()
 
                     do! settingsLink.ClickAsync()
                 })
@@ -590,9 +596,9 @@ module rec ScrutinyStateMachine =
                 destination loggedInAuthorProfile
 
                 via (fun _ -> task {
-                    let profileLink = gs.Page.GetByText(gs.Username)
+                    let profileLink = gs.Page.GetByText(gs.Username).First
 
-                    do! profileLink.First.WaitForAsync()
+                    do! profileLink.WaitForAsync()
 
                     do! profileLink.ClickAsync()
                 })
@@ -761,9 +767,21 @@ module rec ScrutinyStateMachine =
             })
 
             action {
-                name "Change email"
+                isExit
 
                 fn (fun _ -> task {
+                    let logoutButton = gs.Page.GetByText("Or click here to logout")
+
+                    do! logoutButton.First.WaitForAsync()
+
+                    do! logoutButton.ClickAsync()
+                })
+            }
+
+            transition {
+                destination loggedInHome
+
+                via (fun _ -> task {
                     let emailInput = gs.Page.GetByPlaceholder("E-mail")
 
                     let newEmail = $"{Guid.NewGuid()}@example.com"
@@ -811,18 +829,6 @@ module rec ScrutinyStateMachine =
                     do! homeLink.First.WaitForAsync()
 
                     do! homeLink.ClickAsync()
-                })
-            }
-
-            transition {
-                destination loggedInHome
-
-                dependantActions [ "Change email" ]
-
-                via (fun _ -> task {
-                    let updateSettings = gs.Page.GetByText("Update Settings")
-
-                    do! updateSettings.ClickAsync()
                 })
             }
         }
