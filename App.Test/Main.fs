@@ -16,11 +16,13 @@ type PlaywrightTests(outputHelper: ITestOutputHelper) =
     let logger msg = outputHelper.WriteLine(msg)
     let playwright = Playwright.CreateAsync().GetAwaiter().GetResult()
     let isHeadless = false
+    let slowMoAmount = 0f
 
     [<Fact>]
     member this.``Loads home page``() = task {
         let launchOptions = BrowserTypeLaunchOptions()
         launchOptions.Headless <- isHeadless
+        launchOptions.SlowMo <- slowMoAmount
 
         let! browser = playwright.Firefox.LaunchAsync(launchOptions)
         let! context = browser.NewContextAsync(BrowserNewContextOptions(IgnoreHTTPSErrors = true))
@@ -69,6 +71,7 @@ type PlaywrightTests(outputHelper: ITestOutputHelper) =
     member this.``Filters by tag``() = task {
         let launchOptions = BrowserTypeLaunchOptions()
         launchOptions.Headless <- isHeadless
+        launchOptions.SlowMo <- slowMoAmount
 
         let! browser = playwright.Firefox.LaunchAsync(launchOptions)
         let! context = browser.NewContextAsync(BrowserNewContextOptions(IgnoreHTTPSErrors = true))
@@ -102,6 +105,7 @@ type PlaywrightTests(outputHelper: ITestOutputHelper) =
     member this.``Profile page shows author name in banner``() = task {
         let launchOptions = BrowserTypeLaunchOptions()
         launchOptions.Headless <- isHeadless
+        launchOptions.SlowMo <- slowMoAmount
 
         let! browser = playwright.Firefox.LaunchAsync(launchOptions)
         let! context = browser.NewContextAsync(BrowserNewContextOptions(IgnoreHTTPSErrors = true))
@@ -123,6 +127,7 @@ type PlaywrightTests(outputHelper: ITestOutputHelper) =
     member this.``Profile page shows article title``() = task {
         let launchOptions = BrowserTypeLaunchOptions()
         launchOptions.Headless <- isHeadless
+        launchOptions.SlowMo <- slowMoAmount
 
         let! browser = playwright.Firefox.LaunchAsync(launchOptions)
         let! context = browser.NewContextAsync(BrowserNewContextOptions(IgnoreHTTPSErrors = true))
@@ -150,6 +155,7 @@ type PlaywrightTests(outputHelper: ITestOutputHelper) =
     member this.``Home link in nav is clickable``() = task {
         let launchOptions = BrowserTypeLaunchOptions()
         launchOptions.Headless <- isHeadless
+        launchOptions.SlowMo <- slowMoAmount
 
         let! browser = playwright.Firefox.LaunchAsync(launchOptions)
         let! context = browser.NewContextAsync(BrowserNewContextOptions(IgnoreHTTPSErrors = true))
@@ -177,6 +183,7 @@ type PlaywrightTests(outputHelper: ITestOutputHelper) =
     member this.``Can sign up``() = task {
         let launchOptions = BrowserTypeLaunchOptions()
         launchOptions.Headless <- isHeadless
+        launchOptions.SlowMo <- slowMoAmount
 
         let! browser = playwright.Firefox.LaunchAsync(launchOptions)
         let! context = browser.NewContextAsync(BrowserNewContextOptions(IgnoreHTTPSErrors = true))
@@ -225,6 +232,7 @@ type PlaywrightTests(outputHelper: ITestOutputHelper) =
     member this.``Can publish new article``() = task {
         let launchOptions = BrowserTypeLaunchOptions()
         launchOptions.Headless <- isHeadless
+        launchOptions.SlowMo <- slowMoAmount
 
         let! browser = playwright.Firefox.LaunchAsync(launchOptions)
         let! context = browser.NewContextAsync(BrowserNewContextOptions(IgnoreHTTPSErrors = true))
@@ -301,6 +309,7 @@ type PlaywrightTests(outputHelper: ITestOutputHelper) =
     member this.``Can favorite an article``() = task {
         let launchOptions = BrowserTypeLaunchOptions()
         launchOptions.Headless <- isHeadless
+        launchOptions.SlowMo <- slowMoAmount
 
         let! browser = playwright.Firefox.LaunchAsync(launchOptions)
         let! context = browser.NewContextAsync(BrowserNewContextOptions(IgnoreHTTPSErrors = true))
@@ -371,7 +380,7 @@ type PlaywrightTests(outputHelper: ITestOutputHelper) =
     member this.``Run Scrutiny Test``() = task {
         let launchOptions = BrowserTypeLaunchOptions()
         launchOptions.Headless <- isHeadless
-        //launchOptions.SlowMo <- 500f
+        launchOptions.SlowMo <- slowMoAmount
 
         let! browser = playwright.Firefox.LaunchAsync(launchOptions)
         let! context = browser.NewContextAsync(BrowserNewContextOptions(IgnoreHTTPSErrors = true))

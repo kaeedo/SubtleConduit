@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Title</title>
+    <meta charset="utf-8">
+    <style>
+        h1, h2, h3 {
+            font-weight: normal;
+        }
+
+        li {
+            font-size: 24pt;
+            margin-bottom: 2rem;
+        }
+
+        .remark-code, .remark-inline-code {
+            font-family: 'Ubuntu Mono';
+        }
+    </style>
+</head>
+<body>
+<textarea id="source">
+
+class: center, middle
+
+# Scrutiny
+    
+## Uncover edge cases by bringing Property-Based Tests to the UI
+
+---
+
+# Agenda
+
+1. UI Testing is terrible 
+2. Property-based tests
+3. User's journey
+4. How to better
+
+---
+
+# UI Testing is terrible 
+    
+* Tedious to write tests
+* Flaky runs
+* "Test Modeling"
+    
+???
+    Actually writing tests is incredibly tedious. Difficult to use the correct methods for finding the wanted DOM elements
+    
+    Test runs suffer from "flakiness", but this is more to do with the actual tests themselves, 
+        not an inherent property of UI tests
+    
+    Database is one giant state
+    
+    Scrutiny won't help with any of these
+
+---
+   
+# Writing tests is tedious
+    
+* Lot's of duplicated selectors
+* Many actions need to be repeated
+* The only path that is tested is what the developer thinks of
+    
+???
+    Show code examples of the basic tests:
+    
+    * Can sign up
+    * Can publish new article
+    * Can favorite an article
+    
+    Mention that similar problems exist with "normal" unit/integration tests. It just happens to be less of a problem because things move much faster
+    
+---
+    
+# Property based tests
+
+* Automagically generates input values to your SUT
+* Tests "properties" of your system
+* Helps uncover edge cases that you didn't think of during development
+    
+---
+   
+# Example property test
+
+Function to test
+```fsharp
+let rev list = 
+    list |> List.rev;;
+    
+rev [1; 2; 3; 4];;
+// [4; 3; 2; 1]
+    
+```
+    
+Property based test
+```fsharp
+// Uses FsCheck
+[<Property>]
+let testRev inputList =
+    let property = inputList |> rev |> rev
+    Assert.sequenceEquals inputList property
+```
+    
+`inputList` is randomly generated for (default) 100 different lists
+---
+
+# User's journey
+
+* How do you expect your user to use your UI
+* Users are unpredictable
+* Strange interactions occur
+    
+---
+    
+# Usual UI tests
+    
+User favorites an article
+<div class="mermaid">
+flowchart LR
+        login[User logs in] --> navigate
+        findArticle[Finds article to favorite] --- navigate[Navigates to home page]
+        findArticle --> feed[Clicks favorite button]
+        feed[User navigates to Your Feed] --> verify[User verifies favorite article shows up in own feed] 
+</div>
+    
+User write new article
+<div class="mermaid">
+flowchart LR
+        login[User logs in] --> navigate[Navigates to home page]
+        newArticle[Navigates to new article page] --- navigate[Navigates to home page]
+        newArticle --> feed[Writes new article]
+        feed[User navigates to new article] --> verify[User verifies new article is published] 
+</div>
+    
+---
+    
+# Scrutiny UI Tests
+    
+User favorites an article and then writes a new article
+<div class="mermaid">
+flowchart LR
+        login[User logs in] --> navigate
+        findArticle[Finds article to favorite] --- navigate[Navigates to home page]
+        findArticle --> feed[Clicks favorite button]
+        feed[User navigates to Your Feed] --> verify
+        newArticle[Navigates to new article page] --- verify[User verifies favorite article shows up in own feed] 
+        newArticle --> feed2[Writes new article]
+        feed2[User navigates to new article] --> verify2[User verifies new article is published] 
+</div>
+    
+???
+    
+    Show crappy test site after this
+    
+---
+    
+# Describe your UI as a state machine
+    
+<div class="mermaid">
+stateDiagram
+    direction LR
+
+    loggedincomment: Logged In Comment
+    loggedinhome: Logged in Home
+    comment: Comment
+    signin: Sign In
+    home: Home
+
+    loggedincomment --> loggedinhome
+    loggedinhome --> home
+    loggedinhome --> loggedincomment
+    comment --> signin
+    comment --> home
+    signin --> loggedinhome
+    signin --> home
+    home --> signin
+    home --> comment
+</div>
+    
+---
+    
+# State definition
+    
+```fsharp
+page {
+    name "Name of page"
+    onEnter (fun ls ->
+        // Do something when first entering state
+        Assert.equal headerText expectedHeader
+    )
+    onExit (fun _ ->
+        // Do something when leaving state
+        printfn "Exiting comment"
+    )
+    transition {
+        via (fun ls -> click ls.HomeLink)
+        destination home
+    }
+    transition {
+        via (fun _ -> click "#signin")
+        destination signIn
+    }
+    action {
+        fn (fun _ -> () (*do something on the page*))
+    }
+    action {
+        isExit
+        fn (fun _ -> () (*final action to perform before exiting the test*))
+    }
+}
+```
+
+???
+    Show crappy web site scrutiny test
+    
+---
+    
+# For the C# people
+    
+```csharp
+[PageState]
+public class LoggedInComment
+{
+    [OnEnter]
+    public void OnEnter() { }
+    
+    [Action]
+    public async Task WriteComments() { }
+
+    [Action(IsExit = true)]
+    public async Task ExitAction() { }
+
+    [ExitAction]
+    public async Task ExitAction() { }
+
+    [TransitionTo(nameof(AnotherState))]
+    [DependantAction(nameof(WriteComments))] // Optioanlly run the WriteComments action before executing this transition
+    public void TransitionToAnotherState() { }
+}
+```
+    
+???
+    Show crappy web site scrutiny test C# usage example
+    
+---
+    
+# Resources
+
+### Scrutiny
+    
+* https://codeberg.org/CubeOfShame/Scrutiny
+* https://github.com/kaeedo/Scrutiny
+    
+### Subtle Conduit
+
+* https://codeberg.org/CubeOfShame/SubtleConduit
+* https://github.com/kaeedo/SubtleConduit
+    
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+
+    mermaid.initialize({
+        startOnLoad: false,
+        cloneCssStyles: false
+    });
+
+    function initMermaid(s) {
+        const diagrams = document.querySelectorAll('.mermaid');
+        for (let i = 0; i < diagrams.length; i++) {
+            if (diagrams[i].offsetWidth > 0) {
+                mermaid.init(undefined, diagrams[i]);
+            }
+        }
+    }
+    const slideshow = remark.create();
+
+    slideshow.on('afterShowSlide', initMermaid);
+    initMermaid(slideshow.getSlides()[slideshow.getCurrentSlideIndex()]);
+</script>
+</body>
+</html>

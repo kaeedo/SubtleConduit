@@ -16,9 +16,9 @@ An attempt at building a [RealWorld](https://github.com/gothinkster/realworld) a
 
 The following tools are required:
 
-* .Net 5.0
-* Node.js 14.x
-* PNPM 6.x
+* .Net 7.0
+* Node.js 16.x
+* PNPM 7.x
 
 For first time setup, run the following 
 
@@ -46,4 +46,3 @@ To build for prod:
 * [ ] Error handling within the application itself
 * [ ] Commenting system
 * [ ] Icons for header menu items when logged in
-* [ ] Routing (URL) is all sorts of janky
