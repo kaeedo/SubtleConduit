@@ -38,6 +38,7 @@ let Tags (articleFilter: ArticleApi.ArticleFilter option) (setArticleFilter: Art
             ]
             Html.div [
                 Html.ul [
+                    Attr.testId "tags"
                     Bind.el (
                         tags,
                         (function
