@@ -4,11 +4,12 @@ module App.Test.Check
 open System
 open Microsoft.FSharp.Quotations.Patterns
 open Swensen.Unquote
+open Xunit.Sdk
 
 let testWithReason expression reason =
     try
         Assertions.test expression
-    with e ->
+    with :? TrueException as e ->
         let diff =
             match expression with
             | Call(_, methodInfo, [ a; b ]) when methodInfo.Name = "op_Equality" ->
@@ -28,11 +29,12 @@ let testWithReason expression reason =
             | _ -> String.Empty
 
         raise (
-            Exception(
-                reason
+            TrueException(
+                (reason
                 + diff
                 + "\n----------------------------\nUnquote Message:\n"
-                + e.Message
+                + e.Message),
+                false
             )
         )
 
